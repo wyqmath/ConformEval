@@ -1,0 +1,139 @@
+{
+  "ESM2-L11": {
+    "mean_per_protein_AP": 0.7222772228838715,
+    "mean_per_protein_AUROC": 0.8972048620155975,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.8155926649058635,
+    "sd_per_protein_AP": 0.3206552686019278
+  },
+  "ESM2-L23": {
+    "mean_per_protein_AP": 0.7323296981203047,
+    "mean_per_protein_AUROC": 0.9002494693331289,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.822946493888113,
+    "sd_per_protein_AP": 0.317124142542396
+  },
+  "ESM2-L33": {
+    "mean_per_protein_AP": 0.789855985983377,
+    "mean_per_protein_AUROC": 0.9210725243754594,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.8499656180162718,
+    "sd_per_protein_AP": 0.28899359539180147
+  },
+  "MLP-h33-seed13": {
+    "mean_per_protein_AP": 0.8026697628455657,
+    "mean_per_protein_AUROC": 0.9264535106191676,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.8618165309860681,
+    "sd_per_protein_AP": 0.28635257693237764
+  },
+  "MLP-h33-seed2026": {
+    "mean_per_protein_AP": 0.8039258546224098,
+    "mean_per_protein_AUROC": 0.9263115360151472,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.8611941192544349,
+    "sd_per_protein_AP": 0.28594089333431255
+  },
+  "MLP-h33-seed42": {
+    "mean_per_protein_AP": 0.8027674816514621,
+    "mean_per_protein_AUROC": 0.9267443941389324,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.8617380590746357,
+    "sd_per_protein_AP": 0.2854650635560978
+  },
+  "group_bootstrap": {
+    "ESM2-L11": {
+      "bootstrap_unit": "binding_group_id",
+      "delta_vs_ESM2_L33": -0.0675787630995055,
+      "delta_vs_ESM2_L33_ci95": [
+        -0.08099328082806871,
+        -0.05442963062400536
+      ],
+      "macro_ap_ci95": [
+        0.7043481938616328,
+        0.740443616736245
+      ],
+      "replicates": 2000
+    },
+    "ESM2-L23": {
+      "bootstrap_unit": "binding_group_id",
+      "delta_vs_ESM2_L33": -0.05752628786307243,
+      "delta_vs_ESM2_L33_ci95": [
+        -0.06815675946842407,
+        -0.04709902865569538
+      ],
+      "macro_ap_ci95": [
+        0.713915094295675,
+        0.7501523192034666
+      ],
+      "replicates": 2000
+    },
+    "ESM2-L33": {
+      "bootstrap_unit": "binding_group_id",
+      "macro_ap_ci95": [
+        0.773245196724819,
+        0.8060960253467877
+      ],
+      "replicates": 2000
+    },
+    "MLP-h33-seed13": {
+      "bootstrap_unit": "binding_group_id",
+      "delta_vs_ESM2_L33": 0.012813776862188625,
+      "delta_vs_ESM2_L33_ci95": [
+        0.008427951956783064,
+        0.017201496838351694
+      ],
+      "macro_ap_ci95": [
+        0.7856117974778309,
+        0.8186742956623287
+      ],
+      "replicates": 2000
+    },
+    "MLP-h33-seed2026": {
+      "bootstrap_unit": "binding_group_id",
+      "delta_vs_ESM2_L33": 0.014069868639032748,
+      "delta_vs_ESM2_L33_ci95": [
+        0.009589148241649042,
+        0.018756724314603183
+      ],
+      "macro_ap_ci95": [
+        0.7869900608796143,
+        0.8198580487316847
+      ],
+      "replicates": 2000
+    },
+    "MLP-h33-seed42": {
+      "bootstrap_unit": "binding_group_id",
+      "delta_vs_ESM2_L33": 0.012911495668084947,
+      "delta_vs_ESM2_L33_ci95": [
+        0.008375188472697826,
+        0.017636862119852815
+      ],
+      "macro_ap_ci95": [
+        0.7858982146620966,
+        0.8186544874463588
+      ],
+      "replicates": 2000
+    },
+    "traditional-AA-context": {
+      "bootstrap_unit": "binding_group_id",
+      "delta_vs_ESM2_L33": -0.2039501744604717,
+      "delta_vs_ESM2_L33_ci95": [
+        -0.2203139861235613,
+        -0.1871097426171824
+      ],
+      "macro_ap_ci95": [
+        0.5670357175600557,
+        0.6052027637928125
+      ],
+      "replicates": 2000
+    }
+  },
+  "traditional-AA-context": {
+    "mean_per_protein_AP": 0.5859058115229053,
+    "mean_per_protein_AUROC": 0.8227837242884167,
+    "n_proteins": 1279,
+    "pooled_residue_AP_secondary": 0.6243812476651962,
+    "sd_per_protein_AP": 0.31662207309164314
+  }
+}

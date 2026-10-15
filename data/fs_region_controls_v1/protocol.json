@@ -1,0 +1,59 @@
+{
+  "allowed_identical_dssp8": [
+    "H",
+    "G",
+    "I",
+    "E",
+    "B"
+  ],
+  "authorization": "User requested: \u4f60\u73b0\u5728\u628a\u505a\u4e00\u4e0b\u628a\u5df2\u6709\u4e24\u6001\u7ed3\u6784\u6574\u7406\u6210\u53ef\u9760\u7684\u5bf9\u7167\u6807\u7b7e\u3002 This authorizes this separate structural-reference annotation version; frozen labels and scoring protocols are not replaced.",
+  "ca_step_distance_A": [
+    2.5,
+    4.5
+  ],
+  "created_at": "2026-10-15T22:24:00+08:00",
+  "distance_score_definition": "For identity-mapped C-alpha pairs within 15 A in either state, exclude sequence separation <2 in either state. Mean fraction of absolute distance differences below 0.5,1,2,4 A. A symmetric C-alpha-only adaptation inspired by lDDT, not the original all-atom lDDT implementation.",
+  "distance_tolerance_A": [
+    0.5,
+    1.0,
+    2.0,
+    4.0
+  ],
+  "evaluation_policy": "Only cases retaining both inherited positives and new stable references may be considered for later region evaluation. Two endpoints stay in one binding group; residues and overlapping windows must never be randomly split. No scoring folds or model results are generated here.",
+  "exclude_author_range_union": true,
+  "gap_bridging": false,
+  "mapping": "Use sequence/experimental-entity correspondence, never structure-superposition correspondence to reassign residue identities. Require amino-acid identity, one-to-one coordinates, finite C-alpha, occupancy >=0.95 and a unique model-1 C-alpha.",
+  "metadata_finalized_at": "2026-10-15T22:30:51+08:00",
+  "method_source": {
+    "doi": "10.1093/bioinformatics/btt473",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3799472/",
+    "use": "Local distance preservation concept, 15 A radius and four tolerances; this project adds symmetric neighborhoods, C-alpha restriction, local RMSD, DSSP, identity/coverage gates and segment requirements."
+  },
+  "minimum_ca_occupancy": 0.95,
+  "minimum_neighborhood_coverage_each_state": 0.95,
+  "minimum_neighbors": 8,
+  "minimum_segment_length": 5,
+  "minimum_sequence_separation": 2,
+  "negative_semantics": "Locally preserved structured segment in the two observed experimental states, under the registered geometric criteria. Not an author-asserted universal non-switching region.",
+  "neighborhood_radius_A": 15.0,
+  "positive_boundary_buffer_residues": 5,
+  "positive_policy": "Carry over all 124 previously accepted positive endpoint-residue rows exactly; do not add geometry-derived positives or silently repair historical coordinates.",
+  "protocol_id": "FS-REGION-PAIR-STABLE-REFERENCE-v01",
+  "review_policy": "Mechanical validation and separately implemented geometric verification are required; formal task closure still requires independent review.",
+  "scope": "Existing experimental structure pairs only; retrospective development annotation, without model scores or new model evaluation.",
+  "source_ensemble_policy": "Require single-model original experimental structures for new negative annotations. Multi-model structures require ensemble comparison and remain unlabelled by this builder.",
+  "threshold_basis": "Conservative operational annotation choices fixed before running this builder; not universal fold-switch thresholds and not optimized against positive labels or model performance. Report strict sensitivity without selecting a winning variant.",
+  "variants": {
+    "primary": {
+      "maximum_window_rmsd_A": 0.75,
+      "minimum_fraction_within_1A": 0.9,
+      "minimum_symmetric_ca_distance_score": 0.9
+    },
+    "strict_sensitivity": {
+      "maximum_window_rmsd_A": 0.5,
+      "minimum_fraction_within_1A": 0.95,
+      "minimum_symmetric_ca_distance_score": 0.95
+    }
+  },
+  "window_length": 9
+}

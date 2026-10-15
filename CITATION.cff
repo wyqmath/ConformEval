@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below. For scientific claims, also cite the primary data sources listed in SOURCES_AND_DISTRIBUTION.md."
+title: "PhysInfoBench: protein physical inference benchmark"
+type: software
+authors:
+  - given-names: Jiayuan
+    family-names: Ma
+version: 0.4.0
+abstract: >-
+  A benchmark package for evaluating sequence-derived protein representations
+  on topology, disorder, fold-switching, and condition-dependent state tasks.
+keywords:
+  - protein language models
+  - protein biophysics
+  - benchmark
+date-released: 2026-10-16
+repository-code: "https://github.com/wyqmath/ConformEval"
+url: "https://github.com/wyqmath/ConformEval"

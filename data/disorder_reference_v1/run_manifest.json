@@ -1,0 +1,27 @@
+{
+  "code_sha256": {
+    "prepare_disorder_reference_candidate_v01.py": "75f1b7f999e183675370c93c6eac6edab997889db0bf52f5c788d18b06c77f99"
+  },
+  "created_at": "2026-10-15T20:08:23+08:00",
+  "extraction_request_sha256": "1876a41075cddcb91785710de2cd3f4a79b27524a981e2b3eb6572fbfa610cc6",
+  "input_sha256": {
+    "data_manifest.json": "e5b0a9249598d5d98288cfcfbc4ed533eef7f813e09ade0bafe660ff3e1b7fe1",
+    "position_labels_structure_reference_candidate.tsv.gz": "2320fc1212d0e53cd4d921c00c2f3d27aaff90bd425bc4f4d56e3d84597aaacf",
+    "sequences.fasta": "5082dcc8d37f029aa149aec46069c757e705b9216988c711715c5217713b2a4b",
+    "task_samples.tsv.gz": "2a14cc9c3fe066ded670834208553ebfe9b20a1e1fe45f7b3d8bfa0c8e167af4"
+  },
+  "output_sha256": {
+    "REPORT.md": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99",
+    "extraction_request.json": "1876a41075cddcb91785710de2cd3f4a79b27524a981e2b3eb6572fbfa610cc6",
+    "fold_qc.tsv": "51bff4efa99d9720fe2aa0a7f5e7ad77428ca3bda78cb57fd18632b237a32e9f",
+    "inner_fold_roles.tsv": "43b46a6399c078cf08099586f7a0d20ef19b550d21cd704f776b8f700f9b652a",
+    "inputs/resid_index.tsv": "d70b9bf3a8ca0a76eae0f2105df7f31f3a469eec58e1febbe24bdb8799016169",
+    "inputs/sequences.fasta": "8318bb9e8e6d5b9d41e4dc7f0720c2fb3c3c48ac17661e7ff1b5c9af83bc714b",
+    "outer_fold_roles.tsv": "dd5f12c758f7d320177dda678a3a48cf0033b90577cf443ab6fd08d94eba1e23",
+    "protocol.json": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69",
+    "selected_labels.tsv.gz": "253563b7dabd3eb5d2cfce648f2ae3bedcd7e8b363eb5c91170f723bd647023e",
+    "selected_samples.tsv": "ef7fd04bc462542875b56685e9563ae509cc70eb7b87971ea6ee4a640cf95ede"
+  },
+  "status": "INPUTS_AND_FOLDS_FROZEN_PENDING_REPRESENTATION_EXTRACTION_AND_INDEPENDENT_REVIEW",
+  "task_id": "DISORDER-STRUCTURE-REFERENCE-CANDIDATE"
+}

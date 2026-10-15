@@ -1,0 +1,75 @@
+{
+  "case_source_references": {
+    "case_rows": 37,
+    "resolvable_source_records": 37
+  },
+  "dataset_files_verified": 16,
+  "disorder_reference": {
+    "binding_groups": 1029,
+    "inner_folds": 3,
+    "labeled_residue_rows": 391718,
+    "outer_folds": 5,
+    "proteins": 1279,
+    "unique_sequences": 1275
+  },
+  "distribution_status": "DRAFT_NOT_CLEARED_FOR_PUBLIC_RELEASE",
+  "eligible_knot_representations": {
+    "KNOT-PRESENCE": 734,
+    "KNOT-TYPE": 65
+  },
+  "fs_region_controls": {
+    "cases": 10,
+    "endpoints": 20,
+    "primary": {
+      "0": 848,
+      "1": 124,
+      "NA": 4746
+    },
+    "strict": {
+      "0": 580,
+      "1": 124,
+      "NA": 5014
+    }
+  },
+  "group_split_audit": {
+    "FS-L2-grouped-PU-ranking": {
+      "eligible_groups": 8767,
+      "inner_folds_per_outer": 3,
+      "outer_folds": 10
+    },
+    "KNOT-PRESENCE": {
+      "eligible_groups": 283,
+      "inner_folds_per_outer": 3,
+      "outer_folds": 5
+    }
+  },
+  "prediction_rows": {
+    "FS-L2-grouped-PU-ranking": 62153,
+    "KNOT-PRESENCE": 5138
+  },
+  "prediction_sample_arm_fold_audit": {
+    "FS-L2-grouped-PU-ranking": {
+      "arms_per_sample": 7,
+      "eligible_samples": 8879
+    },
+    "KNOT-PRESENCE": {
+      "arms_per_sample": 7,
+      "eligible_samples": 734
+    }
+  },
+  "python_files_without_comments_or_docstrings": 18,
+  "registered_delivery_files": 228,
+  "result_embedding_cache_included": false,
+  "result_files_verified": 89,
+  "result_model_weights_included": false,
+  "status": "PASS_LOCAL_DELIVERY",
+  "task_catalog": {
+    "registered_tasks": 13,
+    "scored_tasks": [
+      "DISORDER-STRUCTURE-REFERENCE-CANDIDATE",
+      "FS-L2-grouped-PU-ranking",
+      "KNOT-PRESENCE"
+    ]
+  },
+  "text_files_scanned_for_local_paths": 101
+}

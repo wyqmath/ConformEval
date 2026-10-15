@@ -1,0 +1,298 @@
+{
+  "task_id": "FS-L2-grouped-PU-ranking",
+  "sample_count": 8879,
+  "group_count": 8767,
+  "outer_folds": 10,
+  "bootstrap": {
+    "unit": "binding_group_id",
+    "replicates": 2000,
+    "scope": "conditional on frozen outer-fold predictions; no refitting uncertainty claim"
+  },
+  "confidence_intervals": {
+    "PLM-nested": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.28365939016630626,
+        0.6879429019951856
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.28365939016630626,
+        0.6879429019951856
+      ]
+    },
+    "PLM-hidden17": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.2924838723302424,
+        0.7671350807124042
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.2924838723302424,
+        0.7671350807124042
+      ]
+    },
+    "PLM-hidden33": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.15655057788228127,
+        0.5085224385180924
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.15655057788228127,
+        0.5085224385180924
+      ]
+    },
+    "PLM-length": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.6154967997376348,
+        0.8071380919600202
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.6154967997376348,
+        0.8071380919600202
+      ]
+    },
+    "PLM-composition": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.3176920323285826,
+        0.6697945627144493
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.3176920323285826,
+        0.6697945627144493
+      ]
+    },
+    "PLM-nearest": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.5005769472340439,
+        0.500884481047153
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.5005769472340439,
+        0.500884481047153
+      ]
+    },
+    "PLM-training-prior": {
+      "metric": "mean_held_case_rank_percentile_lower_is_better",
+      "ci95": [
+        0.500550725349332,
+        0.5005780845909231
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.500550725349332,
+        0.5005780845909231
+      ]
+    },
+    "PLM-nested_minus_PLM-length": {
+      "metric": "rank_percentile_difference_lower_is_better_for_PLN",
+      "ci95": [
+        -0.4976357628020564,
+        0.052016830437074744
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 3,
+      "bonferroni_ci95": [
+        -0.5360142452643059,
+        0.11343798141632601
+      ]
+    },
+    "PLM-nested_minus_PLM-composition": {
+      "metric": "rank_percentile_difference_lower_is_better_for_PLN",
+      "ci95": [
+        -0.30562348500931896,
+        0.2642523517189281
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 3,
+      "bonferroni_ci95": [
+        -0.36443006155618163,
+        0.3471683133364345
+      ]
+    },
+    "PLM-nested_minus_PLM-nearest": {
+      "metric": "rank_percentile_difference_lower_is_better_for_PLN",
+      "ci95": [
+        -0.21706548240245144,
+        0.18710334044210267
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 3,
+      "bonferroni_ci95": [
+        -0.2547602987908106,
+        0.2332893773455863
+      ]
+    },
+    "PLM-nested_minus_PLM-training-prior": {
+      "metric": "rank_percentile_difference_lower_is_better_for_PLN",
+      "ci95": [
+        -0.2169056481564843,
+        0.18737846121040072
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        -0.2169056481564843,
+        0.18737846121040072
+      ]
+    },
+    "PLM-hidden33_minus_PLM-hidden17": {
+      "metric": "rank_percentile_difference_lower_is_better_for_PLM",
+      "ci95": [
+        -0.5563896269908888,
+        0.14562788453033854
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        -0.5563896269908888,
+        0.14562788453033854
+      ]
+    }
+  },
+  "primary_metric": "mean held-positive rank percentile within each frozen outer-fold test universe; lower is better",
+  "arms": {
+    "PLM-nested": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.47659152548553035,
+      "mean_recall_at_1": 0.0,
+      "mean_recall_at_10": 0.0,
+      "mean_recall_at_100": 0.1,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.28365939016630626,
+        0.6879429019951856
+      ]
+    },
+    "PLM-hidden17": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.5293723081129824,
+      "mean_recall_at_1": 0.0,
+      "mean_recall_at_10": 0.0,
+      "mean_recall_at_100": 0.2,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.2924838723302424,
+        0.7671350807124042
+      ]
+    },
+    "PLM-hidden33": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.31616520845056617,
+      "mean_recall_at_1": 0.0,
+      "mean_recall_at_10": 0.1,
+      "mean_recall_at_100": 0.2,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.15655057788228127,
+        0.5085224385180924
+      ]
+    },
+    "PLM-length": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.7117734564167945,
+      "mean_recall_at_1": 0.0,
+      "mean_recall_at_10": 0.0,
+      "mean_recall_at_100": 0.0,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.6154967997376348,
+        0.8071380919600202
+      ]
+    },
+    "PLM-composition": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.4980574702994646,
+      "mean_recall_at_1": 0.0,
+      "mean_recall_at_10": 0.0,
+      "mean_recall_at_100": 0.2,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.3176920323285826,
+        0.6697945627144493
+      ]
+    },
+    "PLM-nearest": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.5007275987338311,
+      "mean_recall_at_1": 0.0008008727049679795,
+      "mean_recall_at_10": 0.010956404316650441,
+      "mean_recall_at_100": 0.11251172043347506,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.5005769472340439,
+        0.500884481047153
+      ]
+    },
+    "PLM-training-prior": {
+      "held_positive_cases": 10,
+      "mean_rank_percentile_lower_is_better": 0.5005640175431576,
+      "mean_recall_at_1": 0.001128035086315076,
+      "mean_recall_at_10": 0.01128035086315076,
+      "mean_recall_at_100": 0.1128035086315076,
+      "mean_recall_at_1000": 1.0,
+      "mean_recall_at_10000": 1.0,
+      "binding_group_bootstrap_ci95": [
+        0.500550725349332,
+        0.5005780845909231
+      ]
+    }
+  },
+  "selected_layers_by_outer_fold": [
+    33,
+    33,
+    17,
+    17,
+    17,
+    33,
+    33,
+    33,
+    17,
+    17
+  ],
+  "PU_label_semantics": "U samples have biological_target=null and biological_mask=0. Their observed learning label 0 is used only by the frozen PU reader and ranking reference; it is not a verified biological negative.",
+  "contrast_families": {
+    "primary_reader_vs_frozen_baselines": {
+      "eligible_comparisons": 3,
+      "CI": "nominal paired 95% and Bonferroni familywise 95%; grouped bootstrap"
+    },
+    "fixed_hidden_layer_contrast": {
+      "eligible_comparisons": 1,
+      "CI": "nominal paired 95% and Bonferroni familywise 95%; grouped bootstrap"
+    }
+  }
+}

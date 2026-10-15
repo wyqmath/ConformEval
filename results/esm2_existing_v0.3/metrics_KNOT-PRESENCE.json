@@ -1,0 +1,257 @@
+{
+  "task_id": "KNOT-PRESENCE",
+  "sample_count": 734,
+  "group_count": 283,
+  "outer_folds": 5,
+  "bootstrap": {
+    "unit": "binding_group_id",
+    "replicates": 2000,
+    "scope": "conditional on frozen outer-fold predictions; no refitting uncertainty claim"
+  },
+  "confidence_intervals": {
+    "PLM-nested": {
+      "metric": "AUROC",
+      "ci95": [
+        0.7953771619131107,
+        0.926656821824097
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.7953771619131107,
+        0.926656821824097
+      ]
+    },
+    "PLM-hidden17": {
+      "metric": "AUROC",
+      "ci95": [
+        0.7056751373136416,
+        0.8814277819933882
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.7056751373136416,
+        0.8814277819933882
+      ]
+    },
+    "PLM-hidden33": {
+      "metric": "AUROC",
+      "ci95": [
+        0.7953771619131107,
+        0.926656821824097
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.7953771619131107,
+        0.926656821824097
+      ]
+    },
+    "PLM-length": {
+      "metric": "AUROC",
+      "ci95": [
+        0.5600744770083176,
+        0.7938388162844972
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.5600744770083176,
+        0.7938388162844972
+      ]
+    },
+    "PLM-composition": {
+      "metric": "AUROC",
+      "ci95": [
+        0.7584055936528209,
+        0.8773030073265907
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.7584055936528209,
+        0.8773030073265907
+      ]
+    },
+    "PLM-nearest": {
+      "metric": "AUROC",
+      "ci95": [
+        0.5977650013776394,
+        0.7436813416161212
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.5977650013776394,
+        0.7436813416161212
+      ]
+    },
+    "PLM-training-prior": {
+      "metric": "AUROC",
+      "ci95": [
+        0.36834305665682865,
+        0.6404379731386262
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.36834305665682865,
+        0.6404379731386262
+      ]
+    },
+    "PLM-nested_minus_PLM-length": {
+      "metric": "AUROC_difference_higher_is_better",
+      "ci95": [
+        0.044873524674805695,
+        0.3379865857621784
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 3,
+      "bonferroni_ci95": [
+        0.021892259070063796,
+        0.3667138930618328
+      ]
+    },
+    "PLM-nested_minus_PLM-composition": {
+      "metric": "AUROC_difference_higher_is_better",
+      "ci95": [
+        -0.02425037602541096,
+        0.11385558106487705
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 3,
+      "bonferroni_ci95": [
+        -0.04114276719396723,
+        0.12493860490630133
+      ]
+    },
+    "PLM-nested_minus_PLM-nearest": {
+      "metric": "AUROC_difference_higher_is_better",
+      "ci95": [
+        0.1197544913419084,
+        0.27081212167632185
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 3,
+      "bonferroni_ci95": [
+        0.09756976105347806,
+        0.29062601211782235
+      ]
+    },
+    "PLM-nested_minus_PLM-training-prior": {
+      "metric": "AUROC_difference_higher_is_better",
+      "ci95": [
+        0.17906714982022476,
+        0.5345307366616424
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.17906714982022476,
+        0.5345307366616424
+      ]
+    },
+    "PLM-hidden33_minus_PLM-hidden17": {
+      "metric": "AUROC_difference_higher_is_better",
+      "ci95": [
+        0.017700908723870826,
+        0.1263440289380403
+      ],
+      "valid_draws": 2000,
+      "requested_draws": 2000,
+      "bonferroni_family_size": 1,
+      "bonferroni_ci95": [
+        0.017700908723870826,
+        0.1263440289380403
+      ]
+    }
+  },
+  "primary_metric": "AUROC from complete outer-fold OOF predictions",
+  "arms": {
+    "PLM-nested": {
+      "auroc": 0.8687413872301332,
+      "average_precision_secondary": 0.6872110825517245,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.7953771619131107,
+        0.926656821824097
+      ]
+    },
+    "PLM-hidden17": {
+      "auroc": 0.8018919384474046,
+      "average_precision_secondary": 0.6167706994976253,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.7056751373136416,
+        0.8814277819933882
+      ]
+    },
+    "PLM-hidden33": {
+      "auroc": 0.8687413872301332,
+      "average_precision_secondary": 0.6872110825517245,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.7953771619131107,
+        0.926656821824097
+      ]
+    },
+    "PLM-length": {
+      "auroc": 0.6759445337620579,
+      "average_precision_secondary": 0.28975391673112605,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.5600744770083176,
+        0.7938388162844972
+      ]
+    },
+    "PLM-composition": {
+      "auroc": 0.8194906982085437,
+      "average_precision_secondary": 0.5793654139570245,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.7584055936528209,
+        0.8773030073265907
+      ]
+    },
+    "PLM-nearest": {
+      "auroc": 0.6729874827744603,
+      "average_precision_secondary": 0.23794567407896489,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.5977650013776394,
+        0.7436813416161212
+      ]
+    },
+    "PLM-training-prior": {
+      "auroc": 0.4943227491961415,
+      "average_precision_secondary": 0.150931349363955,
+      "binding_group_bootstrap_auroc_ci95": [
+        0.36834305665682865,
+        0.6404379731386262
+      ]
+    }
+  },
+  "selected_layers_by_outer_fold": [
+    33,
+    33,
+    33,
+    33,
+    33
+  ],
+  "contrast_families": {
+    "primary_reader_vs_frozen_baselines": {
+      "eligible_comparisons": 3,
+      "CI": "nominal paired 95% and Bonferroni familywise 95%; grouped bootstrap"
+    },
+    "fixed_hidden_layer_contrast": {
+      "eligible_comparisons": 1,
+      "CI": "nominal paired 95% and Bonferroni familywise 95%; grouped bootstrap"
+    }
+  }
+}

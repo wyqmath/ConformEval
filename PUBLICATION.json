@@ -1,0 +1,65 @@
+{
+  "authorization": "Maintainer explicitly requested replacing the contents of this public GitHub repository with the first benchmark delivery on 2026-10-16.",
+  "modified_from_local_delivery": {
+    ".gitignore": {
+      "export_sha256": "fe1746bf2c31760e0d4c3a3aa0e0f5398236b21f0ecef686e21368c4860ccffa",
+      "source_sha256": "58988edd81fa3c21bc2843325921b57fccbaeb538629bd170f0d2078cb0a02db"
+    },
+    "CHANGELOG.md": {
+      "export_sha256": "a0675336600807a63b3b117ec262eb6447d061df820856d3ee7d30a5d2b0ff08",
+      "source_sha256": "ca42751c695e765e35b2830b63554073ddaf62790140a90ff4b941089be0e154"
+    },
+    "CITATION.cff": {
+      "export_sha256": "87a8bfd844668ce151fbc73935b5b65311b73b0c01e8d502c6714291a2f6d2aa",
+      "source_sha256": "abfba026f9cb19238f6498ffcf27789077126077400c8ab60d7665a50311d100"
+    },
+    "CONTRIBUTING.md": {
+      "export_sha256": "af5ecfe9b507ad9e906884319557e84f03bd3923c659dd2f70c4d15ef5e9e6ea",
+      "source_sha256": "d63862c47c3ba24a97ca87646c0d6833402a05de51b6471faf938258c4dcc4d5"
+    },
+    "DATA_CARD.md": {
+      "export_sha256": "ca3109f96900eee8e976a518fb069948e5876ef8fb0b846d5ac7e59930049eae",
+      "source_sha256": "10015082af4025d0f1ca7ba856709f20f50da74964b3bc73910f713a96593591"
+    },
+    "DATA_REVIEWER_CHECKLIST.json": {
+      "export_sha256": "991cfc8ac74b4f689fd59d5e7d181a25bbe6a03c65e59123f9d1384471a75006",
+      "source_sha256": "02e5583b256d213878008283863857ab8d4c263919df7b3f707f09dc03656bf0"
+    },
+    "LICENSE_NOTICE.md": {
+      "export_sha256": "1aab5833739619be94b04fe6081307552017aca7e779526660c4a7238b9b5708",
+      "source_sha256": "1c3d9ab8ea51b9e911a9a3448ac28ccb7ead17a5238161c7221e1bde919e172b"
+    },
+    "README.md": {
+      "export_sha256": "44e761e244522463b5213f29e4771296c3ef7a0f121b29931931cbe6295bee0c",
+      "source_sha256": "aece731cf8baefee85db3dec33f862f0287ecacc085201555d13645224042a9d"
+    },
+    "RELEASE_STATUS.md": {
+      "export_sha256": "cd5fe556cd4dbf102b52798c2ee8fe6c0e869ef74acdb179b07a450798a0af60",
+      "source_sha256": "f7d5d6cd03fa1a934860589e9c2ef45c1299ffa0d348f6152f2971ba71fa5abb"
+    },
+    "SOURCES_AND_DISTRIBUTION.md": {
+      "export_sha256": "44811e9f682f3c4852b1f32411c16c17d7d52edcb5ed66483512dbfd64ce8377",
+      "source_sha256": "e68f9cbb2084fb952340ae2a022e7a15ad1046e4aa5beba1cd961d6830211362"
+    },
+    "UPLOAD_GUIDE.md": {
+      "export_sha256": "fabe25d368e020ad5a122ca619d2fff3732df5292a8c5a485c19e3f8c2ebfe56",
+      "source_sha256": "fb30c8c770a1d44e084ef4a3c6c77f86f863538ac89b3318b9079e6c84461363"
+    },
+    "VALIDATION.md": {
+      "export_sha256": "f6b18f65aef7bbc2be04fe3dd652932be597e2645ef6782d3de0f9ebffed39b4",
+      "source_sha256": "853b97f5b8c40bbb118f3f7066dfdc40ef9e651df286eb903c8206d83de03e57"
+    },
+    "pyproject.toml": {
+      "export_sha256": "a4f24d2beac072affabe7f8fb422f67142c651fb6735b8a6dc1f31d5b20268e3",
+      "source_sha256": "f18a7cf2b6ac58b8c86a96613c98ab5772c17000b7a6a8a632e69824e5e3dc72"
+    }
+  },
+  "prepared_at": "2026-10-16T01:13:39+08:00",
+  "schema_version": 1,
+  "source_local_manifest_sha256": "6a7b657489f6c0c68a4292ef238d96625a7e364ee7ee8928b2ed68dd4aed19ca",
+  "source_project_commit": "9f7d9e6",
+  "target_branch": "main",
+  "target_repository": "https://github.com/wyqmath/ConformEval",
+  "third_party_source_terms": "UNRESOLVED_FOR_SOME_RECORDS; publication is not a blanket dataset license or source-clearance decision",
+  "unchanged_scientific_assets": true
+}

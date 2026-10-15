@@ -1,0 +1,53 @@
+{
+  "artifact_id": "disorder_reference_v1",
+  "files": {
+    "REPORT.md": {
+      "bytes": 781,
+      "sha256": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99"
+    },
+    "evaluation_protocol_v01.json": {
+      "bytes": 2973,
+      "sha256": "9a814a83ef8f39b0ddd03b1cabda75cd58a2c0b67ed105e8433dad9871048648"
+    },
+    "extraction_request.json": {
+      "bytes": 1199,
+      "sha256": "e630cf937393b4292a9d6af7e796f44436efc8dd536c08d0f0a021525a18b197"
+    },
+    "fold_qc.tsv": {
+      "bytes": 246,
+      "sha256": "51bff4efa99d9720fe2aa0a7f5e7ad77428ca3bda78cb57fd18632b237a32e9f"
+    },
+    "inner_fold_roles.tsv": {
+      "bytes": 1483694,
+      "sha256": "43b46a6399c078cf08099586f7a0d20ef19b550d21cd704f776b8f700f9b652a"
+    },
+    "inputs/resid_index.tsv": {
+      "bytes": 1556771,
+      "sha256": "d70b9bf3a8ca0a76eae0f2105df7f31f3a469eec58e1febbe24bdb8799016169"
+    },
+    "inputs/sequences.fasta": {
+      "bytes": 637655,
+      "sha256": "8318bb9e8e6d5b9d41e4dc7f0720c2fb3c3c48ac17661e7ff1b5c9af83bc714b"
+    },
+    "outer_fold_roles.tsv": {
+      "bytes": 593499,
+      "sha256": "dd5f12c758f7d320177dda678a3a48cf0033b90577cf443ab6fd08d94eba1e23"
+    },
+    "protocol.json": {
+      "bytes": 2505,
+      "sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69"
+    },
+    "run_manifest.json": {
+      "bytes": 1839,
+      "sha256": "dc6e34ee4db746e3102c4dc1206c840bedc90b001c411b1e7105c120d5fac55b"
+    },
+    "selected_labels.tsv.gz": {
+      "bytes": 1268695,
+      "sha256": "253563b7dabd3eb5d2cfce648f2ae3bedcd7e8b363eb5c91170f723bd647023e"
+    },
+    "selected_samples.tsv": {
+      "bytes": 332584,
+      "sha256": "ef7fd04bc462542875b56685e9563ae509cc70eb7b87971ea6ee4a640cf95ede"
+    }
+  }
+}

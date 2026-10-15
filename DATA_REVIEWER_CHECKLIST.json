@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "scope": "PUB.02 maintainer-authorized public repository snapshot derived from accepted local v0.4.0; source-specific data clearance is not inferred",
+  "source_checklist": {
+    "filename": "data reviewer checklit(1).pdf",
+    "sha256": "45d8eb76942233d778960491da51e00be9b6e4c9c5a4899cb9f76ef54eb5e7e1",
+    "pages": 1,
+    "extraction": "visual inspection of rendered single scanned page",
+    "original_ticks_are_project_answers": false
+  },
+  "uses_external_databases": true,
+  "uses_data_splits": true,
+  "items": [
+    {
+      "id": "1a",
+      "question": "数据来源是否全部列出并公开可得？",
+      "answer": "No",
+      "rationale": "Source tables are supplied. Original legacy knot source inputs and encoder representation archives have no complete verified public retrieval route in this delivery.",
+      "next_action": "Recover or document the historical knot input snapshot and publish an approved representation acquisition route.",
+      "evidence": [
+        "SOURCES_AND_DISTRIBUTION.md",
+        "DATA_CARD.md"
+      ]
+    },
+    {
+      "id": "1b",
+      "question": "外部数据库是否提供访问日期或版本号？",
+      "answer": "No",
+      "rationale": "Supplemental data carry source and export fingerprints. The original legacy KnotProt snapshot and complete per-query UniProt release information remain unresolved.",
+      "next_action": "Recover original snapshots or create separately reviewed data versions from versioned cleared inputs.",
+      "evidence": [
+        "SOURCES_AND_DISTRIBUTION.md",
+        "SOURCE_ARTIFACTS.json"
+      ]
+    },
+    {
+      "id": "1c",
+      "question": "是否报告或处理来源数据的潜在偏差？",
+      "answer": "Yes",
+      "rationale": "Sampling, label coverage, PU semantics and retrospective scope are described; this is disclosure rather than elimination of bias.",
+      "next_action": "",
+      "evidence": [
+        "DATA_CARD.md",
+        "task_catalog.tsv"
+      ]
+    },
+    {
+      "id": "2a",
+      "question": "是否充分描述数据清洗步骤或提供流水线？",
+      "answer": "No",
+      "rationale": "Portable exporters and accepted supplemental protocols are included. The missing original legacy label inputs prevent a complete raw-source-to-label rebuild for every task.",
+      "next_action": "Restore the missing lineage or publish a new separately reviewed annotation build without overwriting the frozen reference.",
+      "evidence": [
+        "scripts/export_fixed_dataset.py",
+        "data/fs_region_controls_v1/protocol.json",
+        "SOURCES_AND_DISTRIBUTION.md"
+      ]
+    },
+    {
+      "id": "2b",
+      "question": "是否呈现被移除来源数据的数量？",
+      "answer": "Yes",
+      "rationale": "Task eligibility, unknown positions and selected-label denominators are recorded by task and data bundle.",
+      "next_action": "",
+      "evidence": [
+        "task_catalog.tsv",
+        "data/disorder_reference_v1/selected_samples.tsv",
+        "data/fs_region_controls_v1/qc.json"
+      ]
+    },
+    {
+      "id": "2c",
+      "question": "是否标识多来源合并并处理潜在问题？",
+      "answer": "Yes",
+      "rationale": "Exact-sequence IDs, source references, coordinate mappings and differing cross-record labels are retained and checked.",
+      "next_action": "",
+      "evidence": [
+        "DATA_CARD.md",
+        "data/v0.3.1/case_sources.tsv",
+        "scripts/evaluate_residue_predictions.py"
+      ]
+    },
+    {
+      "id": "3a",
+      "question": "是否明确数据特征表示并提供实现？",
+      "answer": "Yes",
+      "rationale": "Encoder revision, layer selection, pooling, residue coordinates and frozen feature protocols are explicit.",
+      "next_action": "",
+      "evidence": [
+        "MODEL_INPUT.md",
+        "RESIDUE_EVALUATION.md",
+        "SCORING_PROTOCOL.json"
+      ]
+    },
+    {
+      "id": "3b",
+      "question": "是否提供标准特征集对照？",
+      "answer": "Yes",
+      "rationale": "Scored pooled tasks include length/composition baselines; disorder reference includes amino-acid/local-context features on matching samples and folds.",
+      "next_action": "",
+      "evidence": [
+        "results/esm2_existing_v0.3/metrics_KNOT-PRESENCE.json",
+        "results/disorder_reference_esm2_v1/metrics.json"
+      ]
+    },
+    {
+      "id": "4a",
+      "question": "模型实现是否支持新数据训练与测试？",
+      "answer": "No",
+      "rationale": "The software fits readers and scores new model representations on the frozen benchmark samples. The residue task is pinned to its accepted data manifest; arbitrary qualified new biological batches are not supported by a general training/test interface.",
+      "next_action": "Define a versioned new-batch protocol, validate biological independence and historical use, and implement an explicit generic new-sample training/test interface before answering Yes.",
+      "evidence": [
+        "PREDICTION_SUBMISSION.md",
+        "RESIDUE_EVALUATION.md"
+      ]
+    },
+    {
+      "id": "4b",
+      "question": "是否提供简单或平凡模型基线？",
+      "answer": "Yes",
+      "rationale": "The pooled tasks provide length, composition, nearest and training-prior arms. The residue task provides a traditional local-context linear baseline.",
+      "next_action": "",
+      "evidence": [
+        "results/esm2_existing_v0.3/metrics_FS-L2-grouped-PU-ranking.json",
+        "results/disorder_reference_esm2_v1/metrics.json"
+      ]
+    },
+    {
+      "id": "4c",
+      "question": "是否提供当前先进方法对照？",
+      "answer": "No",
+      "rationale": "No matched external state-of-the-art comparator is included. ESM-2 and traditional diagnostic arms do not establish such a comparison.",
+      "next_action": "Specify and run compatible external methods on the same qualified samples and frozen evaluation protocol in a later reviewed version.",
+      "evidence": [
+        "README.md",
+        "task_catalog.tsv"
+      ]
+    },
+    {
+      "id": "5a",
+      "question": "是否明确训练、调参和最终评价集合？",
+      "answer": "Yes",
+      "rationale": "Frozen outer test and inner validation roles are explicit. Reader preprocessing and hyperparameter selection use the current training and inner-validation partitions.",
+      "next_action": "",
+      "evidence": [
+        "SCORING_PROTOCOL.json",
+        "data/disorder_reference_v1/inner_fold_roles.tsv",
+        "scripts/run_nested_readers.py"
+      ]
+    },
+    {
+      "id": "5b",
+      "question": "是否描述划分方法及其真实应用相容性？",
+      "answer": "Yes",
+      "rationale": "Registered binding-group development evaluation and its application limits are described. No prospective independence is inferred.",
+      "next_action": "",
+      "evidence": [
+        "DATA_CARD.md",
+        "SCORING_PROTOCOL.json"
+      ]
+    },
+    {
+      "id": "5c",
+      "question": "划分是否避免数据泄漏和相关样本跨集合？",
+      "answer": "No",
+      "rationale": "Registered-group split and exact-sequence checks pass, but they do not certify a complete biological independence graph; historical use and 37 unresolved PDB-key gaps remain.",
+      "next_action": "Complete graph coverage and historical-use audit before qualifying a genuinely independent prospective batch.",
+      "evidence": [
+        "DATA_CARD.md",
+        "audits/DIS.REF.01_review.md"
+      ]
+    },
+    {
+      "id": "6a",
+      "question": "代码或工作流是否在公共仓库可得？",
+      "answer": "Yes",
+      "rationale": "The software is hosted in https://github.com/wyqmath/ConformEval; the repository Git commit identifies its exact version. This answer applies to code publication, not source-specific data permissions.",
+      "next_action": "",
+      "evidence": [
+        "README.md",
+        "CITATION.cff",
+        "PUBLICATION.json"
+      ]
+    },
+    {
+      "id": "6b",
+      "question": "是否提供复现论文发现的脚本？",
+      "answer": "No",
+      "rationale": "All three archived prediction tasks can be rescored locally. Full raw-source and encoder-inference reproduction still needs external inputs; complete reader refitting is not the delivery validation.",
+      "next_action": "Provide approved source snapshots, external representation acquisition and separately verify complete inference/refitting before asserting full computational reproduction.",
+      "evidence": [
+        "README.md",
+        "RESIDUE_EVALUATION.md",
+        "VALIDATION.md"
+      ]
+    },
+    {
+      "id": "6c",
+      "question": "是否明确工作中使用的软件依赖版本？",
+      "answer": "Yes",
+      "rationale": "The reference computation records actual versions, and the clean local scoring environment is recorded separately.",
+      "next_action": "",
+      "evidence": [
+        "requirements-reference.txt",
+        "ENVIRONMENT_VALIDATED.json",
+        "results/disorder_reference_esm2_v1/run.json"
+      ]
+    }
+  ]
+}

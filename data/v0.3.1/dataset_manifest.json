@@ -1,0 +1,109 @@
+{
+  "coordinates": {
+    "fs_region_full_length_labels.tsv.gz": {
+      "coordinate_bounds_checked": 1916,
+      "rows": 1916
+    },
+    "position_labels_strict.tsv.gz": {
+      "rows": 1184733,
+      "unique_coordinates": 1184733
+    },
+    "position_labels_structure_reference_candidate.tsv.gz": {
+      "rows": 1184733,
+      "unique_coordinates": 1184733
+    }
+  },
+  "data_version": "2026-10-14-data-lock-v01-plus-FD03-coverage-overlay-paths-v01",
+  "distribution_status": "DRAFT_NOT_CLEARED_FOR_PUBLIC_RELEASE",
+  "excluded_local_artifacts": [
+    "Original data manifest and QC include machine-specific paths.",
+    "Project-local case source paths are replaced by source_ref keys resolved in case_sources.tsv; upstream artifact hashes and recorded citation identifiers are retained.",
+    "Embedding caches and model weights are not included.",
+    "Raw article full texts and PDB coordinate files are not included.",
+    "The frozen data_v06 task_status.tsv is not copied because it predates FD.03; the benchmark-level task_catalog.tsv is authoritative for this draft."
+  ],
+  "files": {
+    "README.md": {
+      "bytes": 747,
+      "sha256": "bbb55727950ea832c859a867021b988aa973793e8732b162deb8faedd0973896"
+    },
+    "case_modules.tsv": {
+      "bytes": 8423,
+      "sha256": "0768a43ed1ebeb55e9982d67ae00fd60281e4beb7662888e6e9b6548676c390a"
+    },
+    "case_samples.tsv.gz": {
+      "bytes": 2575,
+      "sha256": "56d9459d4fc91bbf27e5412e15694b740f1243bc41e9955b4ee9ef6b1b988d2b"
+    },
+    "case_sources.tsv": {
+      "bytes": 6101,
+      "sha256": "27a2c6871abab4da2cb7b158fc7612af48a8b468c311d7e4c3bd9d6f273313d1"
+    },
+    "data_protocol.json": {
+      "bytes": 2353,
+      "sha256": "8d6590a9ba6682508e6f7c85be697a041ecb8f9f25fc27c1c6577f0acf8a21db"
+    },
+    "folds/fold_qc.tsv": {
+      "bytes": 6514,
+      "sha256": "0a69466ad1e6a9734caa9a9c08984909e5a1290a03367353ca36e22c4dae925c"
+    },
+    "folds/inner_validation_groups.tsv.gz": {
+      "bytes": 3100967,
+      "sha256": "8295c000aae6f804db1ead707451846256c51e60577b1081c30f308660413124"
+    },
+    "folds/outer_group_holdout.tsv": {
+      "bytes": 901920,
+      "sha256": "1942ff508704046a072dcd2f747d72bf80629291e0602108a2600a20c00af0f4"
+    },
+    "fs_region_full_length_labels.tsv.gz": {
+      "bytes": 15584,
+      "sha256": "830190fe0178d299002f92bbfb3a1bb1450f621c31cde5425b5c20bae98688f4"
+    },
+    "position_labels_strict.tsv.gz": {
+      "bytes": 3678204,
+      "sha256": "35b104451ee9e03d673ae978883a1b99d6dc9a4d29f0bae739229c730762e6f1"
+    },
+    "position_labels_structure_reference_candidate.tsv.gz": {
+      "bytes": 4151094,
+      "sha256": "2320fc1212d0e53cd4d921c00c2f3d27aaff90bd425bc4f4d56e3d84597aaacf"
+    },
+    "representation_coverage.tsv.gz": {
+      "bytes": 674075,
+      "sha256": "66f126d11bec9c6f231360ad76e9c67ad26eb1408a1953117e5b3bab57c9e079"
+    },
+    "sample_sequences.tsv.gz": {
+      "bytes": 697286,
+      "sha256": "74a785a6d2b9618c6fb14b6954295a850658b4456c769feaf27976593d3b6a24"
+    },
+    "sequences.fasta": {
+      "bytes": 5004241,
+      "sha256": "5082dcc8d37f029aa149aec46069c757e705b9216988c711715c5217713b2a4b"
+    },
+    "sources.tsv": {
+      "bytes": 6797,
+      "sha256": "89dd3d283d0d202df4446afbbe3a0fb310373afa18b4e2e0ddf642577ec9f03d"
+    },
+    "task_samples.tsv.gz": {
+      "bytes": 1324088,
+      "sha256": "2a14cc9c3fe066ded670834208553ebfe9b20a1e1fe45f7b3d8bfa0c8e167af4"
+    }
+  },
+  "representation_coverage_rows": 14972,
+  "representation_overlay_sha256": "aa1cda9d656143f06bcede44ae7ee4592c025661ad96db0b39b88ae4f8020e3f",
+  "residue_label_masks": {
+    "position_labels_strict.tsv.gz": {
+      "masked_unknown": 991635,
+      "rows": 1184733
+    },
+    "position_labels_structure_reference_candidate.tsv.gz": {
+      "masked_unknown": 490021,
+      "rows": 1184733
+    }
+  },
+  "schema_version": "1.0",
+  "sequences": {
+    "fasta_sequences": 11684,
+    "sample_sequence_rows": 14223
+  },
+  "source_data_lock_sha256": "e5b0a9249598d5d98288cfcfbc4ed533eef7f813e09ade0bafe660ff3e1b7fe1"
+}

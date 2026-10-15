@@ -1,0 +1,12 @@
+{
+  "task_id": "FS.CTRL.01",
+  "recorded_at": "2026-10-15T22:41:22+08:00",
+  "scope": "Administrative timestamp correction only; audited scientific artifacts remain immutable.",
+  "original_config_path": "SOURCE_22060024e295_fs_region_stable_controls_20261015_v01.json",
+  "original_config_sha256": "2ce799bb419a6c03f9f0b4fac8ab2907e6fe6426c4f418d3cf70e9d210a1a43f",
+  "field": "created_at",
+  "recorded_value": "2026-10-15T22:24:00+08:00",
+  "corrected_first_filesystem_write_at": "2026-10-15T22:26:53+08:00",
+  "evidence": "APFS os.stat().st_birthtime of the original configuration file in this workspace, checked after independent review.",
+  "effect": "The nominal created_at field was written 2m53s earlier than the first actual file creation. Actual annotation-run timestamps in run.json are unchanged. No thresholds, coordinates, labels, masks, evidence assignments, or model scores change."
+}

@@ -1,0 +1,62 @@
+{
+  "purpose": "retrospective nested group evaluation on existing ESM-2 mean representations",
+  "encoder": {
+    "id": "facebook/esm2_t33_650M_UR50D",
+    "revision": "08e4846e537177426273712802403f7ba8261b6c",
+    "layers": [
+      5,
+      11,
+      17,
+      23,
+      29,
+      33
+    ],
+    "selected_candidates": [
+      17,
+      33
+    ]
+  },
+  "reader": {
+    "type": "balanced logistic regression",
+    "C_grid": [
+      0.1,
+      1.0
+    ],
+    "solver": "liblinear",
+    "max_iter": 5000,
+    "seed": 2026,
+    "class_weight": "balanced",
+    "preprocessing": "StandardScaler fit on each current training domain only"
+  },
+  "folds": {
+    "outer": {
+      "KNOT-PRESENCE": 5,
+      "FS-L2-grouped-PU-ranking": 10
+    },
+    "inner": 3,
+    "source": "frozen data_v06 fold manifests; no split regeneration"
+  },
+  "tasks": [
+    "KNOT-PRESENCE",
+    "FS-L2-grouped-PU-ranking"
+  ],
+  "new_model_testing": false,
+  "prospective_or_holdout_scoring": false,
+  "FS-L2": "learning_label=0 denotes unlabeled PU reference only; biological mask remains zero",
+  "baselines": [
+    "PLM-length",
+    "PLM-composition",
+    "PLM-nearest",
+    "PLM-training-prior"
+  ],
+  "statistics": {
+    "group_bootstrap_replicates": 2000,
+    "seed": 2026,
+    "confidence": 0.95,
+    "conditional_on_fixed_OOF_predictions": true
+  },
+  "dimensions": {
+    "KNOT-PRESENCE": 1280,
+    "FS-L2-grouped-PU-ranking": 1280
+  }
+}
