@@ -2,13 +2,57 @@
 
 ConformEval evaluates **protein language model representations** on three scoring tasks. It provides fixed sequences and labels, biological binding-group folds, model adapters, nested reader training, scoring tools and reference predictions. Models use the same task samples, group assignments and scoring implementation.
 
-| Scoring task | Input and target | Fixed evaluation | ESM-2 650M reference |
-|---|---|---|---|
-| `KNOT-PRESENCE` | Full sequence; whole-chain knot presence | 734 samples, 283 groups; 5 outer × 3 inner folds | Nested AUROC **0.868741**, AP 0.687211 |
-| `FS-L2-grouped-PU-ranking` | Each positive case's two endpoint sequences, or one background sequence; held-case ranking | 8,879 ranking items, including 10 positives; 10 outer × 3 inner folds | Mean held-case rank percentile **0.476592**, lower is better |
-| `DISORDER-STRUCTURE-REFERENCE-CANDIDATE` | Full sequence with residue coordinates; direct disorder versus an ordered structural reference | 1,279 protein records, 1,029 groups, 391,718 labeled rows; 5 outer × 3 inner folds | Layer 33 mean protein AP **0.789856** |
+## Task and model results
 
-Unknown biological labels remain masked. FS background items have unknown biological targets. The disorder reference task includes experimentally observed PDB positions as reference negatives. The evaluation is retrospective grouped development; task definitions and data sources are in [data documentation](docs/data.md) and the [task catalog](data/task_catalog.tsv).
+The catalog registers **13 tasks**. **Three have complete biological model scores**; the other ten are marked **未测试 / Not tested** below. Small synthetic examples are interface tests and are excluded from these performance tables. The full [result index](results/results_index.tsv) and [readable results](results/README.md) include every saved arm, configuration, sample unit, environment and prediction path.
+
+| Task / primary metric | Data | ESM-2 650M | ESM-2 8M | ProtT5 |
+|---|---|---|---|---|
+| KNOT-PRESENCE / AUROC ↑ | 734 samples | 0.868741 (nested L17/33) | 0.814237 (nested L3/6) | 未测试 / Not tested |
+| FS-L2 / mean held-case rank percentile ↓ | 8,879 items; 10 positives | 0.476592 (nested L17/33) | 0.304406 (nested L3/6) | 未测试 / Not tested |
+| Disorder structure reference / mean protein AP ↑ | 1,279 records; 391,718 rows | 0.789856 (fixed L33) | 0.738289 (nested L3/6) | 未测试 / Not tested |
+
+Each cell names its reader/layer rule. The 650M disorder value is the fixed L33 linear reference, not a nested-layer result. Its three MLP seeds are all listed in the [full results](results/README.md). This matrix reports existing experiments; their different layer grids do not constitute a controlled model-size comparison. Higher is better for AUROC/AP; lower is better for the FS rank percentile. The FS background is biologically unlabeled.
+
+Knot presence uses a whole-chain label. FS ranks confirmed switching cases against unlabeled background items. The disorder reference combines direct experimental disorder labels with direct ordered labels and positions observed in experimental PDB structures as the ordered reference.
+
+### All 13 registered tasks
+
+| Task | Input | Current data | Metric | Status / data needed |
+|---|---|---|---|---|
+| `KNOT-PRESENCE` | Full sequence | 734 samples; 283 groups | AUROC ↑ | 已测试 / Tested: 650M and 8M; ProtT5 未测试. 5 outer × 3 inner folds; evaluated |
+| `KNOT-TYPE` | Full sequence | 65 eligible: 3_1=57, 4_1=6, 5_2=2 | Macro-F1 on locked classes ↑ | 未测试 / Not tested. Required 5_1 class is absent; 4_1 and 5_2 have only 6 and 2 examples. No scoring folds |
+| `FS-L2-grouped-PU-ranking` | Two endpoint sequences per positive case; one per background item | 8,879 items; 10 positive cases; 8,767 groups | Mean held-case rank percentile ↓ | 已测试 / Tested: 650M and 8M; ProtT5 未测试. 10 outer × 3 inner folds; evaluated |
+| `DISORDER-RES` | Sequence + residue coordinates | 2,279 registered proteins; 1 eligible dual-class binding group | Mean protein AP ↑ | 未测试 / Not tested. Additional proteins/groups with direct experimental order and disorder labels; locked protocol requires ≥4 dual-class groups. No scoring folds |
+| `DISORDER-STRUCTURE-REFERENCE-CANDIDATE` | Sequence + residue coordinates | 1,279 records; 1,029 groups; 391,718 labeled rows | Mean protein AP ↑ | 已测试 / Tested: 650M and 8M; ProtT5 未测试. 5 outer × 3 inner folds; evaluated |
+| `FS-L1-PAIRED` | Paired experimental sequences and structures | 16 candidates; 10 accepted cases / 20 endpoints | Case evidence and input-identity audit; no model metric | 未测试 / Not tested. Six pending candidates lack accepted endpoint inputs/evidence in the frozen sequence frame. Case report; no prediction target/scoring folds defined |
+| `FS-REGION` | Sequence + switching-region coordinates | 10 cases / 20 endpoints; 124 positive + 848 reference-negative rows (580 strict); 3 dual-class cases | Label coverage; no model metric defined | 未测试 / Not tested. Switching-region positives cover 3/10 cases; 4,746 endpoint positions remain unknown. Annotations available; scoring protocol/folds not defined; model evaluation not run |
+| `FS-L3-MATCHED` | Sequences of cases and matched controls | 0 qualified matched case-control pairs | AUROC/AP after qualification ↑ | 未测试 / Not tested. Experimentally qualified matched controls with usable biological labels. Control-label qualification pending |
+| `BPTI-REDOX` | Same-variant sequence + redox conditions | 0 qualified experiment pairs | Not defined after qualification stop | 未测试 / Not tested. Qualified endpoint measurements and matched-state evidence. Prespecified qualification stop |
+| `PYP-STATE` | Sequence + illumination condition | 2 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Additional independent groups with matched illumination/state measurements. Case report; no independent scoring folds |
+| `RNASE-ASSEMBLY` | Sequence + assembly condition | 4 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Independent same-batch assembly pairs with measured conditions; current pairs carry cross-batch warnings. Case report; no independent scoring folds |
+| `DISORDER-CONDITION-pH` | Same sequence/region + pH | 7 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Additional qualified independent condition pairs; candidate records include cross-publication and region mismatches. Case report; no independent scoring folds |
+| `DISORDER-CONDITION-temperature` | Same sequence/region + temperature | 2 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Additional independent groups with matched two-temperature experimental labels. Case report; no independent scoring folds |
+
+FS-REGION counts are endpoint-residue rows: 848 reference negatives across all ten cases, including 356 negatives in the three dual-class cases; 580 is the strict subset. Condition counts are state records, not independent proteins or cases. The strict direct-label disorder task and the structural-reference task retain separate labels and results.
+
+### Simple baselines on the same held groups
+
+| Task | Simple baseline | 650M reference run | 8M run |
+|---|---|---|---|
+| KNOT-PRESENCE | Length logistic | 0.675945 | 0.675945 |
+| KNOT-PRESENCE | Composition logistic (650M: length + AA20; 8M: AA20) | 0.819491 | 0.785140 |
+| KNOT-PRESENCE | Representation 1-nearest neighbor | 0.672987 | 0.724348 |
+| KNOT-PRESENCE | Training prior | 0.494323 | 0.494323 |
+| FS-L2-grouped-PU-ranking | Length logistic | 0.711773 | 0.711773 |
+| FS-L2-grouped-PU-ranking | Composition logistic (650M: length + AA20; 8M: AA20) | 0.498057 | 0.480346 |
+| FS-L2-grouped-PU-ranking | Representation 1-nearest neighbor | 0.500728 | 0.500737 |
+| FS-L2-grouped-PU-ranking | Training prior | 0.500564 | 0.500564 |
+| Disorder structure reference | AA + position + local context logistic | 0.585906 | 0.585906 |
+
+The columns identify source runs. Length, composition, training prior and traditional residue features do not use a language model. The 650M composition baseline uses log-length plus 20 amino-acid frequencies (21 features); the 8M composition baseline uses only the 20 frequencies. The nearest-neighbor baseline uses that run's highest candidate layer (33 or 6). All arms and full-precision values, including fixed-layer diagnostics, appear in [the result index](results/results_index.tsv). Prediction intervals remain in the linked metric files.
+
+Data definitions and sources are documented in [data documentation](docs/data.md) and the [task catalog](data/task_catalog.tsv).
 
 ## Supported models and inputs
 
