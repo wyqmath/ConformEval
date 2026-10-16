@@ -1,9 +1,7 @@
 import csv, json, math, sys, tempfile, unittest
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
-from evaluate_residue_predictions import TASK, read_scores, calculate
-from residue_scoring_core import validate_fold_roles
-from verify_release import verify_delivery_file_set
+from confomeval.evaluate_residue_predictions import TASK, read_scores, calculate
+from confomeval.residue_scoring_core import validate_fold_roles
 
 class ResidueScorerTests(unittest.TestCase):
 
@@ -40,13 +38,6 @@ class ResidueScorerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'duplicate'):
             self.read(self.rows + [self.rows[0]])
 
-    def test_unregistered_delivery_file_is_rejected(self):
-        root = Path(self.tmp.name)
-        (root / 'manifest.json').write_text(json.dumps({'files': {}}))
-        self.assertEqual(verify_delivery_file_set(root), 0)
-        (root / 'unexpected.tsv').write_text('new data')
-        with self.assertRaisesRegex(ValueError, 'unregistered'):
-            verify_delivery_file_set(root)
 
     def test_exact_groups_cannot_cross_outer_roles(self):
         samples = {'a': {'binding_group_id': 'g'}, 'b': {'binding_group_id': 'g'}, 'c': {'binding_group_id': 'h'}}

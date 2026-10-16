@@ -3,7 +3,7 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "physinfobench"
+name = "confomeval"
 version = "0.4.0"
 description = "Fixed benchmark data and evaluation utilities for protein physical inference tasks"
 readme = "README.md"
@@ -29,15 +29,12 @@ classifiers = [
 Repository = "https://github.com/wyqmath/ConformEval"
 
 [project.scripts]
-physinfobench-verify = "physinfobench.verify_release:main"
-physinfobench-export-data = "physinfobench.export_fixed_dataset:main"
-physinfobench-export-results = "physinfobench.export_esm2_reference_results:main"
-physinfobench-evaluate = "physinfobench.evaluate_predictions:main"
-physinfobench-build-feature-manifest = "physinfobench.build_feature_manifest:main"
-physinfobench-fit-readers = "physinfobench.run_nested_readers:main"
-physinfobench-evaluate-residues = "physinfobench.evaluate_residue_predictions:main"
-physinfobench-replay-reference = "physinfobench.replay_reference:main"
-physinfobench-fit-reference-residues = "physinfobench.run_disorder_structure_reference_evaluation_v01:main"
+confomeval-evaluate = "confomeval.evaluate_predictions:main"
+confomeval-build-feature-manifest = "confomeval.build_feature_manifest:main"
+confomeval-fit-readers = "confomeval.run_nested_readers:main"
+confomeval-evaluate-residues = "confomeval.evaluate_residue_predictions:main"
+confomeval-replay-reference = "confomeval.replay_reference:main"
+confomeval-fit-reference-residues = "confomeval.train_residue_reference:main"
 
 [project.optional-dependencies]
 evaluation = []
@@ -45,8 +42,10 @@ reference-residue-training = ["torch>=2.5,<3"]
 test = ["scikit-learn>=1.5,<2"]
 
 [tool.setuptools]
-packages = ["physinfobench"]
-package-dir = { physinfobench = "scripts" }
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.unittest]
 start-directory = "tests"

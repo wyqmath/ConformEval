@@ -1286,11 +1286,11 @@
     "benchmark_fixed/20261015/disorder_structure_reference_candidate_v02/cache/ffba4e7e87f318c3b1ae69c5.npz": "82dde900ac79353649c73874f64990084656a9eef9d56bdfda7e0d548922093a"
   },
   "code_sha256_at_end": {
-    "/lenovofs1SOURCE_0e28146f9e8f_physinfobench_model_interface.py": "c512de6261ebf51cf92fc453a2ab74149c1ca329136cdf5de13d15c9c8e5b7aa",
+    "/lenovofs1SOURCE_0e28146f9e8f_confomeval_model_interface.py": "c512de6261ebf51cf92fc453a2ab74149c1ca329136cdf5de13d15c9c8e5b7aa",
     "/lenovofs1SOURCE_dddfdfc941f7_run_disorder_structure_reference_evaluation_v01.py": "ade8dbae1a34de020e47595a69ffa5f636f36cd6c071f65fa5ef85d37d811d30"
   },
   "code_sha256_at_start": {
-    "/lenovofs1SOURCE_0e28146f9e8f_physinfobench_model_interface.py": "c512de6261ebf51cf92fc453a2ab74149c1ca329136cdf5de13d15c9c8e5b7aa",
+    "/lenovofs1SOURCE_0e28146f9e8f_confomeval_model_interface.py": "c512de6261ebf51cf92fc453a2ab74149c1ca329136cdf5de13d15c9c8e5b7aa",
     "/lenovofs1SOURCE_dddfdfc941f7_run_disorder_structure_reference_evaluation_v01.py": "ade8dbae1a34de020e47595a69ffa5f636f36cd6c071f65fa5ef85d37d811d30"
   },
   "device": "cuda",

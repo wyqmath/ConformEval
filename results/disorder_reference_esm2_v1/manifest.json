@@ -1,10 +1,6 @@
 {
   "artifact_id": "disorder_reference_esm2_v1",
   "files": {
-    "REPORT.md": {
-      "bytes": 1521,
-      "sha256": "3355f8b97945b36ceecf979d5d315f4dd0ab9c62cbdb428c9fe054b12c64dcd6"
-    },
     "inner_selection.tsv": {
       "bytes": 18842,
       "sha256": "64e7485b2d319881395818d00e66c9fd251294565944407af746923f842d8c28"
@@ -166,8 +162,8 @@
       "sha256": "66b0fe39d684b592a061a4e0b6e418e2bf5a6da832312fd3c0a929521e72e0ab"
     },
     "run.json": {
-      "bytes": 238845,
-      "sha256": "a89068d176674137cb3e6bb2a75386e074a8195b1a15b99c3ecf7fe7d3513fa6"
+      "bytes": 238839,
+      "sha256": "efd345454aa72ebcf7ad101574602d927995222e7a20e946493622df65902fbb"
     }
   }
 }

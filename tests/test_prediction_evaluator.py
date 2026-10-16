@@ -9,9 +9,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'data/v0.3.1'
 REFERENCE = ROOT / 'results/esm2_existing_v0.3'
-PROTOCOL = ROOT / 'SCORING_PROTOCOL.json'
-sys.path.insert(0, str(ROOT / 'scripts'))
-from evaluate_predictions import evaluate, load_predictions, rank_positive
+PROTOCOL = ROOT / 'configs/scoring_protocol.json'
+from confomeval.evaluate_predictions import evaluate, load_predictions, rank_positive
 
 def write_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
     with path.open('w', newline='', encoding='utf-8') as handle:

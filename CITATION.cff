@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below. For scientific claims, also cite the primary data sources listed in SOURCES_AND_DISTRIBUTION.md."
-title: "PhysInfoBench: protein physical inference benchmark"
+message: "If you use this software, please cite it as below. For scientific claims, also cite the primary data sources listed in docs/data.md."
+title: "ConformEval: protein physical inference benchmark"
 type: software
 authors:
   - given-names: Jiayuan

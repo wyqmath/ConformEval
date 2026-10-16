@@ -1,5 +1,5 @@
 source_ref	module	case_id	source_artifact_id	source_artifact_filename	source_artifact_sha256	evidence_ids	doi	pmcid	other_source_references
-CS0001	BPTI-REDOX	predefined_stop	accepted_protocol_stop_record	physinfobench_existing_20261012.json	46cb535c76590af8fc29b13b1a9d5d4dbdd492ad9640470e11c0769d05ecdff5				internal audit or accepted protocol record; see case_modules detail
+CS0001	BPTI-REDOX	predefined_stop	accepted_protocol_stop_record	confomeval_existing_20261012.json	46cb535c76590af8fc29b13b1a9d5d4dbdd492ad9640470e11c0769d05ecdff5				internal audit or accepted protocol record; see case_modules detail
 CS0002	FS-L1-PAIRED	AD02C_new_01	fold_switch_cases	cases.tsv	8861845d02e1dd5d5b4ee595667b9305bb138cf9a8b3b874b15b36622eef6638				
 CS0003	FS-L1-PAIRED	AD02C_new_02	fold_switch_cases	cases.tsv	8861845d02e1dd5d5b4ee595667b9305bb138cf9a8b3b874b15b36622eef6638				
 CS0004	FS-L1-PAIRED	AD02C_new_03	fold_switch_cases	cases.tsv	8861845d02e1dd5d5b4ee595667b9305bb138cf9a8b3b874b15b36622eef6638				

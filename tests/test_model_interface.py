@@ -5,15 +5,14 @@ import unittest
 from pathlib import Path
 import numpy as np
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PACKAGE_ROOT / 'scripts'))
-from physinfobench_model_interface import align_residue_labels, load_mean_representation, load_residue_representation, sha256_file
+from confomeval.model_interface import align_residue_labels, load_mean_representation, load_residue_representation, sha256_file
 MODEL = 'facebook/esm2_t33_650M_UR50D'
 REVISION = 'test-revision'
 SEQ_SHA = 'a' * 64
 MEAN_LAYERS = (5, 11, 17, 23, 29, 33)
 RESIDUE_LAYERS = (11, 23, 33)
 
-class PhysInfoBenchModelInterfaceTests(unittest.TestCase):
+class ConformEvalModelInterfaceTests(unittest.TestCase):
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()

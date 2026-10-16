@@ -1,6 +1,6 @@
-# Task dispositions in local delivery 0.4.0
+# Task dispositions in benchmark version 0.4.0
 
-This page explains why every registered task either has an ESM-2 score or has no score in this delivery. No score entry means that the locked data or protocol did not define a valid evaluation for that task; it is not a model-performance result.
+This page explains why every registered task either has an ESM-2 score or has no score in this version. No score entry means that the locked data or protocol did not define a valid evaluation for that task; it is not a model-performance result.
 
 | Task | Data in the release | Disposition |
 |---|---|---|
@@ -18,6 +18,6 @@ This page explains why every registered task either has an ESM-2 score or has no
 | DISORDER-CONDITION-pH | 7 condition records | Case report only; no independent scoring folds. |
 | DISORDER-CONDITION-temperature | 2 condition records | Case report only; no independent scoring folds. |
 
-The exact denominators, output pointers, and interpretation limits are in [`task_catalog.tsv`](../task_catalog.tsv). Base labels and masks are in [`data/v0.3.1/`](../data/v0.3.1/); case records are in `case_modules.tsv` and `case_samples.tsv.gz`. The accepted supplemental labels are in [`data/disorder_reference_v1/`](../data/disorder_reference_v1/) and [`data/fs_region_controls_v1/`](../data/fs_region_controls_v1/).
+The exact denominators, output pointers, and interpretation limits are in [`task_catalog.tsv`](../data/task_catalog.tsv). Base labels and masks are in [`data/v0.3.1/`](../data/v0.3.1/); case records are in `case_modules.tsv` and `case_samples.tsv.gz`. The accepted supplemental labels are in [`data/disorder_reference_v1/`](../data/disorder_reference_v1/) and [`data/fs_region_controls_v1/`](../data/fs_region_controls_v1/).
 
-Condition case modules remain descriptive in this delivery. The new condition four-arm experiment is deferred. The separate supplemental label/result bundles update the current task state without rewriting the frozen base snapshot.
+Condition case modules remain descriptive in this version. The new condition four-arm experiment is deferred. The separate supplemental label/result bundles update the current task state without rewriting the frozen base snapshot.

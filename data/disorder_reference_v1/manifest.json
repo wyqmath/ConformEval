@@ -1,18 +1,6 @@
 {
   "artifact_id": "disorder_reference_v1",
   "files": {
-    "REPORT.md": {
-      "bytes": 781,
-      "sha256": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99"
-    },
-    "evaluation_protocol_v01.json": {
-      "bytes": 2973,
-      "sha256": "9a814a83ef8f39b0ddd03b1cabda75cd58a2c0b67ed105e8433dad9871048648"
-    },
-    "extraction_request.json": {
-      "bytes": 1199,
-      "sha256": "e630cf937393b4292a9d6af7e796f44436efc8dd536c08d0f0a021525a18b197"
-    },
     "fold_qc.tsv": {
       "bytes": 246,
       "sha256": "51bff4efa99d9720fe2aa0a7f5e7ad77428ca3bda78cb57fd18632b237a32e9f"
@@ -32,10 +20,6 @@
     "outer_fold_roles.tsv": {
       "bytes": 593499,
       "sha256": "dd5f12c758f7d320177dda678a3a48cf0033b90577cf443ab6fd08d94eba1e23"
-    },
-    "protocol.json": {
-      "bytes": 2505,
-      "sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69"
     },
     "run_manifest.json": {
       "bytes": 1839,

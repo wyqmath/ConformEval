@@ -9,9 +9,8 @@ from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PACKAGE_ROOT / 'scripts'))
-from run_nested_readers import fold_indices, fs_rank_percentiles, fit_logistic, nearest_neighbor, run, validate_sample_sequence_mappings
-from build_feature_manifest import scan_archives
+from confomeval.run_nested_readers import fold_indices, fs_rank_percentiles, fit_logistic, nearest_neighbor, run, validate_sample_sequence_mappings
+from confomeval.build_feature_manifest import scan_archives
 TASK = 'KNOT-PRESENCE'
 
 def write_inner(path: Path, rows: list[dict[str, str]]) -> None:

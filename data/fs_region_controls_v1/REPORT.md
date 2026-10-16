@@ -8,6 +8,6 @@
 
 阈值是本项目预先固定的保守操作定义，未用模型得分挑选；严格敏感性规则同时输出，不按结果择优。距离比较借鉴 [lDDT 原始论文](https://pmc.ncbi.nlm.nih.gov/articles/PMC3799472/) 的邻域保持思想；本实现是对称 Cα 变体，并非原始全原子 lDDT。
 
-输入结构、序列和源产物的哈希在运行前后核对。全长标签、逐残基几何依据和来源映射均落盘。独立审核尚未完成，既有冻结标签、评分协议和模型结果保持原样。
+输入结构、序列和源产物的哈希在运行前后核对。全长标签、逐残基几何依据和来源映射均落盘。本文件记录标签生成时的结果；既有冻结标签、评分协议和模型结果保持原样。
 
-复现入口：`scripts/build_fs_region_stable_controls.py`，显式指定 `--source-dir`、`--upstream-dir`、`--group-map`、`--protocol` 和不存在的 `--output-dir`。详细输入路径见 `run.json`。
+固定规则见 [`configs/fs_region_controls_v1/protocol.json`](../../configs/fs_region_controls_v1/protocol.json)，原始生成运行记录见 [`run.json`](run.json)。历史生成器属于源研究项目；本仓库提供已生成的标签和逐残基几何依据。

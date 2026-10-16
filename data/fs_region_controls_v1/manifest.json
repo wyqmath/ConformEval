@@ -1,10 +1,6 @@
 {
   "artifact_id": "fs_region_controls_v1",
   "files": {
-    "REPORT.md": {
-      "bytes": 1864,
-      "sha256": "ce0941338f54f6a8b1f9671238483499edd1937e053ef90d158af525b72be84e"
-    },
     "case_coverage.tsv": {
       "bytes": 1523,
       "sha256": "399bc50596d5d5c447cc300123503a0c02d71bf5396969e5addf432e57689d33"
@@ -28,10 +24,6 @@
     "pair_residue_metrics.tsv.gz": {
       "bytes": 71646,
       "sha256": "8fbd993e46d45c30c4b7ab62b324664578bf25a497f39c5766b92c6c242bdef1"
-    },
-    "protocol.json": {
-      "bytes": 3725,
-      "sha256": "f96e0c6ab5918eaaaf5e21983105372ebab8992253920ca7b873d22cf2ba0fb1"
     },
     "qc.json": {
       "bytes": 736,

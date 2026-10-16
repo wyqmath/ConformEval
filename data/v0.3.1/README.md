@@ -1,4 +1,4 @@
-# PhysInfoBench data snapshot v0.3.1
+# ConformEval data snapshot v0.3.1
 
 This is a portable export of the frozen 2026-10-14 development dataset plus the independently reviewed FD.03 representation-coverage overlay. Labels, masks, sample identities, and folds are copied without modification. Case-module rows point to `case_sources.tsv` through `source_ref`; that table records the upstream artifact fingerprint and available DOI, PMCID, or source notes without exposing project-local paths. `representation_coverage.tsv.gz` contains no local cache paths.
 

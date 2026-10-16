@@ -2,10 +2,6 @@
   "artifact_id": "esm2-650m-existing-model-reference-v0.3",
   "embedding_cache_included": false,
   "files": {
-    "README.md": {
-      "bytes": 398,
-      "sha256": "99f9795b397e51e2ea5b2e8be36f4fa90402e3b1bc1e9bfed4658d0df26fe311"
-    },
     "case_ranks.tsv": {
       "bytes": 13796,
       "sha256": "71f702007f9cc3948e916b31dd0ee44b4eb264ced557d4189eb2bab9ec2bb66a"

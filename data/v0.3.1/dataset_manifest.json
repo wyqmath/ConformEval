@@ -23,10 +23,6 @@
     "The frozen data_v06 task_status.tsv is not copied because it predates FD.03; the benchmark-level task_catalog.tsv is authoritative for this draft."
   ],
   "files": {
-    "README.md": {
-      "bytes": 747,
-      "sha256": "bbb55727950ea832c859a867021b988aa973793e8732b162deb8faedd0973896"
-    },
     "case_modules.tsv": {
       "bytes": 8423,
       "sha256": "0768a43ed1ebeb55e9982d67ae00fd60281e4beb7662888e6e9b6548676c390a"
@@ -36,12 +32,8 @@
       "sha256": "56d9459d4fc91bbf27e5412e15694b740f1243bc41e9955b4ee9ef6b1b988d2b"
     },
     "case_sources.tsv": {
-      "bytes": 6101,
-      "sha256": "27a2c6871abab4da2cb7b158fc7612af48a8b468c311d7e4c3bd9d6f273313d1"
-    },
-    "data_protocol.json": {
-      "bytes": 2353,
-      "sha256": "8d6590a9ba6682508e6f7c85be697a041ecb8f9f25fc27c1c6577f0acf8a21db"
+      "bytes": 6098,
+      "sha256": "ed8684b47048ad5d87a0c45ce01d0cea02a6cf461eef1a95fc3f9c4f654c608d"
     },
     "folds/fold_qc.tsv": {
       "bytes": 6514,
