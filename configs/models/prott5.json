@@ -1,0 +1,19 @@
+{
+  "adapter": "prott5",
+  "model_id": "Rostlab/prot_t5_xl_half_uniref50-enc",
+  "revision": "94a6abc029ae13029317b140b7424e012bf8dfbf",
+  "layers": [
+    12,
+    24
+  ],
+  "schema_version": 1,
+  "pooling": "mean",
+  "long_sequence": {
+    "policy": "window",
+    "max_residues": 1022,
+    "overlap": 128
+  },
+  "dtype": "float32",
+  "device": "cpu",
+  "store_residues": true
+}

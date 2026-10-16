@@ -36,7 +36,9 @@ def main():
         rows = list(csv.DictReader(f, delimiter='\t'))
     arms = sorted({r['arm'] for r in rows})
     checks = []
-    metadata = {'model_id': 'facebook/esm2_t33_650M_UR50D', 'model_revision': '08e4846e537177426273712802403f7ba8261b6c', 'prediction_method': 'archived audited nested grouped prediction replay', 'prediction_code_sha256': sha256(Path(__file__)), 'training_protocol': 'frozen_nested_grouped_oof_v1', 'candidate_layers': [17, 33], 'pooling': 'mean_over_residues_without_special_tokens'}
+    source_provenance = json.loads((ref / 'provenance.json').read_text())
+    source_configuration = json.loads((ref / 'configuration.json').read_text())
+    metadata = {'model_id': source_provenance['encoder']['id'], 'model_revision': source_provenance['encoder']['revision'], 'prediction_method': 'archived audited nested grouped prediction replay', 'prediction_code_sha256': sha256(Path(__file__)), 'training_protocol': 'frozen_nested_grouped_oof_v1', 'candidate_layers': source_configuration['encoder']['selected_candidates'], 'pooling': 'mean_over_residues_without_special_tokens'}
     meta = out / 'reference_metadata.json'
     meta.write_text(json.dumps(metadata, indent=2) + '\n')
     for arm in arms:

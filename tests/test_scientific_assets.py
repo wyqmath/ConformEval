@@ -11,29 +11,11 @@ import unittest
 from confomeval import data_validation as validation
 from confomeval.evaluate_predictions import verify_dataset
 from confomeval.evaluate_residue_predictions import check_manifest, load_task
-from confomeval.residue_scoring_core import validate_reference_config
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class ScientificAssetTests(unittest.TestCase):
-    def test_reference_configuration_accepts_fixed_protocol_and_rejects_changes(self):
-        source = ROOT / 'configs/disorder_reference_v1'
-        self.assertEqual(len(validate_reference_config(source)), 3)
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp) / 'config'
-            shutil.copytree(source, root)
-            protocol_path = root / 'evaluation_protocol.json'
-            original = protocol_path.read_text()
-            protocol = json.loads(original)
-            protocol['linear_arms']['C_grid'] = [100]
-            protocol_path.write_text(json.dumps(protocol))
-            with self.assertRaisesRegex(ValueError, 'unsupported residue reference'):
-                validate_reference_config(root)
-            protocol_path.write_text(original)
-            (root / 'extraction_request.json').unlink()
-            with self.assertRaisesRegex(ValueError, 'extraction_request'):
-                validate_reference_config(root)
 
     def test_base_identities_masks_coordinates_and_groups(self):
         data = ROOT / 'data/v0.3.1'

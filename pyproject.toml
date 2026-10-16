@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "confomeval"
-version = "0.4.0"
+version = "0.5.0"
 description = "Fixed benchmark data and evaluation utilities for protein physical inference tasks"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -29,16 +29,19 @@ classifiers = [
 Repository = "https://github.com/wyqmath/ConformEval"
 
 [project.scripts]
+confomeval-extract = "confomeval.extract:main"
+confomeval-download = "confomeval.adapters:download_main"
+confomeval-prepare-inputs = "confomeval.tasks:main"
 confomeval-evaluate = "confomeval.evaluate_predictions:main"
 confomeval-build-feature-manifest = "confomeval.build_feature_manifest:main"
-confomeval-fit-readers = "confomeval.run_nested_readers:main"
+confomeval-fit-readers = "confomeval.train:main"
 confomeval-evaluate-residues = "confomeval.evaluate_residue_predictions:main"
 confomeval-replay-reference = "confomeval.replay_reference:main"
-confomeval-fit-reference-residues = "confomeval.train_residue_reference:main"
 
 [project.optional-dependencies]
 evaluation = []
-reference-residue-training = ["torch>=2.5,<3"]
+esm2 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2"]
+prott5 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2", "sentencepiece>=0.2,<1", "protobuf>=4,<7"]
 test = ["scikit-learn>=1.5,<2"]
 
 [tool.setuptools]

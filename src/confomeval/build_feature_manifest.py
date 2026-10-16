@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 from .evaluate_predictions import eligible_frames, read_table, verify_dataset
 from .model_interface import load_mean_representation
-from .run_nested_readers import LAYERS, parse_fasta, validate_sample_sequence_mappings
+from .readers import parse_fasta, validate_sample_sequence_mappings
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -16,8 +16,8 @@ def sha256(path: Path) -> str:
             digest.update(block)
     return digest.hexdigest()
 
-def required_sequences(data_dir: Path) -> tuple[dict[str, tuple[str, int]], dict]:
-    eligible, _ = eligible_frames(data_dir)
+def required_sequences(data_dir: Path, tasks=None) -> tuple[dict[str, tuple[str, int]], dict]:
+    eligible, _ = eligible_frames(data_dir, tasks)
     sequences = parse_fasta(data_dir / 'sequences.fasta')
     sample_rows = {}
     sequence_info: dict[str, tuple[str, int]] = {}
@@ -41,14 +41,14 @@ def required_sequences(data_dir: Path) -> tuple[dict[str, tuple[str, int]], dict
                 raise ValueError(f'sequence hash maps to inconsistent identity or length: {digest}')
     return (sequence_info, eligible)
 
-def scan_archives(archive_root: Path, sequence_info: dict[str, tuple[str, int]], model_id: str, model_revision: str) -> tuple[list[dict], int]:
+def scan_archives(archive_root: Path, sequence_info: dict[str, tuple[str, int]], model_id: str, model_revision: str, layers: tuple[int, ...]) -> tuple[list[dict], int]:
     selected: dict[str, tuple[Path, str]] = {}
     dimensions = set()
     required = set(sequence_info)
     for path in sorted(archive_root.rglob('*.npz')):
         try:
             with np.load(path, allow_pickle=False) as archive:
-                if not {'meta', 'mean_layers'}.issubset(archive.files):
+                if 'meta' not in archive.files or not ({'mean_layers','sequence_layers'} & set(archive.files)):
                     continue
                 meta = json.loads(str(archive['meta'].item()))
             digest = meta.get('seq_sha256')
@@ -60,7 +60,7 @@ def scan_archives(archive_root: Path, sequence_info: dict[str, tuple[str, int]],
             if meta.get('len_full') != length or meta.get('len_used') != length or meta.get('truncated') not in (False, 0, 'false'):
                 continue
             expected_hash = sha256(path)
-            _, dimension = load_mean_representation(path, digest, length, expected_hash, LAYERS, model_id, model_revision)
+            _, dimension = load_mean_representation(path, digest, length, expected_hash, layers, model_id, model_revision)
             dimensions.add(dimension)
             old = selected.get(digest)
             if old is not None and old[1] != expected_hash:
@@ -98,14 +98,16 @@ def build(args) -> dict:
     except ValueError as exc:
         raise ValueError('extractor-code-sha256 must be hexadecimal') from exc
     verify_dataset(data_dir)
-    sequence_info, eligible = required_sequences(data_dir)
-    archive_rows, dimension = scan_archives(archive_root, sequence_info, args.model_id, args.model_revision)
-    manifest = {'model_id': args.model_id, 'model_revision': args.model_revision, 'pooling': args.pooling, 'extractor_code_sha256': args.extractor_code_sha256.lower(), 'candidate_layers': list(LAYERS), 'archives': archive_rows}
+    sequence_info, eligible = required_sequences(data_dir, set(args.task) if args.task else None)
+    archive_rows, dimension = scan_archives(archive_root, sequence_info, args.model_id, args.model_revision, tuple(args.layers))
+    manifest = {'model_id': args.model_id, 'model_revision': args.model_revision, 'pooling': args.pooling, 'extractor_code_sha256': args.extractor_code_sha256.lower(), 'candidate_layers': list(args.layers), 'archives': archive_rows}
     output.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     return {'status': 'PASS', 'manifest': str(output), 'eligible_samples': len(eligible), 'unique_sequences': len(sequence_info), 'validated_archives': len(archive_rows), 'representation_dimension': dimension}
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Build a checked manifest for exact-sequence mean-representation archives.')
+    parser.add_argument('--layers', type=int, nargs='+', required=True)
+    parser.add_argument('--task', action='append', choices=['KNOT-PRESENCE','FS-L2-grouped-PU-ranking'])
     parser.add_argument('--data-dir', type=Path, required=True)
     parser.add_argument('--archive-root', type=Path, required=True, help='directory containing one exact-sequence .npz archive per required sequence')
     parser.add_argument('--output-manifest', type=Path, required=True, help='new JSON manifest path directly inside --archive-root')

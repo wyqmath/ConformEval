@@ -1,11 +1,27 @@
-# Minimal representation example
+# Runnable small examples
 
-After `python -m pip install .`, run from the repository root:
+The `mini` directory contains 30 synthetic protein sequences and complete small group-fold tables for all three task interfaces. The pooled tasks have 20 samples each, and the residue task has 554 known positions. The data manifests mark them `software_example`.
+
+## No model download
 
 ```bash
-python examples/representation_archive.py --output-dir runs/example-archive
+python -m pip install .
+python examples/representation_archive.py --output-dir runs/numpy-example-features
+confomeval-fit-readers --task KNOT-PRESENCE --data-dir examples/mini/base --feature-manifest runs/numpy-example-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/numpy-example-knot --example
 ```
 
-The script creates a synthetic six-residue sequence archive with layers 17 and 33, then reads it through `confomeval.model_interface`. The output is a validated `2 × 4` matrix. The output directory must be new. The vectors illustrate the schema; use actual encoder representations to evaluate a model.
+Expected: `status: PASS`, 20 scored samples per arm, and output predictions/metrics/parameters. The vectors are deterministic synthetic values, not a model-performance result.
 
-See the [model input contract](../docs/model_input.md) for residue archives, sequence-coordinate alignment and complete cache manifests, and [prediction submission](../docs/prediction_submission.md) for evaluation commands.
+## Real models
+
+The [README](../README.md) supplies the complete ESM-2 8M extraction/training/scoring tutorial. To directly exercise either adapter:
+
+```bash
+python examples/adapter_usage.py --model-config configs/models/esm2_8m.json
+```
+
+Install the model's optional dependency extra first. For ESM-2 650M or ProtT5 choose its supplied model config. The script downloads/loads the pinned checkpoint, represents a short sequence and prints layer/residue/dimension shapes. [Validation](../docs/model_validation.md) records the checkpoints and commands actually tested.
+
+## External predictions
+
+`predictions/knot.tsv` and `predictions/residues.tsv` are complete synthetic prediction files. `predictions/metadata.json` makes them runnable; `metadata.template.json` shows the values to replace for an actual submission. [Scoring instructions](../docs/prediction_submission.md) include copyable commands and expected scores.

@@ -35,9 +35,12 @@ def check_manifest(root):
         hashes[name] = record['sha256']
     return hashes
 
-def load_task(root):
+def load_task(root, example=False):
     hashes = check_manifest(root)
-    if hashes['manifest.json'] != 'd8527744b6c8b8997f39dca56e49725a815207237ed4f97547d3ae0c2df7907a':
+    manifest = json.loads((root / 'manifest.json').read_text())
+    if example and (manifest.get('artifact_id') != 'confomeval-software-example-residue-v1' or manifest.get('scope') != 'software_example'):
+        raise ValueError('example mode requires the bundled software example')
+    if not example and hashes['manifest.json'] != 'd8527744b6c8b8997f39dca56e49725a815207237ed4f97547d3ae0c2df7907a':
         raise ValueError('unsupported disorder reference data version')
     rows = read_tsv(root / 'selected_samples.tsv')
     samples = {r['sample_id']: r for r in rows}
@@ -46,7 +49,7 @@ def load_task(root):
     labels = defaultdict(list)
     for r in read_tsv(root / 'selected_labels.tsv.gz'):
         labels[r['sample_id']].append(r)
-    validate_label_rows(samples, labels, load_fasta(root / 'inputs/sequences.fasta'))
+    validate_label_rows(samples, labels, load_fasta(root / 'inputs/sequences.fasta'), example=example)
     sequence_groups = defaultdict(set)
     for s in samples.values():
         sequence_groups[s['sequence_sha256']].add(s['binding_group_id'])
@@ -131,6 +134,7 @@ def main():
     ap.add_argument('--task-dir', required=True, type=Path)
     ap.add_argument('--predictions', required=True, type=Path)
     ap.add_argument('--model-metadata', type=Path)
+    ap.add_argument('--example', action='store_true', help='Score the bundled synthetic software example')
     ap.add_argument('--reference', action='store_true')
     ap.add_argument('--output-dir', required=True, type=Path)
     a = ap.parse_args()
@@ -164,16 +168,16 @@ def main():
     inputs = {str(task / 'manifest.json'): sha256(task / 'manifest.json'), str(pred): sha256(pred), str(Path(__file__).resolve()): sha256(Path(__file__).resolve()), str(Path(__file__).with_name('residue_scoring_core.py').resolve()): sha256(Path(__file__).with_name('residue_scoring_core.py'))}
     if a.model_metadata is not None:
         inputs[str(a.model_metadata.resolve())] = sha256(a.model_metadata)
-    run = {'started_at': stamp(), 'status': 'RUNNING', 'model_metadata': metadata, 'input_sha256': inputs, 'versions': {'python': platform.python_version(), 'numpy': np.__version__, 'scipy': scipy.__version__, 'scikit_learn': sklearn.__version__}, 'warnings': ['Scores verify identities and metrics; training history is supplied provenance.', 'Intervals condition on fixed predictions; no refitting uncertainty.']}
+    run = {'started_at': stamp(), 'status': 'RUNNING', 'model_metadata': metadata, 'input_sha256': inputs, 'versions': {'python': platform.python_version(), 'numpy': np.__version__, 'scipy': scipy.__version__, 'scikit_learn': sklearn.__version__}, 'scope': 'software_example' if a.example else 'retrospective_grouped_development', 'warnings': ['Scores verify identities and metrics; training history is supplied provenance.', 'Intervals condition on fixed predictions; no refitting uncertainty.']}
     out.mkdir(parents=True)
     try:
-        samples, expected, folds, data_hashes = load_task(task)
+        samples, expected, folds, data_hashes = load_task(task, example=a.example)
         run['dataset_sha256'] = data_hashes
         scores = read_scores(pred, samples, expected, folds, set(metadata['arms']), metadata['model_id'])
         rows, metrics = calculate(samples, expected, folds, scores)
         write_tsv(out / 'protein_metrics.tsv', list(rows[0]), rows)
         (out / 'metrics.json').write_text(json.dumps(metrics, indent=2, sort_keys=True) + '\n')
-        if load_task(task)[3] != data_hashes or any((sha256(Path(p)) != h for p, h in inputs.items())):
+        if load_task(task, example=a.example)[3] != data_hashes or any((sha256(Path(p)) != h for p, h in inputs.items())):
             raise ValueError('input or code changed during scoring')
         run.update(status='COMPLETE', ended_at=stamp(), n_predictions=sum((len(ps) for arm in scores.values() for ps in arm.values())), output_sha256={p.name: sha256(p) for p in out.iterdir() if p.is_file()})
     except Exception as e:

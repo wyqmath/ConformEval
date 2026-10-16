@@ -9,8 +9,9 @@ from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-from confomeval.run_nested_readers import fold_indices, fs_rank_percentiles, fit_logistic, nearest_neighbor, run, validate_sample_sequence_mappings
+from confomeval.readers import fold_indices, fs_rank_percentiles, fit_logistic, nearest_neighbor, validate_sample_sequence_mappings
 from confomeval.build_feature_manifest import scan_archives
+from confomeval.train import run
 TASK = 'KNOT-PRESENCE'
 
 def write_inner(path: Path, rows: list[dict[str, str]]) -> None:
@@ -55,7 +56,7 @@ class NestedReaderTests(unittest.TestCase):
             digest_a, digest_b = ('a' * 64, 'b' * 64)
             self.write_representation(root, 'a.npz', digest_a)
             self.write_representation(root, 'b.npz', digest_b)
-            rows, dimension = scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1')
+            rows, dimension = scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1', (17,33))
             self.assertEqual(len(rows), 2)
             self.assertEqual(dimension, 4)
             self.assertTrue(all((len(row['archive_sha256']) == 64 for row in rows)))
@@ -66,14 +67,14 @@ class NestedReaderTests(unittest.TestCase):
             digest_a, digest_b = ('a' * 64, 'b' * 64)
             self.write_representation(root, 'a.npz', digest_a)
             with self.assertRaisesRegex(ValueError, 'missing 1 eligible sequences'):
-                scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1')
+                scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1', (17,33))
             self.write_representation(root, 'b.npz', digest_b, dimension=5)
             with self.assertRaisesRegex(ValueError, 'dimensions differ'):
-                scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1')
+                scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1', (17,33))
             self.write_representation(root, 'a.npz', digest_a, dimension=5)
             self.write_representation(root, 'a_duplicate.npz', digest_a, dimension=5, value=2.0)
             with self.assertRaisesRegex(ValueError, 'multiple different archives'):
-                scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1')
+                scan_archives(root, {digest_a: (f'SEQ_{digest_a}', 4), digest_b: (f'SEQ_{digest_b}', 4)}, 'test/model', 'r1', (17,33))
 
     def test_inner_partition_is_complete_and_disjoint_from_outer_test(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -137,7 +138,7 @@ class NestedReaderTests(unittest.TestCase):
             self.assertEqual(record['status'], 'FAILED')
             self.assertEqual(record['error_type'], 'FileNotFoundError')
             self.assertIn('started_at', record)
-            self.assertIn('completed_at', record)
+            self.assertIn('ended_at', record)
             with self.assertRaisesRegex(ValueError, 'refusing to overwrite'):
                 run(args)
 if __name__ == '__main__':

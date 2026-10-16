@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 — 2026-10-16
+
+- Add real ESM-2 and ProtT5 adapters with full coordinate projection and long-sequence windows.
+- Configure layers, pooling, predictor candidates and nested selection; use one grouped trainer for sequence and residue tasks.
+- Add per-task inputs/scoring, a complete three-task mini fixture, external prediction examples and optional inference dependencies.
+- Add measured model-validation resources and two complete user tutorials.
+
+
 ## Repository organization — 2026-10-16
 
 - Move the importable package to `src/confomeval` and use `confomeval-*` commands.

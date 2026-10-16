@@ -1,6 +1,6 @@
 # Installation
 
-ConformEval requires Python 3.11 or newer. From the repository root:
+Use Python 3.11 or newer. The base package installs only numerical scoring and reader dependencies:
 
 ```bash
 python -m venv .venv
@@ -8,30 +8,37 @@ source .venv/bin/activate
 python -m pip install .
 ```
 
-On Windows use `.venv\Scripts\activate` instead of `source`. For development use `python -m pip install -e .`. Commands accept explicit data, configuration and output paths, so they can be invoked outside the clone. The wheel contains the Python code; versioned data and archived results are read from the clone using those paths.
+On Windows activate with `.venv\Scripts\activate`. For editable development use `python -m pip install -e .`. The wheel contains Python code; the cloned repository supplies versioned data and reference predictions through explicit paths.
 
-## Dependencies
-
-The base package requires NumPy `>=1.26.4,<3`, SciPy `>=1.11,<2` and scikit-learn `>=1.5,<2`. These ranges are declared in [`pyproject.toml`](../pyproject.toml) and [`requirements.txt`](../requirements.txt). The standard library `unittest` runner is used for local tests.
-
-The original reference computation used Python 3.11.16, NumPy 1.26.4, SciPy 1.13.1, scikit-learn 1.6.1 and PyTorch 2.5.1 with CUDA 12.1. [`requirements-reference.txt`](../requirements-reference.txt) records these numerical package versions. The actual training environment is also preserved in each archived run's provenance under `results`.
-
-A clean local scoring install on macOS arm64 was validated with Python 3.14.5, NumPy 2.5.4, SciPy 1.18.1, scikit-learn 1.9.1, joblib 1.6.0 and threadpoolctl 3.7.0. This local environment is separate from the archived cluster training environment. A new run records its own actual versions.
-
-## Optional residue-reader fitting
+## Model-specific optional dependencies
 
 ```bash
-python -m pip install ".[reference-residue-training]"
+python -m pip install ".[esm2]"
+# Or, for ProtT5:
+python -m pip install ".[prott5]"
 ```
 
-This adds PyTorch `>=2.5,<3`. Install a CUDA or CPU build appropriate for your machine. The base package can score predictions and fit pooled readers without PyTorch. Residue-reader fitting needs the exact external representation cache described in [residue evaluation](residue_evaluation.md).
+ESM-2 uses PyTorch, Transformers and huggingface-hub. ProtT5 additionally uses SentencePiece and protobuf. The base package does not install any of these inference dependencies. Both sequence and residue linear/ridge reader training use NumPy/scikit-learn.
 
-## Local checks
+Dependency ranges are declared in [`pyproject.toml`](../pyproject.toml). [`requirements.txt`](../requirements.txt) contains base ranges. The inference validation environment and archived reference environment are listed separately in [resources](resources.md); actual versions are saved with each run.
+
+## Download pinned model files
+
+```bash
+confomeval-download --model-config configs/models/esm2_8m.json
+confomeval-download --model-config configs/models/esm2_650m.json
+confomeval-download --model-config configs/models/prott5.json
+```
+
+Run only the download(s) you need. The command downloads the declared immutable model revision, encoder weights, configuration and tokenizer into the Hugging Face cache. It prints the resolved snapshot path. Use `--cache-dir /path/to/model-cache` to choose the cache location. Extraction uses the same `--cache-dir`, or accepts `--snapshot /path/to/downloaded/snapshot`. Add `--local-files-only` to avoid network access during extraction. Model weights are external inputs and are not committed to this repository.
+
+For inference choose `--device cpu`, `--device cuda` or `--device mps`; the requested device must exist. `--dtype float32`, `float16` and `bfloat16` override the configured precision. CPU float32 is the default. Select one precision and long-sequence policy before comparing models, and keep the run configuration.
+
+## Verify the installation
 
 ```bash
 python -m unittest discover -s tests -v
-python examples/representation_archive.py --output-dir runs/example-archive
 confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
-Run these manually. See [testing and reproduction](testing.md) for the checks and output scope.
+The tests run with base dependencies, without downloading models. Real-checkpoint inference and evaluation evidence is listed in [model validation](model_validation.md).

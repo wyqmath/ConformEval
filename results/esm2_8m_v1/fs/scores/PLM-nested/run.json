@@ -1,0 +1,123 @@
+{
+  "benchmark_data_version": "2026-10-14-data-lock-v01+FD.03",
+  "completed_at": "2026-10-16T23:20:36+08:00",
+  "dependencies": {
+    "numpy": "2.5.4",
+    "python": "3.14.5",
+    "scikit_learn": "1.9.1"
+  },
+  "eligible_sample_counts": {
+    "FS-L2-grouped-PU-ranking": 8879
+  },
+  "input_sha256": {
+    "data/v0.3.1/case_modules.tsv": "0768a43ed1ebeb55e9982d67ae00fd60281e4beb7662888e6e9b6548676c390a",
+    "data/v0.3.1/case_samples.tsv.gz": "56d9459d4fc91bbf27e5412e15694b740f1243bc41e9955b4ee9ef6b1b988d2b",
+    "data/v0.3.1/case_sources.tsv": "ed8684b47048ad5d87a0c45ce01d0cea02a6cf461eef1a95fc3f9c4f654c608d",
+    "data/v0.3.1/dataset_manifest.json": "9ce1dafd90d320815074942f354ea8423af6dce49d5efa3122a0a87beec84985",
+    "data/v0.3.1/folds/fold_qc.tsv": "0a69466ad1e6a9734caa9a9c08984909e5a1290a03367353ca36e22c4dae925c",
+    "data/v0.3.1/folds/inner_validation_groups.tsv.gz": "8295c000aae6f804db1ead707451846256c51e60577b1081c30f308660413124",
+    "data/v0.3.1/folds/outer_group_holdout.tsv": "1942ff508704046a072dcd2f747d72bf80629291e0602108a2600a20c00af0f4",
+    "data/v0.3.1/fs_region_full_length_labels.tsv.gz": "830190fe0178d299002f92bbfb3a1bb1450f621c31cde5425b5c20bae98688f4",
+    "data/v0.3.1/position_labels_strict.tsv.gz": "35b104451ee9e03d673ae978883a1b99d6dc9a4d29f0bae739229c730762e6f1",
+    "data/v0.3.1/position_labels_structure_reference_candidate.tsv.gz": "2320fc1212d0e53cd4d921c00c2f3d27aaff90bd425bc4f4d56e3d84597aaacf",
+    "data/v0.3.1/representation_coverage.tsv.gz": "66f126d11bec9c6f231360ad76e9c67ad26eb1408a1953117e5b3bab57c9e079",
+    "data/v0.3.1/sample_sequences.tsv.gz": "74a785a6d2b9618c6fb14b6954295a850658b4456c769feaf27976593d3b6a24",
+    "data/v0.3.1/sequences.fasta": "5082dcc8d37f029aa149aec46069c757e705b9216988c711715c5217713b2a4b",
+    "data/v0.3.1/sources.tsv": "89dd3d283d0d202df4446afbbe3a0fb310373afa18b4e2e0ddf642577ec9f03d",
+    "data/v0.3.1/task_samples.tsv.gz": "2a14cc9c3fe066ded670834208553ebfe9b20a1e1fe45f7b3d8bfa0c8e167af4",
+    "model_metadata": "12ba1bca0390f2d49c486ec923f9687cd036aa9d427c4df9bca2a8505a1be8ed",
+    "prediction_file": "5de8f60a8a71ca8b38f8aca9e7da73388ce7c3d1ccf810463a96ba6185a3f645",
+    "scoring_protocol": "4caf1ecd04f609ea21ccc3313ee00b3032b9ac0a36d777bb4d05db75ec2c9b8c"
+  },
+  "model_metadata": {
+    "arms": [
+      "PLM-composition",
+      "PLM-hidden3",
+      "PLM-hidden6",
+      "PLM-length",
+      "PLM-nearest",
+      "PLM-nested",
+      "PLM-training-prior"
+    ],
+    "candidate_layers": [
+      3,
+      6
+    ],
+    "extraction_config": {
+      "adapter": "esm2",
+      "device": "cpu",
+      "dtype": "float32",
+      "layers": [
+        3,
+        6
+      ],
+      "long_sequence": {
+        "max_residues": 1022,
+        "overlap": 128,
+        "policy": "window"
+      },
+      "model_id": "facebook/esm2_t6_8M_UR50D",
+      "pooling": "mean",
+      "revision": "c731040fcd8d73dceaa04b0a8e6329b345b0f5df",
+      "schema_version": 1,
+      "store_residues": false
+    },
+    "model_id": "facebook/esm2_t6_8M_UR50D",
+    "model_revision": "c731040fcd8d73dceaa04b0a8e6329b345b0f5df",
+    "pooling": "mean",
+    "prediction_code_sha256": "b69a9a76cb8fbc52dd36d65ce46ae4371f62f240b1eb78bfacb362c5287c6290",
+    "prediction_method": "nested grouped configured readers",
+    "project": "ConformEval",
+    "reader_configuration": {
+      "C_grid": [
+        0.1,
+        1.0
+      ],
+      "baselines": [
+        "length",
+        "composition",
+        "nearest",
+        "training-prior"
+      ],
+      "class_weight": "balanced",
+      "diagnostic_layers": true,
+      "max_iter": 5000,
+      "metric_tie_tolerance": 1e-12,
+      "predictors": [
+        "logistic"
+      ],
+      "preprocessing": "fit_on_training_only",
+      "residue_baselines": [
+        "traditional"
+      ],
+      "schema_version": 1,
+      "seed": 2026
+    },
+    "scope": "retrospective_grouped_development",
+    "training_protocol": "frozen_nested_grouped_oof_v1"
+  },
+  "model_training_protocol_self_attested": true,
+  "outer_folds": {
+    "FS-L2-grouped-PU-ranking": 10
+  },
+  "output_sha256": {
+    "metrics.json": "058c0bae492902e17bb5ec606c3b063a3b7ba2c59c59428af92e5e95b97b74aa",
+    "scored_predictions.tsv.gz": "6188f747935a52b07ccd8f8b539f97d15e8f3380c0cd042fa817ce8cdc451b5a"
+  },
+  "prediction_counts": {
+    "FS-L2-grouped-PU-ranking": 8879
+  },
+  "project": "ConformEval",
+  "scope": "frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer",
+  "scorer_sha256": "5ce40471102d0b21673753c6baa2aa7a5bf8c3d71a41bd5c54170c86d5741cbb",
+  "scorer_uses_outer_test_labels_for_model_selection": false,
+  "scoring_protocol_id": "ConformEval-0.3-frozen-grouped-development",
+  "source_output_sha256": {
+    "metrics.json": "ec82db2ed6d1bbbf80a11b039eadefd49fdf902d9c3436e37c33d860d8d777af",
+    "scored_predictions.tsv.gz": "6188f747935a52b07ccd8f8b539f97d15e8f3380c0cd042fa817ce8cdc451b5a"
+  },
+  "source_run_sha256": "ddbae2b8de763375be19e1c6182c3f93208f152bc0bf83507f589beef2a0255d",
+  "started_at": "2026-10-16T23:20:36+08:00",
+  "status": "PASS",
+  "warnings": []
+}

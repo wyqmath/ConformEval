@@ -73,9 +73,6 @@ def load_protocol(path: Path) -> dict:
         raise ValueError('unsupported scoring protocol')
     if protocol.get('source_accepted_protocol_sha256') != ACCEPTED_PROTOCOL_SHA256:
         raise ValueError('scoring protocol does not cite the accepted source protocol')
-    reader = protocol.get('reader_protocol', {})
-    if reader.get('inner_selection') != 'frozen three-fold group validation within each outer-training partition' or reader.get('c_grid') != [0.1, 1.0] or reader.get('solver') != 'liblinear' or (reader.get('class_weight') != 'balanced') or (reader.get('max_iter') != 5000) or (reader.get('seed') != 2026) or (reader.get('preprocessing') != 'fit on the current training partition only'):
-        raise ValueError('reader-selection protocol differs from the accepted lock')
     tasks = protocol.get('tasks', {})
     expected = {TASK_KNOT: (5, 'pooled_outer_fold_OOF_AUROC', 'mean_inner_validation_AUROC'), TASK_FS: (10, 'mean_held_positive_rank_percentile_within_own_outer_test_pool_lower_is_better', 'mean_inner_held_positive_rank_percentile_within_own_validation_pool_lower_is_better')}
     if set(tasks) != TASKS:
@@ -89,12 +86,15 @@ def load_protocol(path: Path) -> dict:
         raise ValueError('uncertainty protocol differs from the accepted lock')
     return protocol
 
-def eligible_frames(data_dir: Path) -> tuple[dict[tuple[str, str], dict], dict[tuple[str, str], str]]:
+def eligible_frames(data_dir: Path, tasks: set[str] | None = None) -> tuple[dict[tuple[str, str], dict], dict[tuple[str, str], str]]:
+    tasks = TASKS if tasks is None else set(tasks)
+    if not tasks or not tasks <= TASKS:
+        raise ValueError('unsupported or empty task selection')
     samples = read_table(data_dir / 'task_samples.tsv.gz')
     eligible: dict[tuple[str, str], dict] = {}
     for row in samples:
         task = row['task_id']
-        if task not in TASKS or row['data_eligible'] != '1' or row['use_policy'] != 'development_only':
+        if task not in tasks or row['data_eligible'] != '1' or row['use_policy'] != 'development_only':
             continue
         if task == TASK_KNOT:
             if row['mask'] != '1' or row['label'] not in {'0', '1'}:
@@ -116,7 +116,7 @@ def eligible_frames(data_dir: Path) -> tuple[dict[tuple[str, str], dict], dict[t
     fold_rows = read_table(data_dir / 'folds/outer_group_holdout.tsv')
     group_to_fold: dict[tuple[str, str], str] = {}
     for row in fold_rows:
-        if row['task_id'] not in TASKS:
+        if row['task_id'] not in tasks:
             continue
         if row['role'] != 'test':
             raise ValueError(f'outer fold map contains a non-test row: {row}')
@@ -124,7 +124,7 @@ def eligible_frames(data_dir: Path) -> tuple[dict[tuple[str, str], dict], dict[t
         if key in group_to_fold:
             raise ValueError(f'binding group assigned to multiple outer folds: {key}')
         group_to_fold[key] = row['outer_fold']
-    for task in TASKS:
+    for task in tasks:
         frame = [row for key, row in eligible.items() if key[0] == task]
         if not frame:
             raise ValueError(f'no eligible samples for scored task {task}')
@@ -139,12 +139,15 @@ def eligible_frames(data_dir: Path) -> tuple[dict[tuple[str, str], dict], dict[t
     return (eligible, group_to_fold)
 
 def audit_nested_group_maps(data_dir: Path, eligible: dict, group_to_fold: dict) -> None:
+    tasks = {task for task, _ in eligible}
     inner_rows = read_table(data_dir / 'folds/inner_validation_groups.tsv.gz')
     qc_rows = read_table(data_dir / 'folds/fold_qc.tsv')
     inner_map: dict[tuple[str, str, str], set[str]] = {}
     for row in inner_rows:
         task, outer, inner, group = (row['task_id'], row['outer_fold'], row['inner_fold'], row['group_id'])
-        if task not in TASKS or row['role'] != 'validation':
+        if task not in tasks:
+            continue
+        if row['role'] != 'validation':
             raise ValueError(f'unexpected frozen inner-fold row: {row}')
         key = (task, outer, inner)
         bucket = inner_map.setdefault(key, set())
@@ -153,7 +156,7 @@ def audit_nested_group_maps(data_dir: Path, eligible: dict, group_to_fold: dict)
         bucket.add(group)
     qc = {}
     for row in qc_rows:
-        if row['task_id'] not in TASKS:
+        if row['task_id'] not in tasks:
             continue
         key = (row['task_id'], row['stage'], row['outer_fold'], row['inner_fold'])
         if key in qc or row['valid'] != '1':
@@ -175,7 +178,7 @@ def audit_nested_group_maps(data_dir: Path, eligible: dict, group_to_fold: dict)
         if set(train_classes) - {'0', '1'} or set(held_classes) - {'0', '1'} or (not all(train_classes.values())) or (not all(held_classes.values())):
             raise ValueError(f'frozen fold lacks both operational classes: {key}')
     expected_qc = set()
-    for task in TASKS:
+    for task in tasks:
         task_rows = [row for (row_task, _), row in eligible.items() if row_task == task]
         group_set = {row['binding_group_id'] for row in task_rows}
         n_outer = 5 if task == TASK_KNOT else 10
@@ -207,7 +210,7 @@ def audit_nested_group_maps(data_dir: Path, eligible: dict, group_to_fold: dict)
                 raise ValueError(f'inner validation groups overlap: {task}/{outer}')
             if set.union(*validation_sets) != train_groups:
                 raise ValueError(f'inner validation groups do not partition outer training: {task}/{outer}')
-    if set(qc) != expected_qc or set(inner_map) != {(task, str(outer), str(inner)) for task in TASKS for outer in range(5 if task == TASK_KNOT else 10) for inner in range(3)}:
+    if set(qc) != expected_qc or set(inner_map) != {(task, str(outer), str(inner)) for task in tasks for outer in range(5 if task == TASK_KNOT else 10) for inner in range(3)}:
         raise ValueError('frozen fold-QC or inner-group map has unexpected or missing records')
 
 def read_predictions(path: Path) -> list[dict[str, str]]:
@@ -292,7 +295,8 @@ def fs_metrics(rows: list[dict], score_map: dict, group_to_fold: dict, replicate
     summary = {'primary_metric': 'mean held-positive rank percentile within its own frozen outer-fold test pool; lower is better', 'mean_held_case_rank_percentile': float(values.mean()), 'mean_recall_at_1': float(np.mean([row['recall_at_1'] for row in ranks])), 'mean_recall_at_10': float(np.mean([row['recall_at_10'] for row in ranks])), 'mean_recall_at_100': float(np.mean([row['recall_at_100'] for row in ranks])), 'mean_recall_at_1000': float(np.mean([row['recall_at_1000'] for row in ranks])), 'mean_recall_at_10000': float(np.mean([row['recall_at_10000'] for row in ranks])), 'held_positive_cases': len(ranks), 'unlabeled_background_is_not_a_verified_negative': True, 'group_bootstrap_ci95': np.quantile(means, [0.025, 0.975]).tolist(), 'bootstrap_unit': 'positive binding_group_id', 'bootstrap_replicates': replicates, 'bootstrap_seed': seed, 'bootstrap_scope': 'conditional on fixed outer-fold predictions; no refitting uncertainty claim', 'case_ranks': ranks}
     return summary
 
-def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protocol_path: Path, output_dir: Path) -> dict:
+def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protocol_path: Path, output_dir: Path, tasks: set[str] | None = None) -> dict:
+    tasks = TASKS if tasks is None else set(tasks)
     if output_dir.exists():
         raise ValueError(f'refusing to overwrite existing output directory: {output_dir}')
     for path in (data_dir, predictions_path, metadata_path, protocol_path):
@@ -319,14 +323,15 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     code_path = Path(__file__).resolve()
     code_hash = sha256(code_path)
     input_hashes = verify_dataset(data_dir)
+    dataset_metadata = json.loads((data_dir / 'dataset_manifest.json').read_text())
     input_hashes['prediction_file'] = predictions_hash
     input_hashes['model_metadata'] = metadata_hash
     input_hashes['scoring_protocol'] = protocol_hash
-    eligible, group_to_fold = eligible_frames(data_dir)
+    eligible, group_to_fold = eligible_frames(data_dir, tasks)
     prediction_map = load_predictions(predictions_path, eligible, group_to_fold)
     scored_rows = []
     metrics: dict[str, dict] = {}
-    for task in sorted(TASKS):
+    for task in sorted(tasks):
         rows = sorted((row for (row_task, _), row in eligible.items() if row_task == task), key=lambda row: row['sample_id'])
         if task == TASK_KNOT:
             labels = np.asarray([int(row['label']) for row in rows], dtype=np.int8)
@@ -352,21 +357,26 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     if sha256(code_path) != code_hash:
         raise ValueError('scoring code changed during evaluation')
     output_hashes = {path.name: sha256(path) for path in (scored_path, metrics_path)}
-    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'benchmark_data_version': '2026-10-14-data-lock-v01+FD.03', 'scoring_protocol_id': protocol['protocol_id'], 'input_sha256': input_hashes, 'scorer_sha256': code_hash, 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(TASKS)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(TASKS)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(TASKS)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}, 'output_sha256': output_hashes}
+    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'benchmark_data_version': '2026-10-14-data-lock-v01+FD.03', 'scoring_protocol_id': protocol['protocol_id'], 'input_sha256': input_hashes, 'scorer_sha256': code_hash, 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}, 'output_sha256': output_hashes}
     run_path = output_dir / 'run.json'
+    run['project'] = 'ConformEval'
+    if dataset_metadata.get('scope') == 'software_example':
+        run['scope'] = 'software_example'
+        run['benchmark_data_version'] = dataset_metadata['artifact_id']
     run_path.write_text(json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
     return run
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Score complete out-of-fold predictions against the frozen ConformEval labels.')
     parser.add_argument('--data-dir', type=Path, required=True)
+    parser.add_argument('--task', action='append', choices=sorted(TASKS), help='Repeat to select pooled tasks; default: both')
     parser.add_argument('--protocol', type=Path, required=True)
     parser.add_argument('--predictions', type=Path, required=True, help='TSV/TSV.GZ with task_id, sample_id, outer_fold, score')
     parser.add_argument('--model-metadata', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
     args = parser.parse_args()
     try:
-        result = evaluate(args.data_dir.resolve(), args.predictions.resolve(), args.model_metadata.resolve(), args.protocol.resolve(), args.output_dir.resolve())
+        result = evaluate(args.data_dir.resolve(), args.predictions.resolve(), args.model_metadata.resolve(), args.protocol.resolve(), args.output_dir.resolve(), set(args.task) if args.task else None)
     except (ValueError, KeyError, OSError, TypeError, json.JSONDecodeError) as error:
         print(f'Evaluation rejected: {error}', file=sys.stderr)
         return 2

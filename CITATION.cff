@@ -5,7 +5,7 @@ type: software
 authors:
   - given-names: Jiayuan
     family-names: Ma
-version: 0.4.0
+version: 0.5.0
 abstract: >-
   A benchmark package for evaluating sequence-derived protein representations
   on topology, disorder, fold-switching, and condition-dependent state tasks.

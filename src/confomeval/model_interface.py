@@ -72,10 +72,11 @@ def _check_archive_hash(path: Path, expected_archive_sha256: str) -> None:
 def load_mean_representation(path: Path, expected_sha256: str, expected_length: int, expected_archive_sha256: str, selected_layers: tuple[int, ...], model: str, revision: str) -> tuple[np.ndarray, int]:
     _check_archive_hash(path, expected_archive_sha256)
     with np.load(path, allow_pickle=False) as archive:
-        if 'mean_layers' not in archive.files:
+        key = 'sequence_layers' if 'sequence_layers' in archive.files else 'mean_layers'
+        if key not in archive.files:
             raise ValueError(f'feature archive has no mean_layers: {path.name}')
         meta = _load_meta(archive)
-        values = np.asarray(archive['mean_layers'])
+        values = np.asarray(archive[key])
     _validate_identity(meta, expected_sha256, expected_length, model, revision)
     layer_ids = _layer_ids(meta, 'mean')
     if values.ndim != 2 or values.shape[0] != len(layer_ids) or values.shape[1] < 1:

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "predictors": [
+    "logistic"
+  ],
+  "C_grid": [
+    0.1,
+    1.0
+  ],
+  "seed": 2026,
+  "max_iter": 5000,
+  "class_weight": "balanced",
+  "diagnostic_layers": true,
+  "baselines": [
+    "length",
+    "composition",
+    "nearest",
+    "training-prior"
+  ],
+  "preprocessing": "fit_on_training_only",
+  "residue_baselines": [
+    "traditional"
+  ],
+  "metric_tie_tolerance": 1e-12
+}

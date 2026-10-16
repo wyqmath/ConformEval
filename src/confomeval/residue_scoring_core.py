@@ -9,13 +9,6 @@ from sklearn.metrics import average_precision_score, roc_auc_score
 BOOTSTRAPS = 2000
 BOOTSTRAP_SEED = 2026
 
-# These fingerprints identify this fixed scientific protocol, not repository files.
-REFERENCE_CONFIG_HASHES = {
-    'data_protocol.json': '5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69',
-    'evaluation_protocol.json': '9a814a83ef8f39b0ddd03b1cabda75cd58a2c0b67ed105e8433dad9871048648',
-    'extraction_request.json': 'c6952a6425b6477a528ee3baeb0fb6b6131abc320c6dcf00f5cb515e7d4d0725',
-}
-
 def stamp() -> str:
     return datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
 
@@ -28,16 +21,6 @@ def sha256_file(path: Path) -> str:
 
 def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode('ascii')).hexdigest()
-
-def validate_reference_config(config_dir: Path) -> dict[str, str]:
-    """Require the versioned residue task settings used by the fixed reader."""
-    hashes = {}
-    for name, expected in REFERENCE_CONFIG_HASHES.items():
-        path = config_dir / name
-        if not path.is_file() or sha256_file(path) != expected:
-            raise ValueError(f'unsupported residue reference configuration: {name}')
-        hashes[name] = expected
-    return hashes
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
     opener = gzip.open if path.suffix == '.gz' else open
@@ -71,7 +54,7 @@ def load_fasta(path: Path) -> dict[str, str]:
                 records[current].append(line.upper())
     return {key: ''.join(parts) for key, parts in records.items()}
 
-def validate_label_rows(samples: dict[str, dict], labels_by_sample: dict[str, list[dict]], sequences: dict[str, str]) -> None:
+def validate_label_rows(samples: dict[str, dict], labels_by_sample: dict[str, list[dict]], sequences: dict[str, str], example: bool = False) -> None:
     if not samples:
         raise ValueError('candidate sample table is empty')
     if set(labels_by_sample) - set(samples):
@@ -84,7 +67,7 @@ def validate_label_rows(samples: dict[str, dict], labels_by_sample: dict[str, li
         seq_sha = sample['sequence_sha256']
         if seq_id != f'SEQ_{seq_sha}' or len(seq) != int(sample['length']) or sha256_text(seq) != seq_sha:
             raise ValueError(f'sequence identity/length/hash mismatch: {sid}')
-        if sample['use_policy'] != 'development_only' or sample['label_view'] != 'reference':
+        if sample['use_policy'] != 'development_only' or sample['label_view'] != ('synthetic_example' if example else 'reference'):
             raise ValueError(f'sample is outside the locked development reference task: {sid}')
         rows = labels_by_sample.get(sid, [])
         seen = set()
@@ -100,6 +83,10 @@ def validate_label_rows(samples: dict[str, dict], labels_by_sample: dict[str, li
             if label not in {'0', '1'}:
                 raise ValueError(f'unknown label was included in scoring rows: {sid}/{pos}')
             counts[label] += 1
+            if example:
+                if row['label_source'] != 'synthetic_example':
+                    raise ValueError('software example requires synthetic labels')
+                continue
             if label == '1':
                 if not (row['direct_label'] == '1' and row['direct_mask'] == '1' and (row['label_source'] == 'direct_experimental_disorder')):
                     raise ValueError(f'positive lacks direct experimental disorder evidence: {sid}/{pos}')
