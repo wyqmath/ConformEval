@@ -22,7 +22,7 @@ def digest(path: Path) -> str:
 
 
 def json_write(path: Path, obj) -> None:
-    Path(path).write_text(json.dumps(obj, indent=2, sort_keys=True, allow_nan=False) + '\n')
+    Path(path).write_text(json.dumps(obj, indent=2, sort_keys=True, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
 
 
 def safe_path(root: Path, name: str) -> Path:
@@ -35,7 +35,7 @@ def safe_path(root: Path, name: str) -> Path:
 
 def versions() -> dict:
     result = {'python': platform.python_version()}
-    for name in ['numpy', 'scipy', 'scikit-learn', 'torch', 'transformers', 'sentencepiece', 'huggingface-hub']:
+    for name in ['numpy', 'scipy', 'scikit-learn', 'torch', 'transformers', 'sentencepiece', 'huggingface-hub', 'tzdata']:
         try:
             result[name] = version(name)
         except PackageNotFoundError:
@@ -86,7 +86,7 @@ class RunRecord:
                                             (1 if platform.system() == 'Darwin' else 1024)) if resource else None))
         if error:
             self.data.update(error_type=type(error).__name__, error=str(error))
-        self.data['output_sha256'] = {str(p.relative_to(self.output)): digest(p)
+        self.data['output_sha256'] = {p.relative_to(self.output).as_posix(): digest(p)
                                      for p in sorted(self.output.rglob('*'))
                                      if p.is_file() and p.name != 'run.json'}
         self.save()

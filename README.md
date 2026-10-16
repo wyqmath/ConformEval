@@ -64,7 +64,7 @@ Data definitions and sources are documented in [data documentation](docs/data.md
 
 Inputs are an exact-sequence FASTA and a pinned model configuration. Extraction writes sequence/residue NPZ archives and `representation_manifest.json`. Training reads those archives, task labels and fixed folds, and writes out-of-fold predictions, fitted parameters, selected settings, metrics and `run.json`. Complete external prediction TSVs can also be scored directly. See [the archive and adapter contract](docs/model_input.md).
 
-Base scoring and linear/ridge reader training require Python **3.11+**, NumPy, SciPy and scikit-learn. Model dependencies are optional: install `.[esm2]` for ESM-2 or `.[prott5]` for ProtT5. See [installation](docs/installation.md) for tested versions and [resources](docs/resources.md) for measured time, peak memory, cache sizes and long-sequence handling.
+Base scoring and linear/ridge reader training require Python **3.11+**, NumPy, SciPy and scikit-learn. Actual operating-system installation and scoring coverage is listed in the [platform matrix](docs/platforms.md); Windows is **未测试 / Not tested**. Model dependencies are optional: install `.[esm2]` for ESM-2 or `.[prott5]` for ProtT5. See [installation](docs/installation.md) for tested versions and [resources](docs/resources.md) for measured time, peak memory, cache sizes and long-sequence handling.
 
 ## Tutorial 1: reproduce reference scores from included predictions
 
@@ -79,7 +79,7 @@ python -m pip install .
 confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
-Expected output: `runs/reference-replay/REPLAY.json` has `status: PASS`. All seven arms for each of the three tasks match the archived metrics and group-bootstrap intervals at tolerance `1e-10`. The table above shows the reference primary results. The output directory must be new. On Windows activate with `.venv\Scripts\activate`.
+Expected output: `runs/reference-replay/REPLAY.json` has `status: PASS`. All seven arms for each of the three tasks match the archived metrics and group-bootstrap intervals at tolerance `1e-10`. The table above shows the reference primary results. The output directory must be new. Windows activation commands and their validation status are in [installation](docs/installation.md).
 
 For a small, immediate external-prediction example, the actual TSV and metadata are included:
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 — 2026-10-17
+
+- Read UTF-8 inputs explicitly, accept an optional BOM, and write new JSON/FASTA text with LF line endings.
+- Preserve frozen data, configuration and result bytes during Git checkout.
+- Add text portability tests and a Windows timezone-data dependency; record actual operating-system installation/scoring coverage.
+
 ## 0.5.0 — 2026-10-16
 
 - Add real ESM-2 and ProtT5 adapters with full coordinate projection and long-sequence windows.

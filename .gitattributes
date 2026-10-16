@@ -1,0 +1,9 @@
+# Keep source/document text deterministic across checkouts.
+* text=auto eol=lf
+# Scientific/configuration snapshots retain their original exact bytes.
+data/** -text
+results/** -text
+configs/** -text
+examples/mini/** -text
+*.gz -text
+*.npz -text

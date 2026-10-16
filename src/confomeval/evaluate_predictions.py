@@ -36,7 +36,7 @@ def now() -> str:
 
 def read_table(path: Path) -> list[dict[str, str]]:
     opener = gzip.open if path.suffix == '.gz' else open
-    with opener(path, 'rt', newline='', encoding='utf-8') as handle:
+    with opener(path, 'rt', newline='', encoding='utf-8-sig') as handle:
         return list(csv.DictReader(handle, delimiter='\t'))
 
 def write_gzip_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
@@ -49,7 +49,7 @@ def write_gzip_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
 
 def verify_dataset(data_dir: Path) -> dict[str, str]:
     manifest_path = data_dir / 'dataset_manifest.json'
-    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
     records = manifest.get('files', {})
     if not records:
         raise ValueError('dataset manifest has no file records')
@@ -68,7 +68,7 @@ def verify_dataset(data_dir: Path) -> dict[str, str]:
     return hashes
 
 def load_protocol(path: Path) -> dict:
-    protocol = json.loads(path.read_text(encoding='utf-8'))
+    protocol = json.loads(path.read_text(encoding='utf-8-sig'))
     if protocol.get('schema_version') != 1 or protocol.get('protocol_id') != 'ConformEval-0.3-frozen-grouped-development':
         raise ValueError('unsupported scoring protocol')
     if protocol.get('source_accepted_protocol_sha256') != ACCEPTED_PROTOCOL_SHA256:
@@ -215,7 +215,7 @@ def audit_nested_group_maps(data_dir: Path, eligible: dict, group_to_fold: dict)
 
 def read_predictions(path: Path) -> list[dict[str, str]]:
     opener = gzip.open if path.suffix == '.gz' else open
-    with opener(path, 'rt', newline='', encoding='utf-8') as handle:
+    with opener(path, 'rt', newline='', encoding='utf-8-sig') as handle:
         reader = csv.DictReader(handle, delimiter='\t')
         if set(reader.fieldnames or ()) != set(PREDICTION_FIELDS):
             raise ValueError(f"prediction table must contain exactly these fields: {', '.join(PREDICTION_FIELDS)}")
@@ -306,7 +306,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     protocol = load_protocol(protocol_path)
     metadata_hash = sha256(metadata_path)
     predictions_hash = sha256(predictions_path)
-    metadata = json.loads(metadata_path.read_text(encoding='utf-8'))
+    metadata = json.loads(metadata_path.read_text(encoding='utf-8-sig'))
     for key in ('model_id', 'model_revision', 'prediction_method', 'prediction_code_sha256', 'training_protocol'):
         if not isinstance(metadata.get(key), str) or not metadata[key].strip():
             raise ValueError(f'model metadata is missing required field: {key}')
@@ -323,7 +323,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     code_path = Path(__file__).resolve()
     code_hash = sha256(code_path)
     input_hashes = verify_dataset(data_dir)
-    dataset_metadata = json.loads((data_dir / 'dataset_manifest.json').read_text())
+    dataset_metadata = json.loads((data_dir / 'dataset_manifest.json').read_text(encoding='utf-8-sig'))
     input_hashes['prediction_file'] = predictions_hash
     input_hashes['model_metadata'] = metadata_hash
     input_hashes['scoring_protocol'] = protocol_hash
@@ -353,7 +353,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     scored_path = output_dir / 'scored_predictions.tsv.gz'
     write_gzip_tsv(scored_path, scored_rows, ['task_id', 'sample_id', 'outer_fold', 'binding_group_id', 'score', 'learning_label', 'learning_mask', 'biological_target', 'biological_mask', 'label', 'mask'])
     metrics_path = output_dir / 'metrics.json'
-    metrics_path.write_text(json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    metrics_path.write_text(json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
     if sha256(code_path) != code_hash:
         raise ValueError('scoring code changed during evaluation')
     output_hashes = {path.name: sha256(path) for path in (scored_path, metrics_path)}
@@ -363,7 +363,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     if dataset_metadata.get('scope') == 'software_example':
         run['scope'] = 'software_example'
         run['benchmark_data_version'] = dataset_metadata['artifact_id']
-    run_path.write_text(json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
+    run_path.write_text(json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
     return run
 
 def main() -> int:

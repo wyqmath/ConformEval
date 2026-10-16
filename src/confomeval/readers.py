@@ -19,7 +19,7 @@ AA20 = 'ACDEFGHIKLMNPQRSTVWY'
 def parse_fasta(path: Path) -> dict[str, str]:
     records: dict[str, list[str]] = {}
     current = None
-    for raw in path.read_text(encoding='utf-8').splitlines():
+    for raw in path.read_text(encoding='utf-8-sig').splitlines():
         line = raw.strip()
         if not line:
             continue

@@ -47,10 +47,10 @@ class AdapterTests(unittest.TestCase):
         for name,layers in [('esm2_8m',[3,6]),('esm2_650m',[17,33]),('prott5',[12,24])]:
             config=load_config(ROOT/'configs/models'/f'{name}.json')
             self.assertEqual(config['layers'],layers)
-        original=json.loads((ROOT/'configs/models/esm2_8m.json').read_text())
+        original=json.loads((ROOT/'configs/models/esm2_8m.json').read_text(encoding='utf-8-sig'))
         for field,value in [('layers',[0]),('revision','main'),('pooling','include_special_tokens')]:
             with self.subTest(field=field),tempfile.TemporaryDirectory() as temp:
-                invalid={**original,field:value};path=Path(temp)/'model.json';path.write_text(json.dumps(invalid))
+                invalid={**original,field:value};path=Path(temp)/'model.json';path.write_text(json.dumps(invalid), encoding='utf-8', newline='\n')
                 with self.assertRaises(ValueError):load_config(path)
 
 

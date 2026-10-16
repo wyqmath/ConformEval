@@ -19,7 +19,7 @@ from .runtime import RunRecord, digest, json_write, safe_path
 
 
 def reader_config(path: Path):
-    config = json.loads(path.read_text())
+    config = json.loads(path.read_text(encoding='utf-8-sig'))
     if config.get('schema_version') != 1 or config.get('preprocessing') != 'fit_on_training_only':
         raise ValueError('reader configuration requires training-only preprocessing')
     predictors = config.get('predictors')
@@ -69,7 +69,7 @@ def fit_reader(X, y, train, held, predictor, C, config, context, warning_rows):
 
 
 def load_archives(path, required, residue=False):
-    manifest=json.loads(path.read_text())
+    manifest=json.loads(path.read_text(encoding='utf-8-sig'))
     layers=manifest.get('candidate_layers')
     if not isinstance(layers,list) or not layers or len(set(layers))!=len(layers) or any(type(l) is not int or l<1 for l in layers):
         raise ValueError('invalid candidate layer manifest')
@@ -114,7 +114,7 @@ def load_archives(path, required, residue=False):
 
 def pooled_data(data_dir,task,manifest_path,example=False):
     hashes=verify_dataset(data_dir)
-    is_example=json.loads((data_dir/'dataset_manifest.json').read_text()).get('scope')=='software_example'
+    is_example=json.loads((data_dir/'dataset_manifest.json').read_text(encoding='utf-8-sig')).get('scope')=='software_example'
     if is_example != example:
         raise ValueError('software example requires explicit --example; benchmark data must omit it')
     eligible,group_to_fold=eligible_frames(data_dir,{task})
@@ -286,7 +286,7 @@ def train_task(args,record,config):
             arm_path=record.output/(arm+'.tsv.gz')
             write_gzip_tsv(arm_path,[{k:v for k,v in r.items() if k!='arm'} for r in pred_rows if r['arm']==arm],['task_id','sample_id','outer_fold','score'])
             evaluate(data_dir,arm_path,record.output/'model_metadata.json',args.protocol,record.output/'scores'/arm,{task})
-            metrics[arm]=json.loads((record.output/'scores'/arm/'metrics.json').read_text())['metrics'][task]
+            metrics[arm]=json.loads((record.output/'scores'/arm/'metrics.json').read_text(encoding='utf-8-sig'))['metrics'][task]
         json_write(record.output/'metrics.json',metrics)
     record.data.update(task_id=task,scope=metadata['scope'],candidate_layers=list(layers),
                        model_id=manifest['model_id'],model_revision=manifest['model_revision'],

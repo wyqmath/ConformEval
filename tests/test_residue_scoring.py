@@ -15,7 +15,7 @@ class ResidueScorerTests(unittest.TestCase):
         self.rows = [dict(task_id=TASK, sample_id='a', position_1based=p, outer_fold=0, score=s) for p, s in [(1, 0.2), (3, 0.8)]]
 
     def read(self, rows):
-        with self.path.open('w', newline='') as f:
+        with self.path.open('w', newline='', encoding='utf-8') as f:
             w = csv.DictWriter(f, fieldnames=list(self.rows[0]), delimiter='\t')
             w.writeheader()
             w.writerows(rows)

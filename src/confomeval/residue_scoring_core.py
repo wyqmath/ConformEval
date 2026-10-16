@@ -24,7 +24,7 @@ def sha256_text(value: str) -> str:
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
     opener = gzip.open if path.suffix == '.gz' else open
-    with opener(path, 'rt', newline='', encoding='utf-8') as f:
+    with opener(path, 'rt', newline='', encoding='utf-8-sig') as f:
         return list(csv.DictReader(f, delimiter='\t'))
 
 def write_tsv(path: Path, fields: list[str], rows: list[dict]) -> None:
@@ -38,7 +38,7 @@ def write_tsv(path: Path, fields: list[str], rows: list[dict]) -> None:
 def load_fasta(path: Path) -> dict[str, str]:
     records: dict[str, list[str]] = {}
     current = None
-    with path.open(encoding='utf-8') as f:
+    with path.open(encoding='utf-8-sig', newline='') as f:
         for raw in f:
             line = raw.strip()
             if not line:

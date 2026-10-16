@@ -134,7 +134,7 @@ class NestedReaderTests(unittest.TestCase):
             args = SimpleNamespace(output_dir=output, data_dir=root / 'missing_data', protocol=root / 'missing_protocol.json', feature_manifest=root / 'missing_features.json')
             with self.assertRaisesRegex(FileNotFoundError, 'missing_data'):
                 run(args)
-            record = json.loads((output / 'run.json').read_text(encoding='utf-8'))
+            record = json.loads((output / 'run.json').read_text(encoding='utf-8-sig'))
             self.assertEqual(record['status'], 'FAILED')
             self.assertEqual(record['error_type'], 'FileNotFoundError')
             self.assertIn('started_at', record)

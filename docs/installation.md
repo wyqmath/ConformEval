@@ -8,7 +8,7 @@ source .venv/bin/activate
 python -m pip install .
 ```
 
-On Windows activate with `.venv\Scripts\activate`. For editable development use `python -m pip install -e .`. The wheel contains Python code; the cloned repository supplies versioned data and reference predictions through explicit paths.
+For Windows commands and actual system coverage, see the platform section below. For editable development use `python -m pip install -e .`. The wheel contains Python code; the cloned repository supplies versioned data and reference predictions through explicit paths.
 
 ## Model-specific optional dependencies
 
@@ -42,3 +42,18 @@ confomeval-replay-reference --benchmark-root . --output-dir runs/reference-repla
 ```
 
 The tests run with base dependencies, without downloading models. Real-checkpoint inference and evaluation evidence is listed in [model validation](model_validation.md).
+
+## Text files and operating systems
+
+Use UTF-8 for JSON, FASTA and TSV inputs; an optional UTF-8 BOM is accepted. TSV and FASTA readers accept LF or CRLF line endings. New JSON/FASTA text and generated TSV records use LF. Invalid UTF-8 is rejected. Git checkout rules preserve frozen scientific/configuration files byte-for-byte, including any original CRLF, so their recorded hashes remain valid.
+
+On Windows, the base dependency set includes `tzdata` for the named evaluation timezone. These PowerShell commands correspond to the base installation and scoring route:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install .
+confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+```
+
+For `cmd.exe`, activate with `.venv\Scripts\activate.bat`. Windows execution is **未测试 / Not tested**. Actual macOS/Linux package-installation and scoring evidence, with Python versions, is recorded in the [platform matrix](platforms.md). The model inference device/precision coverage is separately recorded in [model validation](model_validation.md).

@@ -27,7 +27,7 @@ def sha256(path: Path) -> str:
 
 def read_tsv(path: Path, compressed: bool=False) -> list[dict[str, str]]:
     opener = gzip.open if compressed else open
-    with opener(path, 'rt', newline='', encoding='utf-8') as handle:
+    with opener(path, 'rt', newline='', encoding='utf-8-sig') as handle:
         return list(csv.DictReader(handle, delimiter='\t'))
 
 def write_tsv(path: Path, fields: list[str], rows: list[dict[str, str]]) -> None:
@@ -50,7 +50,7 @@ def fasta_records(path: Path) -> dict[str, str]:
     records: dict[str, str] = {}
     identifier = None
     sequence: list[str] = []
-    for line in path.read_text(encoding='utf-8').splitlines():
+    for line in path.read_text(encoding='utf-8-sig').splitlines():
         if line.startswith('>'):
             if identifier is not None:
                 if identifier in records:
@@ -147,7 +147,7 @@ def verify_coordinates(data_dir: Path) -> dict:
 def verify_predictions(path: Path) -> dict:
     counts = {task: 0 for task in EXPECTED}
     seen = set()
-    with gzip.open(path, 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(path, 'rt', newline='', encoding='utf-8-sig') as handle:
         reader = csv.DictReader(handle, delimiter='\t')
         required = {'task_id', 'outer_fold', 'arm', 'sample_id', 'learning_label', 'biological_target', 'biological_mask', 'label', 'mask', 'score'}
         if not required.issubset(reader.fieldnames or ()):
@@ -180,7 +180,7 @@ def verify_prediction_assignments(predictions_path: Path, data_dir: Path, expect
     if not tasks or not arms:
         raise ValueError('prediction audit requires nonempty task and arm sets')
     sample_path = data_dir / 'task_samples.tsv.gz'
-    with gzip.open(sample_path, 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(sample_path, 'rt', newline='', encoding='utf-8-sig') as handle:
         sample_rows = list(csv.DictReader(handle, delimiter='\t'))
     eligible = {}
     for row in sample_rows:
@@ -192,7 +192,7 @@ def verify_prediction_assignments(predictions_path: Path, data_dir: Path, expect
         eligible[key] = row
     fold_path = data_dir / 'folds/outer_group_holdout.tsv'
     group_fold = {}
-    with fold_path.open(newline='', encoding='utf-8') as handle:
+    with fold_path.open(newline='', encoding='utf-8-sig') as handle:
         for row in csv.DictReader(handle, delimiter='\t'):
             if row['task_id'] not in tasks:
                 continue
@@ -204,7 +204,7 @@ def verify_prediction_assignments(predictions_path: Path, data_dir: Path, expect
             group_fold[key] = row['outer_fold']
     observed: dict[tuple[str, str], set[str]] = {}
     actual_samples = set()
-    with gzip.open(predictions_path, 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(predictions_path, 'rt', newline='', encoding='utf-8-sig') as handle:
         reader = csv.DictReader(handle, delimiter='\t')
         for row in reader:
             task = row['task_id']
@@ -240,7 +240,7 @@ def verify_prediction_assignments(predictions_path: Path, data_dir: Path, expect
 
 def verify_task_catalog(root: Path) -> dict:
     catalog_path = root / 'data/task_catalog.tsv'
-    with catalog_path.open(newline='', encoding='utf-8') as handle:
+    with catalog_path.open(newline='', encoding='utf-8-sig') as handle:
         rows = list(csv.DictReader(handle, delimiter='\t'))
     count_fields = ('candidate_count_unit', 'eligible_count_unit', 'scored_count_unit')
     if not rows or any((field not in rows[0] for field in count_fields)):
@@ -273,12 +273,12 @@ def verify_task_catalog(root: Path) -> dict:
 
 def verify_knot_representation_coverage(data_dir: Path) -> dict:
     coverage_path = data_dir / 'representation_coverage.tsv.gz'
-    with gzip.open(coverage_path, 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(coverage_path, 'rt', newline='', encoding='utf-8-sig') as handle:
         coverage_rows = list(csv.DictReader(handle, delimiter='\t'))
     coverage = {(row['task_id'], row['sample_id'], row['sequence_sha256']): row for row in coverage_rows}
     ready_counts = {}
     sample_path = data_dir / 'task_samples.tsv.gz'
-    with gzip.open(sample_path, 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(sample_path, 'rt', newline='', encoding='utf-8-sig') as handle:
         samples = list(csv.DictReader(handle, delimiter='\t'))
     for task in ('KNOT-PRESENCE', 'KNOT-TYPE'):
         eligible = [row for row in samples if row['task_id'] == task and row['data_eligible'] == '1']
@@ -349,22 +349,22 @@ def audit_group_splits(eligible_groups: dict[str, set[str]], outer_rows: list[di
     return audit
 
 def verify_group_splits(data_dir: Path, scored_tasks: dict[str, dict[str, str]]) -> dict:
-    with gzip.open(data_dir / 'task_samples.tsv.gz', 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(data_dir / 'task_samples.tsv.gz', 'rt', newline='', encoding='utf-8-sig') as handle:
         samples = list(csv.DictReader(handle, delimiter='\t'))
     eligible_groups = {task: {row['binding_group_id'] for row in samples if row['task_id'] == task and row['data_eligible'] == '1'} for task in scored_tasks}
     outer_path = data_dir / 'folds/outer_group_holdout.tsv'
-    with outer_path.open(newline='', encoding='utf-8') as handle:
+    with outer_path.open(newline='', encoding='utf-8-sig') as handle:
         outer_rows = [row for row in csv.DictReader(handle, delimiter='\t') if row['task_id'] in scored_tasks]
     inner_path = data_dir / 'folds/inner_validation_groups.tsv.gz'
-    with gzip.open(inner_path, 'rt', newline='', encoding='utf-8') as handle:
+    with gzip.open(inner_path, 'rt', newline='', encoding='utf-8-sig') as handle:
         inner_rows = [row for row in csv.DictReader(handle, delimiter='\t') if row['task_id'] in scored_tasks]
     fold_counts = {task: int(row['outer_folds']) for task, row in scored_tasks.items()}
     return audit_group_splits(eligible_groups, outer_rows, inner_rows, fold_counts)
 
 def verify_case_source_references(data_dir: Path) -> dict:
-    with (data_dir / 'case_modules.tsv').open(newline='', encoding='utf-8') as handle:
+    with (data_dir / 'case_modules.tsv').open(newline='', encoding='utf-8-sig') as handle:
         modules = list(csv.DictReader(handle, delimiter='\t'))
-    with (data_dir / 'case_sources.tsv').open(newline='', encoding='utf-8') as handle:
+    with (data_dir / 'case_sources.tsv').open(newline='', encoding='utf-8-sig') as handle:
         sources = list(csv.DictReader(handle, delimiter='\t'))
     if not modules or not sources:
         raise ValueError('case module or source registry is empty')
@@ -397,7 +397,7 @@ def verify_case_source_references(data_dir: Path) -> dict:
 
 def verify_stable_controls(root):
     check_manifest(root)
-    with (root / 'endpoint_provenance.tsv').open(newline='', encoding='utf-8') as handle:
+    with (root / 'endpoint_provenance.tsv').open(newline='', encoding='utf-8-sig') as handle:
         endpoints = {r['endpoint_sample_id']: r for r in csv.DictReader(handle, delimiter='\t')}
     counts = {}
     tables = {}
@@ -405,7 +405,7 @@ def verify_stable_controls(root):
         seen = set()
         c = Counter()
         values = {}
-        with gzip.open(root / name, 'rt') as f:
+        with gzip.open(root / name, 'rt', encoding='utf-8-sig', newline='') as f:
             for row in csv.DictReader(f, delimiter='\t'):
                 sid = row['endpoint_sample_id']
                 p = int(row['position_1based'])

@@ -58,7 +58,7 @@ def extract(args, adapter_factory=HFAdapter):
             if config['store_residues']:
                 arrays.update(resid_layers=residues, resid_indices=np.arange(1, len(sequence)+1, dtype=np.int64))
             np.savez_compressed(path, **arrays)
-            rows.append({'sequence_sha256': sha, 'length': len(sequence), 'file': str(path.relative_to(output)),
+            rows.append({'sequence_sha256': sha, 'length': len(sequence), 'file': path.relative_to(output).as_posix(),
                          'archive_sha256': digest(path)})
         manifest = {'schema_version': 1, 'model_id': config['model_id'], 'model_revision': config['revision'],
                     'output_dimension': adapter.dimension, 'candidate_layers': config['layers'],

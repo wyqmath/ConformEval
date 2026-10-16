@@ -59,7 +59,7 @@ class GenericTrainingTests(unittest.TestCase):
             root=Path(temp)
             for dimension in [4,7]:
                 path=feature_fixture(root/str(dimension),dimension)
-                m=json.loads(path.read_text());first=m['archives'][0];required={first['sequence_sha256']:first['length']}
+                m=json.loads(path.read_text(encoding='utf-8-sig'));first=m['archives'][0];required={first['sequence_sha256']:first['length']}
                 manifest,arrays,_=load_archives(path,required)
                 self.assertEqual(arrays[first['sequence_sha256']].shape,(2,dimension))
                 m['pooling']='max';json_write(path,m)
@@ -75,14 +75,14 @@ class GenericTrainingTests(unittest.TestCase):
             self.assertTrue(np.isfinite(scores).all())
         for bad in [0,-1,float('nan')]:
             with tempfile.TemporaryDirectory() as temp:
-                p=Path(temp)/'reader.json';json_write(p,{**config,'C_grid':[bad]}) if np.isfinite(bad) else p.write_text(json.dumps({**config,'C_grid':[bad]}))
+                p=Path(temp)/'reader.json';json_write(p,{**config,'C_grid':[bad]}) if np.isfinite(bad) else p.write_text(json.dumps({**config,'C_grid':[bad]}), encoding='utf-8', newline='\n')
                 with self.assertRaises(ValueError):reader_config(p)
 
     def test_external_prediction_examples_are_complete_and_score_one(self):
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)/'score'
             evaluate(ROOT/'examples/mini/base',ROOT/'examples/predictions/knot.tsv',ROOT/'examples/predictions/metadata.json',ROOT/'configs/scoring_protocol.json',out,{TASK_KNOT})
-            self.assertEqual(json.loads((out/'metrics.json').read_text())['metrics'][TASK_KNOT]['auroc'],1.0)
+            self.assertEqual(json.loads((out/'metrics.json').read_text(encoding='utf-8-sig'))['metrics'][TASK_KNOT]['auroc'],1.0)
         samples,expected,folds,_=load_task(ROOT/'examples/mini/residue',example=True)
         scores=read_scores(ROOT/'examples/predictions/residues.tsv',samples,expected,folds,{'example'},'example')
         _,metrics=calculate(samples,expected,folds,scores)

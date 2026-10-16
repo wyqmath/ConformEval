@@ -54,7 +54,7 @@ class PredictionEvaluatorTests(unittest.TestCase):
             prediction_path = root / 'nested_predictions.tsv.gz'
             source_path = REFERENCE / 'predictions.tsv.gz'
             rows = []
-            with gzip.open(source_path, 'rt', newline='', encoding='utf-8') as source:
+            with gzip.open(source_path, 'rt', newline='', encoding='utf-8-sig') as source:
                 for row in csv.DictReader(source, delimiter='\t'):
                     if row['arm'] == 'PLM-nested':
                         rows.append({key: row[key] for key in ('task_id', 'sample_id', 'outer_fold', 'score')})
@@ -62,15 +62,15 @@ class PredictionEvaluatorTests(unittest.TestCase):
                 writer = csv.DictWriter(out, fieldnames=['task_id', 'sample_id', 'outer_fold', 'score'], delimiter='\t', lineterminator='\n')
                 writer.writeheader()
                 writer.writerows(rows)
-            provenance = json.loads((REFERENCE / 'provenance.json').read_text(encoding='utf-8'))
-            configuration = json.loads((REFERENCE / 'configuration.json').read_text(encoding='utf-8'))
+            provenance = json.loads((REFERENCE / 'provenance.json').read_text(encoding='utf-8-sig'))
+            configuration = json.loads((REFERENCE / 'configuration.json').read_text(encoding='utf-8-sig'))
             metadata = {'model_id': provenance['encoder']['id'], 'model_revision': provenance['encoder']['revision'], 'prediction_method': 'nested balanced logistic regression', 'prediction_code_sha256': provenance['evaluator_sha256'], 'training_protocol': 'frozen_nested_grouped_oof_v1', 'candidate_layers': configuration['encoder']['selected_candidates'], 'pooling': 'mean_over_residues_without_special_tokens'}
             metadata_path = root / 'model_metadata.json'
-            metadata_path.write_text(json.dumps(metadata), encoding='utf-8')
+            metadata_path.write_text(json.dumps(metadata), encoding='utf-8', newline='\n')
             result = evaluate(DATA, prediction_path, metadata_path, PROTOCOL, root / 'score')
-            observed = json.loads((root / 'score/metrics.json').read_text(encoding='utf-8'))['metrics']
-            expected_knot = json.loads((REFERENCE / 'metrics_KNOT-PRESENCE.json').read_text(encoding='utf-8'))
-            expected_fs = json.loads((REFERENCE / 'metrics_FS-L2-grouped-PU-ranking.json').read_text(encoding='utf-8'))
+            observed = json.loads((root / 'score/metrics.json').read_text(encoding='utf-8-sig'))['metrics']
+            expected_knot = json.loads((REFERENCE / 'metrics_KNOT-PRESENCE.json').read_text(encoding='utf-8-sig'))
+            expected_fs = json.loads((REFERENCE / 'metrics_FS-L2-grouped-PU-ranking.json').read_text(encoding='utf-8-sig'))
             self.assertAlmostEqual(observed['KNOT-PRESENCE']['auroc'], expected_knot['arms']['PLM-nested']['auroc'], places=12)
             self.assertAlmostEqual(observed['FS-L2-grouped-PU-ranking']['mean_held_case_rank_percentile'], expected_fs['arms']['PLM-nested']['mean_rank_percentile_lower_is_better'], places=12)
             self.assertEqual(result['model_training_protocol_self_attested'], True)

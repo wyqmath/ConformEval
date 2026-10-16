@@ -25,7 +25,7 @@ class ScientificAssetTests(unittest.TestCase):
         validation.verify_coordinates(data)
         validation.verify_case_source_references(data)
         validation.verify_knot_representation_coverage(data)
-        with (ROOT / 'data/task_catalog.tsv').open(newline='') as handle:
+        with (ROOT / 'data/task_catalog.tsv').open(newline='', encoding='utf-8-sig') as handle:
             tasks = {r['task_id']: r for r in csv.DictReader(handle, delimiter='\t')
                      if r['task_id'] in validation.EXPECTED}
         validation.verify_group_splits(data, tasks)
@@ -50,12 +50,12 @@ class ScientificAssetTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             payload = root / 'labels.tsv'
-            payload.write_text('label\tmask\n1\t1\n')
+            payload.write_text('label\tmask\n1\t1\n', encoding='utf-8', newline='\n')
             record = {'sha256': hashlib.sha256(payload.read_bytes()).hexdigest(),
                       'bytes': payload.stat().st_size}
-            (root / 'manifest.json').write_text(json.dumps({'files': {'labels.tsv': record}}))
+            (root / 'manifest.json').write_text(json.dumps({'files': {'labels.tsv': record}}), encoding='utf-8', newline='\n')
             check_manifest(root)
-            payload.write_text('label\tmask\n0\t1\n')
+            payload.write_text('label\tmask\n0\t1\n', encoding='utf-8', newline='\n')
             with self.assertRaisesRegex(ValueError, 'hash/size mismatch'):
                 check_manifest(root)
 
@@ -71,7 +71,7 @@ class ScientificAssetTests(unittest.TestCase):
                 root = Path(temp) / 'controls'
                 shutil.copytree(source, root)
                 table = root / 'labels_primary.tsv.gz'
-                with gzip.open(table, 'rt', newline='') as handle:
+                with gzip.open(table, 'rt', newline='', encoding='utf-8-sig') as handle:
                     reader = csv.DictReader(handle, delimiter='\t')
                     fields, rows = reader.fieldnames, list(reader)
                 if field is None:
@@ -81,12 +81,12 @@ class ScientificAssetTests(unittest.TestCase):
                 validation.write_gzip_tsv(table, fields, rows)
                 # Keep the data hash consistent to exercise semantic rejection.
                 manifest_path = root / 'manifest.json'
-                manifest = json.loads(manifest_path.read_text())
+                manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
                 manifest['files'][table.name] = {
                     'sha256': hashlib.sha256(table.read_bytes()).hexdigest(),
                     'bytes': table.stat().st_size,
                 }
-                manifest_path.write_text(json.dumps(manifest))
+                manifest_path.write_text(json.dumps(manifest), encoding='utf-8', newline='\n')
                 with self.assertRaisesRegex(ValueError, message):
                     validation.verify_stable_controls(root)
 

@@ -24,7 +24,7 @@ class DataIntegrityTests(unittest.TestCase):
     def fixture(self, root: Path):
         sequence = 'ACD'
         digest = hashlib.sha256(sequence.encode('ascii')).hexdigest()
-        (root / 'sequences.fasta').write_text(f'>SEQ_{digest}\n{sequence}\n', encoding='utf-8')
+        (root / 'sequences.fasta').write_text(f'>SEQ_{digest}\n{sequence}\n', encoding='utf-8', newline='\n')
         self.write_tsv(root / 'sample_sequences.tsv.gz', ['task_id', 'sample_id', 'endpoint_role', 'sequence_id', 'sequence_sha256', 'length'], [{'task_id': 'FS-REGION', 'sample_id': 'case_A', 'endpoint_role': 'A', 'sequence_id': f'SEQ_{digest}', 'sequence_sha256': digest, 'length': '3'}], compressed=True)
         label_fields = ['sample_id', 'sequence_sha256', 'position', 'label', 'mask']
         row = {'sample_id': 'DP00001', 'sequence_sha256': digest, 'position': '1', 'label': '1', 'mask': '1'}
@@ -76,7 +76,7 @@ class ReferenceDataTests(unittest.TestCase):
     def test_catalog_declares_denominator_units_and_consistent_case_counts(self):
         result = data_validation.verify_task_catalog(ROOT)
         self.assertEqual(result['registered_tasks'], 13)
-        with (ROOT / 'data/task_catalog.tsv').open(newline='', encoding='utf-8') as handle:
+        with (ROOT / 'data/task_catalog.tsv').open(newline='', encoding='utf-8-sig') as handle:
             rows = {row['task_id']: row for row in csv.DictReader(handle, delimiter='\t')}
         self.assertEqual(rows['FS-L1-PAIRED']['candidate_units'], '16')
         self.assertEqual(rows['FS-L1-PAIRED']['eligible_units'], '10')

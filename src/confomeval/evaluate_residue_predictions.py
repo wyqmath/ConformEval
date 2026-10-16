@@ -23,7 +23,7 @@ def sha256(path):
     return h.hexdigest()
 
 def check_manifest(root):
-    manifest = json.loads((root / 'manifest.json').read_text())
+    manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
     hashes = {'manifest.json': sha256(root / 'manifest.json')}
     for name, record in manifest['files'].items():
         rel = Path(name)
@@ -37,7 +37,7 @@ def check_manifest(root):
 
 def load_task(root, example=False):
     hashes = check_manifest(root)
-    manifest = json.loads((root / 'manifest.json').read_text())
+    manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
     if example and (manifest.get('artifact_id') != 'confomeval-software-example-residue-v1' or manifest.get('scope') != 'software_example'):
         raise ValueError('example mode requires the bundled software example')
     if not example and hashes['manifest.json'] != 'd8527744b6c8b8997f39dca56e49725a815207237ed4f97547d3ae0c2df7907a':
@@ -64,7 +64,7 @@ def read_scores(path, samples, expected, folds, arms, default_arm):
     scores = {arm: {sid: {} for sid in samples} for arm in arms}
     opener = gzip.open if path.suffix == '.gz' else open
     required = {'task_id', 'sample_id', 'position_1based', 'outer_fold', 'score'}
-    with opener(path, 'rt', newline='', encoding='utf-8') as f:
+    with opener(path, 'rt', newline='', encoding='utf-8-sig') as f:
         reader = csv.DictReader(f, delimiter='\t')
         if not required.issubset(reader.fieldnames or []):
             raise ValueError('missing prediction columns')
@@ -152,7 +152,7 @@ def main():
     else:
         if a.model_metadata is None:
             raise ValueError('model metadata is required')
-        metadata = json.loads(a.model_metadata.read_text())
+        metadata = json.loads(a.model_metadata.read_text(encoding='utf-8-sig'))
         for k in ['model_id', 'model_revision', 'prediction_method', 'prediction_code_sha256', 'training_protocol']:
             if not isinstance(metadata.get(k), str) or not metadata[k].strip():
                 raise ValueError(f'missing model metadata: {k}')
@@ -176,15 +176,15 @@ def main():
         scores = read_scores(pred, samples, expected, folds, set(metadata['arms']), metadata['model_id'])
         rows, metrics = calculate(samples, expected, folds, scores)
         write_tsv(out / 'protein_metrics.tsv', list(rows[0]), rows)
-        (out / 'metrics.json').write_text(json.dumps(metrics, indent=2, sort_keys=True) + '\n')
+        (out / 'metrics.json').write_text(json.dumps(metrics, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
         if load_task(task, example=a.example)[3] != data_hashes or any((sha256(Path(p)) != h for p, h in inputs.items())):
             raise ValueError('input or code changed during scoring')
         run.update(status='COMPLETE', ended_at=stamp(), n_predictions=sum((len(ps) for arm in scores.values() for ps in arm.values())), output_sha256={p.name: sha256(p) for p in out.iterdir() if p.is_file()})
     except Exception as e:
         run.update(status='FAILED', ended_at=stamp(), error=str(e))
-        (out / 'run.json').write_text(json.dumps(run, indent=2, sort_keys=True) + '\n')
+        (out / 'run.json').write_text(json.dumps(run, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
         raise
-    (out / 'run.json').write_text(json.dumps(run, indent=2, sort_keys=True) + '\n')
+    (out / 'run.json').write_text(json.dumps(run, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'status': run['status'], 'n_predictions': run['n_predictions'], 'output_dir': str(out)}, indent=2))
     return 0
 if __name__ == '__main__':

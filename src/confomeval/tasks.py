@@ -17,7 +17,7 @@ def required_sequences(data_dir: Path, task: str, example=False):
         required = {s['sequence_id']: all_sequences[s['sequence_id']] for s in samples.values()}
     else:
         verify_dataset(data_dir)
-        is_example=json.loads((data_dir/'dataset_manifest.json').read_text()).get('scope')=='software_example'
+        is_example=json.loads((data_dir/'dataset_manifest.json').read_text(encoding='utf-8-sig')).get('scope')=='software_example'
         if is_example != example:
             raise ValueError('software example requires explicit --example; benchmark data must omit it')
         eligible, _ = eligible_frames(data_dir, {task})
@@ -55,7 +55,7 @@ def main():
             if p.is_file() and p.suffix != '.md':
                 record.track(p)
         sequences = required_sequences(args.data_dir, args.task, args.example)
-        (record.output / 'sequences.fasta').write_text(''.join(f'>{sid}\n{seq}\n' for sid,seq in sorted(sequences.items())))
+        (record.output / 'sequences.fasta').write_text(''.join(f'>{sid}\n{seq}\n' for sid,seq in sorted(sequences.items())), encoding='utf-8', newline='\n')
         record.data['unique_sequences'] = len(sequences)
     except Exception as error:
         record.finish(error)

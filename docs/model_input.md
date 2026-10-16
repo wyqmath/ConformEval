@@ -23,7 +23,7 @@ Each archive contains:
 | `resid_layers` | `[n_layers, n_positions, dimension]` | Selected transformer-layer vectors at exact residue coordinates |
 | `resid_indices` | `[n_positions]` | Strictly increasing, unique, one-based coordinates in the original full sequence |
 
-`--sequence-only` omits the last two arrays. `representation_manifest.json` records the model revision, output dimension, candidate layers, pooling, complete extraction configuration and each archive's relative path, sequence identity, length and SHA-256. Absolute paths, escapes outside the manifest directory, mixed dimensions, model/config mismatches, missing labeled coordinates and non-finite values are rejected by the training loader.
+`--sequence-only` omits the last two arrays. `representation_manifest.json` records the model revision, output dimension, candidate layers, pooling, complete extraction configuration and each archive's relative path, sequence identity, length and SHA-256. Relative archive filenames are serialized with `/` on every operating system. Absolute paths, escapes outside the manifest directory, mixed dimensions, model/config mismatches, missing labeled coordinates and non-finite values are rejected by the training loader.
 
 Every archive uses `len_full == len_used` and `truncated: false`. A sequence that cannot be represented is an explicit error. For a fold-switch pair, keep both endpoint identities, even when their sequences are identical; training validates them before averaging the two vectors.
 

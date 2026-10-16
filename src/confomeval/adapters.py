@@ -9,7 +9,7 @@ from .runtime import json_write
 
 
 def load_config(path: Path) -> dict:
-    config = json.loads(path.read_text())
+    config = json.loads(path.read_text(encoding='utf-8-sig'))
     if config.get('schema_version') != 1 or config.get('adapter') not in {'esm2', 'prott5'}:
         raise ValueError('unsupported model adapter configuration')
     if not re.fullmatch('[0-9a-f]{40}', config.get('revision', '')):
