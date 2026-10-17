@@ -14,7 +14,7 @@ Expected: `status: PASS`, 20 scored samples per arm, and output predictions/metr
 
 ## Real models
 
-The [README](../README.md) supplies the complete ESM-2 8M extraction/training/scoring tutorial. To directly exercise either adapter:
+The [tutorials](../docs/tutorials.md) supply the complete ESM-2 8M extraction/training/scoring walkthrough for all three tasks. To directly exercise either adapter:
 
 ```bash
 python examples/adapter_usage.py --model-config configs/models/esm2_8m.json
