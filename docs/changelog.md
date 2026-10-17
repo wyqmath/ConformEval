@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- List compatible dependency ranges in the installation guide and keep exact historical requirements under `docs/reproduction/`.
+
 - Remove snapshot-version suffixes from data, configuration, and result directory names.
 - Update commands, scoring paths, tests, result indexes, and documentation to the new layout.
 - Record original snapshot versions and source locations in [bundle metadata](../data/provenance/bundle_versions.json). Scientific versions, labels, folds, predictions, and saved execution records are preserved.

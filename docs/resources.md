@@ -10,7 +10,7 @@ These measurements were made on 2026-10-16 on an Apple M5, 10 CPU cores and 16 G
 | Base training and scoring | Python 3.14.5; NumPy 2.5.4; SciPy 1.18.1; scikit-learn 1.9.1; no inference packages |
 | Second base installation | Python 3.11.15; NumPy 2.4.6; SciPy 1.17.1; scikit-learn 1.9.1; no inference packages |
 
-Both base installations passed 50 local tests. Python 3.11 encoder inference, CUDA, MPS, float16 and bfloat16 were not tested in this validation. Each saved run contains its actual environment. The older archived 650M reference environment is recorded in its original results and `requirements-reference.txt`; it is separate from the new adapter validation.
+Both base installations passed 50 local tests. Python 3.11 encoder inference, CUDA, MPS, float16 and bfloat16 were not tested in this validation. Each saved run contains its actual environment. The older archived 650M reference environment is recorded in its original results and [historical requirements](reproduction/requirements-reference.txt); it is separate from the new adapter validation. [Reproduction records](reproduction/README.md) index the exact environments; [installation](installation.md) lists the compatible dependency ranges.
 
 ## Real-checkpoint small examples
 

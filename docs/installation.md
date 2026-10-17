@@ -1,6 +1,6 @@
 # Installation
 
-Use Python 3.11 or newer. The base package installs only numerical scoring and reader dependencies:
+Use Python >=3.11. The base package installs only numerical scoring and reader dependencies:
 
 ```bash
 python -m venv .venv
@@ -20,7 +20,24 @@ python -m pip install ".[prott5]"
 
 ESM-2 uses PyTorch, Transformers and huggingface-hub. ProtT5 additionally uses SentencePiece and protobuf. The base package does not install any of these inference dependencies. Both sequence and residue linear/ridge reader training use NumPy/scikit-learn.
 
-Dependency ranges are declared in [`pyproject.toml`](../pyproject.toml). [`requirements.txt`](../requirements.txt) contains base ranges. The inference validation environment and archived reference environment are listed separately in [resources](resources.md); actual versions are saved with each run.
+## Compatible dependency ranges
+
+| Installation | Dependencies |
+|---|---|
+| Base scoring and reader training | Python >=3.11; NumPy >=1.26.4,<3; SciPy >=1.11,<2; scikit-learn >=1.5,<2 |
+| ESM-2 extra | PyTorch >=2.6,<3; Transformers >=4.48,<6; huggingface-hub >=0.28,<2 |
+| ProtT5 extra | ESM-2 extra dependencies, plus SentencePiece >=0.2,<1 and protobuf >=4,<7 |
+| Windows base installation | Also installs tzdata >=2024.1 |
+
+[`pyproject.toml`](../pyproject.toml) declares these ranges;
+[`requirements.txt`](../requirements.txt) provides the same base requirements.
+Pip resolves versions for your Python version and operating system. Recorded
+test coverage is listed in the [platform matrix](platforms.md) and
+[model validation](model_validation.md).
+
+Exact measured versions are retained in [reproduction records](reproduction/README.md)
+and each saved run's metadata. Use those records when reproducing a particular
+experiment.
 
 ## Download pinned model files
 

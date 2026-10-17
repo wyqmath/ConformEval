@@ -26,7 +26,7 @@ source .venv/bin/activate
 python -m pip install .
 ```
 
-Windows is not tested. See [installation](docs/installation.md) for platform commands and optional dependencies.
+Windows is not tested. See [installation](docs/installation.md) for compatible dependency ranges, platform commands and model extras. Exact tested versions are kept in [reproduction records](docs/reproduction/README.md).
 
 ### 1. Reproduce reference scores
 
