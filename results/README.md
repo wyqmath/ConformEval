@@ -37,7 +37,7 @@ For 8M the exact extraction/reader configurations are embedded in each model met
 | Training-label prior | PLM-training-prior | 8M-knot | 734 sample | AUROC | 0.494323 | 8M-knot | [predictions](../results/esm2_8m/knot/predictions.tsv.gz) | [metrics](../results/esm2_8m/knot/metrics.json) |
 | ProtT5 XL encoder | Not tested | Not tested | 734 sample | AUROC; average precision secondary | Not tested | Not tested | Not tested | Not tested |
 
-Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`.
+Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`. The 8M task directories keep one combined `predictions.tsv.gz` per task. Select an arm from its `arm` column instead of looking for a separate arm-named prediction file. The complete field catalog and reading examples are in the [data and table guide](../docs/data_tables.md).
 
 
 ## FS-L2-grouped-PU-ranking
@@ -60,7 +60,7 @@ Shared prediction files are filtered by `task_id` and `arm`; these exact filters
 | Training-label prior | PLM-training-prior | 8M-fs | 8879 ranking_item | mean_held_case_rank_percentile | 0.500564 | 8M-fs | [predictions](../results/esm2_8m/fs/predictions.tsv.gz) | [metrics](../results/esm2_8m/fs/metrics.json) |
 | ProtT5 XL encoder | Not tested | Not tested | 8879 ranking_item | mean held-case rank percentile; Recall@k | Not tested | Not tested | Not tested | Not tested |
 
-Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`.
+Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`. The 8M task directories keep one combined `predictions.tsv.gz` per task. Select an arm from its `arm` column instead of looking for a separate arm-named prediction file. The complete field catalog and reading examples are in the [data and table guide](../docs/data_tables.md).
 
 
 ## DISORDER-STRUCTURE-REFERENCE-CANDIDATE
@@ -80,7 +80,7 @@ Shared prediction files are filtered by `task_id` and `arm`; these exact filters
 | AA + position + local context + logistic | traditional-AA-context | 8M-residue | 1279 protein_record; 391,718 rows | mean_per_protein_AP | 0.585906 | 8M-residue | [predictions](../results/esm2_8m/residue/predictions.tsv.gz) | [metrics](../results/esm2_8m/residue/metrics.json) |
 | ProtT5 XL encoder | Not tested | Not tested | 1279 protein | mean per-protein average precision | Not tested | Not tested | Not tested | Not tested |
 
-Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`.
+Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`. The complete field catalog and reading examples are in the [data and table guide](../docs/data_tables.md).
 
 
 ## Tasks without model evaluation

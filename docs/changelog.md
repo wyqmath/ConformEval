@@ -5,6 +5,8 @@
 - Remove snapshot-version suffixes from data, configuration, and result directory names.
 - Update commands, scoring paths, tests, result indexes, and documentation to the new layout.
 - Record original snapshot versions and source locations in [bundle metadata](../data/provenance/bundle_versions.json). Scientific versions, labels, folds, predictions, and saved execution records are preserved.
+- Consolidate redundant ESM-2 8M arm prediction slices into the existing per-task `predictions.tsv.gz` tables.
+- Add a single [data and table guide](data_tables.md) with public TSV/TSV.GZ purposes, fields, and reading examples.
 
 ## 0.5.1 — 2026-10-17
 

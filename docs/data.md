@@ -93,6 +93,11 @@ The separate disorder reference bundle uses the existing DisProt and PDB-observe
 
 ## Reference documentation
 
+The complete public table catalog, field list, compression rules, and Python
+reading examples are in the [data and table guide](data_tables.md). It is the
+single entry point for locating TSV and TSV.GZ files; the scientific tables
+below remain separate when their masks or label semantics differ.
+
 - [Disorder dataset](reference/disorder-dataset.md): label counts and grouped folds.
 - [Fold-switch region controls](reference/fold-switch-region-controls.md): structural control definitions and coverage.
 - [Disorder ESM-2 results](reference/disorder-esm2-results.md): reference scores and evaluation method.

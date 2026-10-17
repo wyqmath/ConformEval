@@ -35,6 +35,19 @@ class ScientificAssetTests(unittest.TestCase):
         self.assertEqual(sum(validation.verify_predictions(predictions).values()), 67291)
         validation.verify_prediction_assignments(predictions, ROOT / 'data/base')
 
+    def test_8m_predictions_use_one_combined_table_per_task(self):
+        expected = {'knot': (734, 7), 'fs': (8879, 7)}
+        for task, (rows_per_arm, arm_count) in expected.items():
+            with self.subTest(task=task):
+                path = ROOT / f'results/esm2_8m/{task}/predictions.tsv.gz'
+                rows = validation.read_tsv(path, compressed=True)
+                arms = {row['arm'] for row in rows}
+                self.assertEqual(len(arms), arm_count)
+                self.assertEqual(len(rows), rows_per_arm * arm_count)
+                self.assertFalse(list(path.parent.glob('PLM-*.tsv.gz')))
+                for arm in arms:
+                    self.assertEqual(sum(row['arm'] == arm for row in rows), rows_per_arm)
+
     def test_disorder_reference_identities_and_folds(self):
         samples, labels, folds, hashes = load_task(ROOT / 'data/disorder_reference')
         self.assertEqual(len(samples), 1279)
