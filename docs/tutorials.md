@@ -58,4 +58,3 @@ confomeval-fit-readers   --task KNOT-PRESENCE --data-dir data/v0.3.1   --feature
 ```
 
 Expected: **569 unique sequences**, **734 samples**, **283 groups**, and **5 × 3** folds. [Full-task commands](full_evaluation.md) cover PU ranking and generic residue training. The [small NumPy example](../examples/README.md) also exercises training without model downloads.
-
