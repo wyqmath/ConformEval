@@ -4,11 +4,11 @@ ConformEval tests how well **protein language model representations** capture pr
 
 ## Tasks and reference results
 
-| Task | Data | Metric | ESM-2 650M | ESM-2 8M | ProtT5 |
-|---|---|---|---:|---:|---|
-| Knot presence | 734 samples | AUROC ↑ | 0.868741 | 0.814237 | Not tested |
-| Fold-switch ranking | 8,879 items; 10 positives | Mean held-case rank percentile ↓ | 0.476592 | 0.304406 | Not tested |
-| Disorder structure reference | 1,279 records; 391,718 labeled rows | Mean protein AP ↑ | 0.789856 | 0.738289 | Not tested |
+| Task | Metric | ESM-2 650M | ESM-2 8M | ProtT5 |
+| --- | --- | ---: | ---: | --- |
+| Knot presence | AUROC ↑ | 0.868741 | 0.814237 | Not tested |
+| Fold-switch ranking | Mean held-case rank percentile ↓ | 0.476592 | 0.304406 | Not tested |
+| Disorder structure reference | Mean protein AP ↑ | 0.789856 | 0.738289 | Not tested |
 
 The fold-switch background is unlabeled. The disorder task combines experimental disorder labels with ordered annotations and PDB-observed structural references. These are grouped-development results; model configurations differ. [Full results and baselines](results/README.md) document each configuration. The [task catalog](data/task_catalog.tsv) covers all 13 registered tasks, including the ten without model scores.
 
