@@ -10,4 +10,4 @@
 
 输入结构、序列和源产物的哈希在运行前后核对。全长标签、逐残基几何依据和来源映射均落盘。本文件记录标签生成时的结果；既有冻结标签、评分协议和模型结果保持原样。
 
-固定规则见 [`configs/fs_region_controls_v1/protocol.json`](../../configs/fs_region_controls_v1/protocol.json)，原始生成运行记录见 [`run.json`](run.json)。历史生成器属于源研究项目；本仓库提供已生成的标签和逐残基几何依据。
+固定规则见 [`configs/fs_region_controls_v1/protocol.json`](../../configs/fs_region_controls_v1/protocol.json)，原始生成运行记录见 [`run.json`](../../data/fs_region_controls_v1/run.json)。历史生成器属于源研究项目；本仓库提供已生成的标签和逐残基几何依据。

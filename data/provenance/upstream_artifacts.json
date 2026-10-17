@@ -3,7 +3,7 @@
     {
       "historical_export_sha256": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99",
       "historical_transformation": "byte-identical",
-      "path": "data/disorder_reference_v1/REPORT.md",
+      "path": "docs/reference/disorder-dataset.md",
       "upstream_name": "REPORT.md",
       "upstream_sha256": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99"
     },
@@ -87,7 +87,7 @@
     {
       "historical_export_sha256": "ce0941338f54f6a8b1f9671238483499edd1937e053ef90d158af525b72be84e",
       "historical_transformation": "byte-identical",
-      "path": "data/fs_region_controls_v1/REPORT.md",
+      "path": "docs/reference/fold-switch-region-controls.md",
       "upstream_name": "REPORT.md",
       "upstream_sha256": "ce0941338f54f6a8b1f9671238483499edd1937e053ef90d158af525b72be84e"
     },
@@ -171,7 +171,7 @@
     {
       "historical_export_sha256": "3355f8b97945b36ceecf979d5d315f4dd0ab9c62cbdb428c9fe054b12c64dcd6",
       "historical_transformation": "byte-identical",
-      "path": "results/disorder_reference_esm2_v1/REPORT.md",
+      "path": "docs/reference/disorder-esm2-results.md",
       "upstream_name": "REPORT.md",
       "upstream_sha256": "3355f8b97945b36ceecf979d5d315f4dd0ab9c62cbdb428c9fe054b12c64dcd6"
     },

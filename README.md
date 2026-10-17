@@ -131,4 +131,4 @@ Expected: **569 unique sequences**, **734 samples**, **283 groups**, and **5 × 
 python -m unittest discover -s tests -v
 ```
 
-Use [CITATION.cff](CITATION.cff) for the software citation, and cite the primary data sources for scientific use. [LICENSE](LICENSE) covers original software; [data documentation](docs/data.md) records actual source terms. See [CONTRIBUTING.md](CONTRIBUTING.md) for adding models, data or results.
+Cite the primary data sources for scientific use. [LICENSE](LICENSE) covers original software; [data documentation](docs/data.md) records actual source terms. See [CONTRIBUTING.md](CONTRIBUTING.md) for adding models, data or results.

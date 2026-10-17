@@ -90,3 +90,11 @@ Included in this repository snapshot: curated sequence and label tables, group a
 ## Version 0.4.0 additions
 
 The separate disorder reference bundle uses the existing DisProt and PDB-observed mapping evidence. The fold-switch region control bundle adds structural-reference annotations from existing experimental pairs. Upstream source fingerprints are in [data provenance](../data/provenance/upstream_artifacts.json); data-generation and evaluation records accompany their scientific artifacts. These additions do not resolve the legacy KnotProt or literature-source redistribution entries above. The original software remains MIT licensed.
+
+## Reference documentation
+
+- [Disorder dataset](reference/disorder-dataset.md): label counts and grouped folds.
+- [Fold-switch region controls](reference/fold-switch-region-controls.md): structural control definitions and coverage.
+- [Disorder ESM-2 results](reference/disorder-esm2-results.md): reference scores and evaluation method.
+
+These documents were relocated from the data and result bundles. Historical run records retain their original output filenames and hashes; the source-lineage index points to the current documentation paths.
