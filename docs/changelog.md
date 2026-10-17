@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add a runnable ESM-2 8M notebook with a Colab entry, full knot and synthetic modes, and independent rescoring checks.
+- Recheck ESM-2 8M/650M and ProtT5 on all three synthetic task pipelines; retain untested full-task states explicitly.
+
 - List compatible dependency ranges in the installation guide and keep exact historical requirements under `docs/reproduction/`.
 
 - Remove snapshot-version suffixes from data, configuration, and result directory names.

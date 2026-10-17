@@ -1,5 +1,7 @@
 # Runnable small examples
 
+The [ESM-2 8M notebook](notebooks/esm2_8m.ipynb) runs a complete knot benchmark by default, with a switch for the small synthetic knot example. It includes data/checkpoint download, inference, training and independent scoring. [Open in Colab](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb) or see [validation and local instructions](../docs/notebook.md).
+
 The `mini` directory contains 30 synthetic protein sequences and complete small group-fold tables for all three task interfaces. The pooled tasks have 20 samples each, and the residue task has 554 known positions. The data manifests mark them `software_example`.
 
 ## No model download

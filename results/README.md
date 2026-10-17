@@ -2,6 +2,8 @@
 
 This index covers complete biological task evaluations. **39 saved arm records** are reported with their original experiment settings; baseline repeats are retained by source run. **33 task/model combinations are Not tested**. The three-model synthetic smoke tests are separately recorded in [model validation](../docs/model_validation.md).
 
+The [ESM-2 8M notebook](../examples/notebooks/esm2_8m.ipynb) independently reproduced the complete knot AUROC of **0.814237** on 2026-10-17. Its 734 predictions were separately rescored with matching AUROC and bootstrap intervals; [verification](notebook_validation/full.json) records the actual environment and hashes. Synthetic example scores remain outside this biological results index.
+
 ## Configuration and environment keys
 
 | Key | Configuration source | Reader/extraction settings | Recorded environment | Evidence |

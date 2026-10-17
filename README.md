@@ -12,9 +12,13 @@ ConformEval tests how well **protein language model representations** capture pr
 
 The fold-switch background is unlabeled. The disorder task combines experimental disorder labels with ordered annotations and PDB-observed structural references. These are grouped-development results; model configurations differ. [Full results and baselines](results/README.md) document each configuration. The [task catalog](data/task_catalog.tsv) covers all 13 registered tasks, including the ten without model scores. The [data and table guide](docs/data_tables.md) indexes every public TSV/TSV.GZ file, its fields, and its reading method.
 
-Adapters support **ESM-2 8M, ESM-2 650M, and ProtT5**. All three passed real-checkpoint extraction and small-example tests. The 650M scores above come from archived reference runs; full ProtT5 evaluation is not tested. See [model validation](docs/model_validation.md).
+Adapters support **ESM-2 8M, ESM-2 650M, and ProtT5**. All three passed real-checkpoint extraction and all three small-example tasks again on 2026-10-17. The 650M scores above come from archived reference runs; full ProtT5 evaluation is **Not tested**. See [model validation](docs/model_validation.md).
 
 ## Quick start
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb)
+
+Run the [ESM-2 8M notebook](examples/notebooks/esm2_8m.ipynb) to download data, extract real model representations, train readers, and independently score predictions. It defaults to the complete 734-sample knot task; a switch selects a small synthetic example. [Notebook validation](docs/notebook.md) records actual execution and output checks.
 
 Use **Python 3.11+**. From a terminal on macOS or Linux:
 

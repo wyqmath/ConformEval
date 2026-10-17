@@ -2,6 +2,8 @@
 
 Run all commands from the cloned repository root. Use a new output directory for each run.
 
+For an executable tutorial, open the [ESM-2 8M notebook](../examples/notebooks/esm2_8m.ipynb) in [Colab](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb). Its default route downloads the complete knot data and runs inference, training and independent rescoring. [Notebook instructions and actual validation](notebook.md) include the small-example switch and output locations.
+
 ## Tutorial 1: reproduce reference scores from included predictions
 
 This route needs the base package and the included data/results:
