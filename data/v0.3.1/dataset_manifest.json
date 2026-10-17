@@ -24,16 +24,16 @@
   ],
   "files": {
     "case_modules.tsv": {
-      "bytes": 8423,
-      "sha256": "0768a43ed1ebeb55e9982d67ae00fd60281e4beb7662888e6e9b6548676c390a"
+      "bytes": 8670,
+      "sha256": "b4b2d46593b52a988d5e96f8509a23817392dcfaa91eec683170568dee1888d8"
     },
     "case_samples.tsv.gz": {
       "bytes": 2575,
       "sha256": "56d9459d4fc91bbf27e5412e15694b740f1243bc41e9955b4ee9ef6b1b988d2b"
     },
     "case_sources.tsv": {
-      "bytes": 6098,
-      "sha256": "ed8684b47048ad5d87a0c45ce01d0cea02a6cf461eef1a95fc3f9c4f654c608d"
+      "bytes": 6094,
+      "sha256": "2e38c10e2e7259304e40bceaf0578d87676fe3e1ba70159b4b28098e96562b30"
     },
     "folds/fold_qc.tsv": {
       "bytes": 6514,
@@ -72,13 +72,33 @@
       "sha256": "5082dcc8d37f029aa149aec46069c757e705b9216988c711715c5217713b2a4b"
     },
     "sources.tsv": {
-      "bytes": 6797,
-      "sha256": "89dd3d283d0d202df4446afbbe3a0fb310373afa18b4e2e0ddf642577ec9f03d"
+      "bytes": 7296,
+      "sha256": "d5c5058797abd2b722c3cfb1b90bb5bcc849892457e313bf597376fbaa79f6cf"
     },
     "task_samples.tsv.gz": {
       "bytes": 1324088,
       "sha256": "2a14cc9c3fe066ded670834208553ebfe9b20a1e1fe45f7b3d8bfa0c8e167af4"
     }
+  },
+  "metadata_translation": {
+    "language": "en",
+    "scope": "English translation of descriptive source and case metadata only; scientific identities, numeric values, labels, masks, coordinates, folds and predictions are unchanged.",
+    "source_dataset_manifest_sha256": "9ce1dafd90d320815074942f354ea8423af6dce49d5efa3122a0a87beec84985",
+    "source_files": {
+      "case_modules.tsv": {
+        "bytes": 8423,
+        "sha256": "0768a43ed1ebeb55e9982d67ae00fd60281e4beb7662888e6e9b6548676c390a"
+      },
+      "case_sources.tsv": {
+        "bytes": 6098,
+        "sha256": "ed8684b47048ad5d87a0c45ce01d0cea02a6cf461eef1a95fc3f9c4f654c608d"
+      },
+      "sources.tsv": {
+        "bytes": 6797,
+        "sha256": "89dd3d283d0d202df4446afbbe3a0fb310373afa18b4e2e0ddf642577ec9f03d"
+      }
+    },
+    "source_repository_commit": "ac21710782ccebce9ac5170f33d9464e2ad6d37f"
   },
   "representation_coverage_rows": 14972,
   "representation_overlay_sha256": "aa1cda9d656143f06bcede44ae7ee4592c025661ad96db0b39b88ae4f8020e3f",

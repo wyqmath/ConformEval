@@ -1,6 +1,6 @@
 # Task dispositions
 
-This page explains why every registered task has a scored evaluation or is marked 未测试 in the current results index. No score entry means that the locked data or protocol did not define a valid evaluation for that task; it is not a model-performance result.
+This page explains why every registered task has a scored evaluation or is marked Not tested in the current results index. No score entry means that the locked data or protocol did not define a valid evaluation for that task; it is not a model-performance result.
 
 | Task | Data in the release | Disposition |
 |---|---|---|
@@ -22,4 +22,4 @@ The exact denominators, output pointers, and interpretation limits are in [`task
 
 Condition case modules remain descriptive in this version. The new condition four-arm experiment is deferred. The separate supplemental label/result bundles update the current task state without rewriting the frozen base snapshot.
 
-The [result summary](README.md) and [uniform result index](results_index.tsv) list actual scores, configurations, environments and prediction paths. All three complete ProtT5 task evaluations and the ten tasks without model evaluation are explicitly marked 未测试; completed synthetic examples do not fill those entries.
+The [result summary](README.md) and [uniform result index](results_index.tsv) list actual scores, configurations, environments and prediction paths. All three complete ProtT5 task evaluations and the ten tasks without model evaluation are explicitly marked Not tested; completed synthetic examples do not fill those entries.

@@ -98,3 +98,7 @@ The separate disorder reference bundle uses the existing DisProt and PDB-observe
 - [Disorder ESM-2 results](reference/disorder-esm2-results.md): reference scores and evaluation method.
 
 These documents were relocated from the data and result bundles. Historical run records retain their original output filenames and hashes; the source-lineage index points to the current documentation paths.
+
+## English metadata
+
+Human-readable source descriptions, case notes, authorization text, and status labels use English. The dataset manifest records their current export hashes and the original metadata fingerprints. Scientific identities, numeric values, labels, masks, coordinates, folds, and predictions are unchanged. Historical run hashes identify the metadata exports used by those runs; they are not checksums of the translated descriptions.

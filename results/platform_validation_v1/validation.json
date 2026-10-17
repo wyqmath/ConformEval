@@ -216,7 +216,7 @@
       "implementation": "Explicit UTF-8 I/O, POSIX relative archive paths, optional resource import and Windows-only tzdata dependency are implemented.",
       "reason": "No accessible Windows runtime; no native Windows installation, scoring or encoder inference claimed.",
       "status": "not_tested",
-      "status_display": "\u672a\u6d4b\u8bd5",
+      "status_display": "Not tested",
       "tests": null
     }
   },

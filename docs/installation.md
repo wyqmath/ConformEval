@@ -56,4 +56,4 @@ python -m pip install .
 confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
-For `cmd.exe`, activate with `.venv\Scripts\activate.bat`. Windows execution is **未测试 / Not tested**. Actual macOS/Linux package-installation and scoring evidence, with Python versions, is recorded in the [platform matrix](platforms.md). The model inference device/precision coverage is separately recorded in [model validation](model_validation.md).
+For `cmd.exe`, activate with `.venv\Scripts\activate.bat`. Windows execution is **Not tested**. Actual macOS/Linux package-installation and scoring evidence, with Python versions, is recorded in the [platform matrix](platforms.md). The model inference device/precision coverage is separately recorded in [model validation](model_validation.md).

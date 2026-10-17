@@ -4,13 +4,13 @@ ConformEval evaluates **protein language model representations** on three scorin
 
 ## Task and model results
 
-The catalog registers **13 tasks**. **Three have complete biological model scores**; the other ten are marked **未测试 / Not tested** below. Small synthetic examples are interface tests and are excluded from these performance tables. The full [result index](results/results_index.tsv) and [readable results](results/README.md) include every saved arm, configuration, sample unit, environment and prediction path.
+The catalog registers **13 tasks**. **Three have complete biological model scores**; the other ten are marked **Not tested** below. Small synthetic examples are interface tests and are excluded from these performance tables. The full [result index](results/results_index.tsv) and [readable results](results/README.md) include every saved arm, configuration, sample unit, environment and prediction path.
 
 | Task / primary metric | Data | ESM-2 650M | ESM-2 8M | ProtT5 |
 |---|---|---|---|---|
-| KNOT-PRESENCE / AUROC ↑ | 734 samples | 0.868741 (nested L17/33) | 0.814237 (nested L3/6) | 未测试 / Not tested |
-| FS-L2 / mean held-case rank percentile ↓ | 8,879 items; 10 positives | 0.476592 (nested L17/33) | 0.304406 (nested L3/6) | 未测试 / Not tested |
-| Disorder structure reference / mean protein AP ↑ | 1,279 records; 391,718 rows | 0.789856 (fixed L33) | 0.738289 (nested L3/6) | 未测试 / Not tested |
+| KNOT-PRESENCE / AUROC ↑ | 734 samples | 0.868741 (nested L17/33) | 0.814237 (nested L3/6) | Not tested |
+| FS-L2 / mean held-case rank percentile ↓ | 8,879 items; 10 positives | 0.476592 (nested L17/33) | 0.304406 (nested L3/6) | Not tested |
+| Disorder structure reference / mean protein AP ↑ | 1,279 records; 391,718 rows | 0.789856 (fixed L33) | 0.738289 (nested L3/6) | Not tested |
 
 Each cell names its reader/layer rule. The 650M disorder value is the fixed L33 linear reference, not a nested-layer result. Its three MLP seeds are all listed in the [full results](results/README.md). This matrix reports existing experiments; their different layer grids do not constitute a controlled model-size comparison. Higher is better for AUROC/AP; lower is better for the FS rank percentile. The FS background is biologically unlabeled.
 
@@ -20,19 +20,19 @@ Knot presence uses a whole-chain label. FS ranks confirmed switching cases again
 
 | Task | Input | Current data | Metric | Status / data needed |
 |---|---|---|---|---|
-| `KNOT-PRESENCE` | Full sequence | 734 samples; 283 groups | AUROC ↑ | 已测试 / Tested: 650M and 8M; ProtT5 未测试. 5 outer × 3 inner folds; evaluated |
-| `KNOT-TYPE` | Full sequence | 65 eligible: 3_1=57, 4_1=6, 5_2=2 | Macro-F1 on locked classes ↑ | 未测试 / Not tested. Required 5_1 class is absent; 4_1 and 5_2 have only 6 and 2 examples. No scoring folds |
-| `FS-L2-grouped-PU-ranking` | Two endpoint sequences per positive case; one per background item | 8,879 items; 10 positive cases; 8,767 groups | Mean held-case rank percentile ↓ | 已测试 / Tested: 650M and 8M; ProtT5 未测试. 10 outer × 3 inner folds; evaluated |
-| `DISORDER-RES` | Sequence + residue coordinates | 2,279 registered proteins; 1 eligible dual-class binding group | Mean protein AP ↑ | 未测试 / Not tested. Additional proteins/groups with direct experimental order and disorder labels; locked protocol requires ≥4 dual-class groups. No scoring folds |
-| `DISORDER-STRUCTURE-REFERENCE-CANDIDATE` | Sequence + residue coordinates | 1,279 records; 1,029 groups; 391,718 labeled rows | Mean protein AP ↑ | 已测试 / Tested: 650M and 8M; ProtT5 未测试. 5 outer × 3 inner folds; evaluated |
-| `FS-L1-PAIRED` | Paired experimental sequences and structures | 16 candidates; 10 accepted cases / 20 endpoints | Case evidence and input-identity audit; no model metric | 未测试 / Not tested. Six pending candidates lack accepted endpoint inputs/evidence in the frozen sequence frame. Case report; no prediction target/scoring folds defined |
-| `FS-REGION` | Sequence + switching-region coordinates | 10 cases / 20 endpoints; 124 positive + 848 reference-negative rows (580 strict); 3 dual-class cases | Label coverage; no model metric defined | 未测试 / Not tested. Switching-region positives cover 3/10 cases; 4,746 endpoint positions remain unknown. Annotations available; scoring protocol/folds not defined; model evaluation not run |
-| `FS-L3-MATCHED` | Sequences of cases and matched controls | 0 qualified matched case-control pairs | AUROC/AP after qualification ↑ | 未测试 / Not tested. Experimentally qualified matched controls with usable biological labels. Control-label qualification pending |
-| `BPTI-REDOX` | Same-variant sequence + redox conditions | 0 qualified experiment pairs | Not defined after qualification stop | 未测试 / Not tested. Qualified endpoint measurements and matched-state evidence. Prespecified qualification stop |
-| `PYP-STATE` | Sequence + illumination condition | 2 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Additional independent groups with matched illumination/state measurements. Case report; no independent scoring folds |
-| `RNASE-ASSEMBLY` | Sequence + assembly condition | 4 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Independent same-batch assembly pairs with measured conditions; current pairs carry cross-batch warnings. Case report; no independent scoring folds |
-| `DISORDER-CONDITION-pH` | Same sequence/region + pH | 7 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Additional qualified independent condition pairs; candidate records include cross-publication and region mismatches. Case report; no independent scoring folds |
-| `DISORDER-CONDITION-temperature` | Same sequence/region + temperature | 2 state records | Case/input audit; no prediction metric defined | 未测试 / Not tested. Additional independent groups with matched two-temperature experimental labels. Case report; no independent scoring folds |
+| `KNOT-PRESENCE` | Full sequence | 734 samples; 283 groups | AUROC ↑ | Tested: 650M and 8M; ProtT5 Not tested. 5 outer × 3 inner folds; evaluated |
+| `KNOT-TYPE` | Full sequence | 65 eligible: 3_1=57, 4_1=6, 5_2=2 | Macro-F1 on locked classes ↑ | Not tested. Required 5_1 class is absent; 4_1 and 5_2 have only 6 and 2 examples. No scoring folds |
+| `FS-L2-grouped-PU-ranking` | Two endpoint sequences per positive case; one per background item | 8,879 items; 10 positive cases; 8,767 groups | Mean held-case rank percentile ↓ | Tested: 650M and 8M; ProtT5 Not tested. 10 outer × 3 inner folds; evaluated |
+| `DISORDER-RES` | Sequence + residue coordinates | 2,279 registered proteins; 1 eligible dual-class binding group | Mean protein AP ↑ | Not tested. Additional proteins/groups with direct experimental order and disorder labels; locked protocol requires ≥4 dual-class groups. No scoring folds |
+| `DISORDER-STRUCTURE-REFERENCE-CANDIDATE` | Sequence + residue coordinates | 1,279 records; 1,029 groups; 391,718 labeled rows | Mean protein AP ↑ | Tested: 650M and 8M; ProtT5 Not tested. 5 outer × 3 inner folds; evaluated |
+| `FS-L1-PAIRED` | Paired experimental sequences and structures | 16 candidates; 10 accepted cases / 20 endpoints | Case evidence and input-identity audit; no model metric | Not tested. Six pending candidates lack accepted endpoint inputs/evidence in the frozen sequence frame. Case report; no prediction target/scoring folds defined |
+| `FS-REGION` | Sequence + switching-region coordinates | 10 cases / 20 endpoints; 124 positive + 848 reference-negative rows (580 strict); 3 dual-class cases | Label coverage; no model metric defined | Not tested. Switching-region positives cover 3/10 cases; 4,746 endpoint positions remain unknown. Annotations available; scoring protocol/folds not defined; model evaluation not run |
+| `FS-L3-MATCHED` | Sequences of cases and matched controls | 0 qualified matched case-control pairs | AUROC/AP after qualification ↑ | Not tested. Experimentally qualified matched controls with usable biological labels. Control-label qualification pending |
+| `BPTI-REDOX` | Same-variant sequence + redox conditions | 0 qualified experiment pairs | Not defined after qualification stop | Not tested. Qualified endpoint measurements and matched-state evidence. Prespecified qualification stop |
+| `PYP-STATE` | Sequence + illumination condition | 2 state records | Case/input audit; no prediction metric defined | Not tested. Additional independent groups with matched illumination/state measurements. Case report; no independent scoring folds |
+| `RNASE-ASSEMBLY` | Sequence + assembly condition | 4 state records | Case/input audit; no prediction metric defined | Not tested. Independent same-batch assembly pairs with measured conditions; current pairs carry cross-batch warnings. Case report; no independent scoring folds |
+| `DISORDER-CONDITION-pH` | Same sequence/region + pH | 7 state records | Case/input audit; no prediction metric defined | Not tested. Additional qualified independent condition pairs; candidate records include cross-publication and region mismatches. Case report; no independent scoring folds |
+| `DISORDER-CONDITION-temperature` | Same sequence/region + temperature | 2 state records | Case/input audit; no prediction metric defined | Not tested. Additional independent groups with matched two-temperature experimental labels. Case report; no independent scoring folds |
 
 FS-REGION counts are endpoint-residue rows: 848 reference negatives across all ten cases, including 356 negatives in the three dual-class cases; 580 is the strict subset. Condition counts are state records, not independent proteins or cases. The strict direct-label disorder task and the structural-reference task retain separate labels and results.
 
@@ -64,7 +64,7 @@ Data definitions and sources are documented in [data documentation](docs/data.md
 
 Inputs are an exact-sequence FASTA and a pinned model configuration. Extraction writes sequence/residue NPZ archives and `representation_manifest.json`. Training reads those archives, task labels and fixed folds, and writes out-of-fold predictions, fitted parameters, selected settings, metrics and `run.json`. Complete external prediction TSVs can also be scored directly. See [the archive and adapter contract](docs/model_input.md).
 
-Base scoring and linear/ridge reader training require Python **3.11+**, NumPy, SciPy and scikit-learn. Actual operating-system installation and scoring coverage is listed in the [platform matrix](docs/platforms.md); Windows is **未测试 / Not tested**. Model dependencies are optional: install `.[esm2]` for ESM-2 or `.[prott5]` for ProtT5. See [installation](docs/installation.md) for tested versions and [resources](docs/resources.md) for measured time, peak memory, cache sizes and long-sequence handling.
+Base scoring and linear/ridge reader training require Python **3.11+**, NumPy, SciPy and scikit-learn. Actual operating-system installation and scoring coverage is listed in the [platform matrix](docs/platforms.md); Windows is **Not tested**. Model dependencies are optional: install `.[esm2]` for ESM-2 or `.[prott5]` for ProtT5. See [installation](docs/installation.md) for tested versions and [resources](docs/resources.md) for measured time, peak memory, cache sizes and long-sequence handling.
 
 ## Tutorial 1: reproduce reference scores from included predictions
 

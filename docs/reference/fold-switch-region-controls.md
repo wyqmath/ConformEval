@@ -1,13 +1,13 @@
-# 两态实验结构稳定对照标签 v01
+# Stable control labels from paired experimental structures v01
 
-已对 10 个既有结构对、20 个端点生成全长标签。主规则新增 848 个稳定对照端点残基，严格敏感性规则保留 580 个。原有 124 个正标注逐位保留，4746 个位置继续未知。
+Full-length labels were generated for 10 existing structure pairs and 20 endpoints. The primary rule adds 848 stable-control endpoint residues; the strict sensitivity rule retains 580. All 124 original positive labels are preserved at their original positions, and 4746 positions remain unknown.
 
-3 个病例同时具备既有转换正例与新增稳定对照，涉及 3 个绑定组。两端点与重叠局部窗口不构成独立样本；本次没有生成评分折或运行模型。其他病例的对照标签可作结构参考，不能据此把整个蛋白标成非转换蛋白。
+3 cases contain both existing switching positives and newly added stable controls, spanning 3 binding groups. Paired endpoints and overlapping local windows are not independent samples. No scoring folds were generated and no model was run for this annotation. Control labels from the other cases provide structural references; they do not establish whole-protein non-switching labels.
 
-负标签含义为这两个已观测实验状态之间满足固定规则的局部稳定结构。它是结构派生参考，作者直接实验区段与结构派生对照的来源等级分别保存。规则为同身份连续 9 残基窗口、局部叠合 RMSD≤0.75 Å、中心相同 DSSP 螺旋/折叠状态、对称 Cα 距离保持分数≥0.90、1 Å 内距离差比例≥0.90、两态近邻覆盖≥0.95，以及至少 5 个连续合格残基。已知正区段、额外作者区段并集及边界缓冲被排除，缺失坐标和不确定对应保留未知。
+A negative label denotes local structural stability under fixed rules between the two observed experimental states. These are structure-derived references. Author-reported experimental regions and structure-derived controls retain separate evidence levels. The rules require contiguous 9-residue windows with matched identities, local alignment RMSD≤0.75 Å, and the same central DSSP helix or strand state. Additional requirements are a symmetric Cα distance-preservation score≥0.90, a fraction≥0.90 of distance differences within 1 Å, neighbor coverage≥0.95 in both states, and at least 5 consecutive qualifying residues. Known positive regions, the union of additional author-reported regions, and boundary buffers are excluded. Missing coordinates and uncertain correspondences remain unknown.
 
-阈值是本项目预先固定的保守操作定义，未用模型得分挑选；严格敏感性规则同时输出，不按结果择优。距离比较借鉴 [lDDT 原始论文](https://pmc.ncbi.nlm.nih.gov/articles/PMC3799472/) 的邻域保持思想；本实现是对称 Cα 变体，并非原始全原子 lDDT。
+The thresholds are conservative operational definitions fixed in advance by this project, without selection based on model scores. Strict sensitivity labels are also reported, without selecting the rule by its results. Distance comparisons draw on neighborhood preservation in the [original lDDT paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC3799472/). This implementation uses a symmetric Cα variant rather than the original all-atom lDDT.
 
-输入结构、序列和源产物的哈希在运行前后核对。全长标签、逐残基几何依据和来源映射均落盘。本文件记录标签生成时的结果；既有冻结标签、评分协议和模型结果保持原样。
+Hashes of input structures, sequences, and source artifacts were checked before and after execution. Full-length labels, per-residue geometric evidence, and source mappings were saved. This document records the label-generation results; existing frozen labels, scoring protocols, and model results are unchanged.
 
-固定规则见 [`configs/fs_region_controls_v1/protocol.json`](../../configs/fs_region_controls_v1/protocol.json)，原始生成运行记录见 [`run.json`](../../data/fs_region_controls_v1/run.json)。历史生成器属于源研究项目；本仓库提供已生成的标签和逐残基几何依据。
+The fixed rules are in [`configs/fs_region_controls_v1/protocol.json`](../../configs/fs_region_controls_v1/protocol.json), and the original generation record is in [`run.json`](../../data/fs_region_controls_v1/run.json). The historical generator belongs to the source research project; this repository provides the generated labels and per-residue geometric evidence.

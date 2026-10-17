@@ -28,8 +28,8 @@ CS0026	FS-REGION	porter_80_5f3kA__5f5rB	fold_switch_region_labels	labels.tsv.gz	
 CS0027	FS-REGION	porter_87_2k0qA__2lelA	fold_switch_region_labels	labels.tsv.gz	04df03447a81dfe6e68f60b077492fabbbb1a6efc4a52475e1de4418d92e3c1c				
 CS0028	FS-REGION	porter_9_3j7wB__3j7vG	fold_switch_region_labels	labels.tsv.gz	04df03447a81dfe6e68f60b077492fabbbb1a6efc4a52475e1de4418d92e3c1c				
 CS0029	illumination	PAIR-PYP-001	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				EXP-PYP-2014-SFX (single batch)
-CS0030	oligomer_state	PAIR-RNA-001	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				cross-batch（单体=独立研究 10.1110/ps.ps.31102；二聚体=Liu1998/2001）
-CS0031	oligomer_state	PAIR-RNA-002	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				cross-batch（单体=独立研究 10.1110/ps.ps.31102；二聚体=Liu1998/2001）
+CS0030	oligomer_state	PAIR-RNA-001	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				cross-batch (monomer=independent study 10.1110/ps.ps.31102; dimer=Liu1998/2001)
+CS0031	oligomer_state	PAIR-RNA-002	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				cross-batch (monomer=independent study 10.1110/ps.ps.31102; dimer=Liu1998/2001)
 CS0032	pH	PAIR-NS-00118-EXCLUDED	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				pmid 8243650/2387861
 CS0033	pH	PAIR-NS-01677-01	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				pmid 10555983
 CS0034	pH	PAIR-NS-01677-02	condition_pairs	pairs.tsv	45fdd2d12b1bbec128a4b021fb865a08ee68a91c9902d00440183423a09dea07				pmid 10555983

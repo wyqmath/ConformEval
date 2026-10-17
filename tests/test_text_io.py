@@ -27,7 +27,7 @@ def read_data_table(path):
 
 class TextIOTests(unittest.TestCase):
     def test_tsv_bom_crlf_and_unicode_plain_or_gzip(self):
-        rows=[{'id':'蛋白甲','note':'实验\r\n条件'}]
+        rows=[{'id':'protein_α','note':'assay\r\n25 °C'}]
         for ending in ['\n','\r\n']:
             for bom in [b'',b'\xef\xbb\xbf']:
                 stream=io.StringIO(newline='')
@@ -44,23 +44,23 @@ class TextIOTests(unittest.TestCase):
 
     def test_json_fasta_config_and_output_bytes(self):
         with tempfile.TemporaryDirectory() as temp:
-            root=Path(temp)/'中文 路径';root.mkdir()
+            root=Path(temp)/'Unicode α path';root.mkdir()
             config=json.loads((ROOT/'configs/models/esm2_8m.json').read_text(encoding='utf-8'))
-            config['note']='实验条件'
-            path=root/'模型.json';path.write_bytes(b'\xef\xbb\xbf'+json.dumps(config,ensure_ascii=False).encode('utf-8'))
-            self.assertEqual(load_config(path)['note'],'实验条件')
-            fasta=root/'序列.fasta';fasta.write_bytes('\ufeff>蛋白甲\r\nACDE\r\n'.encode('utf-8'))
-            self.assertEqual(parse_fasta(fasta),{'蛋白甲':'ACDE'})
-            target=root/'输出.json';json_write(target,{'条件':'温度','value':1})
-            self.assertEqual(json.loads(target.read_bytes().decode('utf-8')),{'条件':'温度','value':1})
+            config['note']='assay temperature: 25 °C'
+            path=root/'model_α.json';path.write_bytes(b'\xef\xbb\xbf'+json.dumps(config,ensure_ascii=False).encode('utf-8'))
+            self.assertEqual(load_config(path)['note'],'assay temperature: 25 °C')
+            fasta=root/'sequences_α.fasta';fasta.write_bytes('\ufeff>protein_α\r\nACDE\r\n'.encode('utf-8'))
+            self.assertEqual(parse_fasta(fasta),{'protein_α':'ACDE'})
+            target=root/'output_α.json';json_write(target,{'temperature_°C':'25 °C','value':1})
+            self.assertEqual(json.loads(target.read_bytes().decode('utf-8')),{'temperature_°C':'25 °C','value':1})
             self.assertTrue(target.read_bytes().endswith(b'\n'));self.assertNotIn(b'\r\n',target.read_bytes())
-            rows=[{'id':'蛋白甲','value':'1'}]
+            rows=[{'id':'protein_α','value':'1'}]
             for suffix in ['.tsv','.tsv.gz']:
                 path=root/('table'+suffix);write_tsv(path,['id','value'],rows)
                 raw=gzip.decompress(path.read_bytes()) if suffix.endswith('.gz') else path.read_bytes()
-                self.assertEqual(raw,'id\tvalue\n蛋白甲\t1\n'.encode('utf-8'))
+                self.assertEqual(raw,'id\tvalue\nprotein_α\t1\n'.encode('utf-8'))
             path=root/'scores.tsv.gz';write_gzip_tsv(path,rows,['id','value'])
-            self.assertEqual(gzip.decompress(path.read_bytes()),'id\tvalue\n蛋白甲\t1\n'.encode('utf-8'))
+            self.assertEqual(gzip.decompress(path.read_bytes()),'id\tvalue\nprotein_α\t1\n'.encode('utf-8'))
 
     @unittest.skipUnless(shutil.which('git'), 'Git is required to test checkout rules')
     def test_git_autocrlf_preserves_scientific_bytes(self):
@@ -95,7 +95,7 @@ class TextIOTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='confomeval-io-') as temp:
             root=Path(temp)
             metadata=json.loads((ROOT/'examples/predictions/metadata.json').read_text(encoding='utf-8'))
-            metadata['prediction_method']='中文描述：外部预测'
+            metadata['prediction_method']='external prediction at 25 °C'
             meta=root/'model.json';meta.write_bytes(b'\xef\xbb\xbf'+json.dumps(metadata,ensure_ascii=False).encode('utf-8'))
             env={**os.environ,'PYTHONUTF8':'0','PYTHONCOERCECLOCALE':'0','PYTHONIOENCODING':'ascii:backslashreplace','PYTHONWARNDEFAULTENCODING':'1','LC_ALL':'C'}
             for kind,filename in [('knot','knot.tsv'),('residue','residues.tsv')]:

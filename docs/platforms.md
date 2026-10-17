@@ -7,7 +7,7 @@ ConformEval 0.5.1 was installed from the same pure-Python wheel on the systems b
 | macOS 26.4, arm64 | 3.14.5 | PASS, base-only venv | 55 passed, 0 skipped; 28.113 s | PASS; all three tasks, seven arms per task; 42.65 s |
 | macOS 26.4, arm64 | 3.11.15 | PASS, base-only venv | 55 passed, 0 skipped; 25.510 s | Not repeated for this Python version; scoring is exercised by the test suite |
 | Linux kernel 4.18.0-553.el8_10, x86_64, glibc 2.28 | 3.12.3 | PASS, fresh package in venv using existing Conda system-site libraries | 55 passed, 0 skipped; 40.343 s | PASS; all three tasks, seven arms per task; 78.36 s |
-| Windows | 未测试 / Not tested | 未测试 | 未测试 | 未测试 |
+| Windows | Not tested | Not tested | Not tested | Not tested |
 
 The Linux checks ran on an actual remote Linux host. These rows describe base-package installation, training/scoring interface tests and archived prediction scoring. Model encoder inference was not rerun for this patch; its actual device/precision coverage is recorded separately in [model validation](model_validation.md). No Windows installation or execution is claimed.
 

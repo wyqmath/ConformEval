@@ -1,6 +1,6 @@
 # Results and task status
 
-This index covers complete biological task evaluations. **39 saved arm records** are reported with their original experiment settings; baseline repeats are retained by source run. **33 task/model combinations are 未测试 / Not tested**. The three-model synthetic smoke tests are separately recorded in [model validation](../docs/model_validation.md).
+This index covers complete biological task evaluations. **39 saved arm records** are reported with their original experiment settings; baseline repeats are retained by source run. **33 task/model combinations are Not tested**. The three-model synthetic smoke tests are separately recorded in [model validation](../docs/model_validation.md).
 
 ## Configuration and environment keys
 
@@ -35,7 +35,7 @@ For 8M the exact extraction/reader configurations are embedded in each model met
 | ESM-2 8M | PLM-nearest | 8M-knot | 734 sample | AUROC | 0.724348 | 8M-knot | [predictions](../results/esm2_8m_v1/knot/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/knot/metrics.json) |
 | ESM-2 8M | PLM-nested | 8M-knot | 734 sample | AUROC | 0.814237 | 8M-knot | [predictions](../results/esm2_8m_v1/knot/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/knot/metrics.json) |
 | Training-label prior | PLM-training-prior | 8M-knot | 734 sample | AUROC | 0.494323 | 8M-knot | [predictions](../results/esm2_8m_v1/knot/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/knot/metrics.json) |
-| ProtT5 XL encoder | 未测试 | 未测试 | 734 sample | AUROC; average precision secondary | 未测试 | 未测试 | 未测试 | 未测试 |
+| ProtT5 XL encoder | Not tested | Not tested | 734 sample | AUROC; average precision secondary | Not tested | Not tested | Not tested | Not tested |
 
 Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`.
 
@@ -58,7 +58,7 @@ Shared prediction files are filtered by `task_id` and `arm`; these exact filters
 | ESM-2 8M | PLM-nearest | 8M-fs | 8879 ranking_item | mean_held_case_rank_percentile | 0.500737 | 8M-fs | [predictions](../results/esm2_8m_v1/fs/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/fs/metrics.json) |
 | ESM-2 8M | PLM-nested | 8M-fs | 8879 ranking_item | mean_held_case_rank_percentile | 0.304406 | 8M-fs | [predictions](../results/esm2_8m_v1/fs/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/fs/metrics.json) |
 | Training-label prior | PLM-training-prior | 8M-fs | 8879 ranking_item | mean_held_case_rank_percentile | 0.500564 | 8M-fs | [predictions](../results/esm2_8m_v1/fs/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/fs/metrics.json) |
-| ProtT5 XL encoder | 未测试 | 未测试 | 8879 ranking_item | mean held-case rank percentile; Recall@k | 未测试 | 未测试 | 未测试 | 未测试 |
+| ProtT5 XL encoder | Not tested | Not tested | 8879 ranking_item | mean held-case rank percentile; Recall@k | Not tested | Not tested | Not tested | Not tested |
 
 Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`.
 
@@ -78,7 +78,7 @@ Shared prediction files are filtered by `task_id` and `arm`; these exact filters
 | ESM-2 8M | PLM-hidden6 | 8M-residue | 1279 protein_record; 391,718 rows | mean_per_protein_AP | 0.744395 | 8M-residue | [predictions](../results/esm2_8m_v1/residue/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/residue/metrics.json) |
 | ESM-2 8M | PLM-nested | 8M-residue | 1279 protein_record; 391,718 rows | mean_per_protein_AP | 0.738289 | 8M-residue | [predictions](../results/esm2_8m_v1/residue/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/residue/metrics.json) |
 | AA + position + local context + logistic | traditional-AA-context | 8M-residue | 1279 protein_record; 391,718 rows | mean_per_protein_AP | 0.585906 | 8M-residue | [predictions](../results/esm2_8m_v1/residue/predictions.tsv.gz) | [metrics](../results/esm2_8m_v1/residue/metrics.json) |
-| ProtT5 XL encoder | 未测试 | 未测试 | 1279 protein | mean per-protein average precision | 未测试 | 未测试 | 未测试 | 未测试 |
+| ProtT5 XL encoder | Not tested | Not tested | 1279 protein | mean per-protein average precision | Not tested | Not tested | Not tested | Not tested |
 
 Shared prediction files are filtered by `task_id` and `arm`; these exact filters are in `results_index.tsv`.
 
@@ -87,18 +87,18 @@ Shared prediction files are filtered by `task_id` and `arm`; these exact filters
 
 | Task | Input | Current data | Metric | Status / data needed |
 |---|---|---|---|---|
-| `KNOT-TYPE` | Full sequence | 65 eligible: 3_1=57, 4_1=6, 5_2=2 | Macro-F1 on locked classes ↑ | 未测试. Required 5_1 class is absent; 4_1 and 5_2 have only 6 and 2 examples. No scoring folds |
-| `DISORDER-RES` | Sequence + residue coordinates | 2,279 registered proteins; 1 eligible dual-class binding group | Mean protein AP ↑ | 未测试. Additional proteins/groups with direct experimental order and disorder labels; locked protocol requires ≥4 dual-class groups. No scoring folds |
-| `FS-L1-PAIRED` | Paired experimental sequences and structures | 16 candidates; 10 accepted cases / 20 endpoints | Case evidence and input-identity audit; no model metric | 未测试. Six pending candidates lack accepted endpoint inputs/evidence in the frozen sequence frame. Case report; no prediction target/scoring folds defined |
-| `FS-REGION` | Sequence + switching-region coordinates | 10 cases / 20 endpoints; 124 positive + 848 reference-negative rows (580 strict); 3 dual-class cases | Label coverage; no model metric defined | 未测试. Switching-region positives cover 3/10 cases; 4,746 endpoint positions remain unknown. Annotations available; scoring protocol/folds not defined; model evaluation not run |
-| `FS-L3-MATCHED` | Sequences of cases and matched controls | 0 qualified matched case-control pairs | AUROC/AP after qualification ↑ | 未测试. Experimentally qualified matched controls with usable biological labels. Control-label qualification pending |
-| `BPTI-REDOX` | Same-variant sequence + redox conditions | 0 qualified experiment pairs | Not defined after qualification stop | 未测试. Qualified endpoint measurements and matched-state evidence. Prespecified qualification stop |
-| `PYP-STATE` | Sequence + illumination condition | 2 state records | Case/input audit; no prediction metric defined | 未测试. Additional independent groups with matched illumination/state measurements. Case report; no independent scoring folds |
-| `RNASE-ASSEMBLY` | Sequence + assembly condition | 4 state records | Case/input audit; no prediction metric defined | 未测试. Independent same-batch assembly pairs with measured conditions; current pairs carry cross-batch warnings. Case report; no independent scoring folds |
-| `DISORDER-CONDITION-pH` | Same sequence/region + pH | 7 state records | Case/input audit; no prediction metric defined | 未测试. Additional qualified independent condition pairs; candidate records include cross-publication and region mismatches. Case report; no independent scoring folds |
-| `DISORDER-CONDITION-temperature` | Same sequence/region + temperature | 2 state records | Case/input audit; no prediction metric defined | 未测试. Additional independent groups with matched two-temperature experimental labels. Case report; no independent scoring folds |
+| `KNOT-TYPE` | Full sequence | 65 eligible: 3_1=57, 4_1=6, 5_2=2 | Macro-F1 on locked classes ↑ | Not tested. Required 5_1 class is absent; 4_1 and 5_2 have only 6 and 2 examples. No scoring folds |
+| `DISORDER-RES` | Sequence + residue coordinates | 2,279 registered proteins; 1 eligible dual-class binding group | Mean protein AP ↑ | Not tested. Additional proteins/groups with direct experimental order and disorder labels; locked protocol requires ≥4 dual-class groups. No scoring folds |
+| `FS-L1-PAIRED` | Paired experimental sequences and structures | 16 candidates; 10 accepted cases / 20 endpoints | Case evidence and input-identity audit; no model metric | Not tested. Six pending candidates lack accepted endpoint inputs/evidence in the frozen sequence frame. Case report; no prediction target/scoring folds defined |
+| `FS-REGION` | Sequence + switching-region coordinates | 10 cases / 20 endpoints; 124 positive + 848 reference-negative rows (580 strict); 3 dual-class cases | Label coverage; no model metric defined | Not tested. Switching-region positives cover 3/10 cases; 4,746 endpoint positions remain unknown. Annotations available; scoring protocol/folds not defined; model evaluation not run |
+| `FS-L3-MATCHED` | Sequences of cases and matched controls | 0 qualified matched case-control pairs | AUROC/AP after qualification ↑ | Not tested. Experimentally qualified matched controls with usable biological labels. Control-label qualification pending |
+| `BPTI-REDOX` | Same-variant sequence + redox conditions | 0 qualified experiment pairs | Not defined after qualification stop | Not tested. Qualified endpoint measurements and matched-state evidence. Prespecified qualification stop |
+| `PYP-STATE` | Sequence + illumination condition | 2 state records | Case/input audit; no prediction metric defined | Not tested. Additional independent groups with matched illumination/state measurements. Case report; no independent scoring folds |
+| `RNASE-ASSEMBLY` | Sequence + assembly condition | 4 state records | Case/input audit; no prediction metric defined | Not tested. Independent same-batch assembly pairs with measured conditions; current pairs carry cross-batch warnings. Case report; no independent scoring folds |
+| `DISORDER-CONDITION-pH` | Same sequence/region + pH | 7 state records | Case/input audit; no prediction metric defined | Not tested. Additional qualified independent condition pairs; candidate records include cross-publication and region mismatches. Case report; no independent scoring folds |
+| `DISORDER-CONDITION-temperature` | Same sequence/region + temperature | 2 state records | Case/input audit; no prediction metric defined | Not tested. Additional independent groups with matched two-temperature experimental labels. Case report; no independent scoring folds |
 
-The [72-row TSV](results_index.tsv) supplies explicit rows for all three models on all 13 tasks, with every tested arm, full-precision primary and secondary values, metric direction, config and environment paths, sample/row units, prediction filters and data gaps. `model_id=none` identifies sequence-only baselines; `experiment_model` identifies the source run. An untested row records currently eligible data, **zero scored rows**, and `未测试` for configuration, environment, predictions and scores.
+The [72-row TSV](results_index.tsv) supplies explicit rows for all three models on all 13 tasks, with every tested arm, full-precision primary and secondary values, metric direction, config and environment paths, sample/row units, prediction filters and data gaps. `model_id=none` identifies sequence-only baselines; `experiment_model` identifies the source run. An untested row records currently eligible data, **zero scored rows**, and `Not tested` for configuration, environment, predictions and scores.
 
 Condition modules and FS-L1 are case/evidence records; their prediction metrics and independent scoring folds are not defined. FS-REGION has paired structural annotations but no model evaluation. KNOT-TYPE lacks required 5_1 examples; strict DISORDER-RES has only one dual-class group against the locked minimum of four. These statuses are recorded separately from available data.
 
