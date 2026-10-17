@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-10-17T14:54:32.888129+00:00",
+  "links": {
+    "github": {
+      "url": "https://github.com/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "status": 200,
+      "resolved_url": "https://github.com/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "bytes": 259414
+    },
+    "raw_notebook": {
+      "url": "https://raw.githubusercontent.com/wyqmath/ConformEval/main/examples/notebooks/esm2_8m.ipynb",
+      "status": 200,
+      "resolved_url": "https://raw.githubusercontent.com/wyqmath/ConformEval/main/examples/notebooks/esm2_8m.ipynb",
+      "bytes": 17360,
+      "cells": 17,
+      "sha256": "9acbe56c5372f6faf360455348c7cf125ae4a3128dbcd317057a313157cb938d",
+      "matches_local": true
+    },
+    "colab": {
+      "url": "https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "status": 200,
+      "resolved_url": "https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "bytes": 97643
+    }
+  },
+  "published_commit": "2de2250de50dd2985565284871b837ac628b4136",
+  "colab_render": {
+    "status": "PASS",
+    "checked_at": "2026-10-17T14:55:28.171510+00:00",
+    "page_title": "esm2_8m.ipynb - Colab",
+    "notebook_name": "esm2_8m.ipynb",
+    "heading": "ConformEval with ESM-2 8M",
+    "cells_visible": 17,
+    "cloud_runtime_execution": "Not tested",
+    "observation": "Notebook text and all cells loaded in browser; Run all and Connect controls visible."
+  }
+}

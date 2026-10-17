@@ -61,3 +61,8 @@ with a fresh checkpoint cache. These are local measurements; hosted Colab
 execution is **Not tested**. Runtime availability and package resolution may
 differ in Colab. The source notebook is committed without machine-specific
 outputs; verification records preserve the actual local execution evidence.
+
+[Live link checks](../results/notebook_validation/links.json) verified the
+GitHub file page, raw notebook and Colab URL after publication. Colab loaded
+the notebook title and all 17 cells. This verifies notebook loading; a hosted
+runtime was not started.
