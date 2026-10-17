@@ -52,9 +52,9 @@ The model config chooses layers, pooling and long-sequence policy. The reader co
 For the complete benchmark, use the full task data rather than the synthetic fixture. This is a complete single-task example:
 
 ```bash
-confomeval-prepare-inputs   --task KNOT-PRESENCE --data-dir data/v0.3.1   --output-dir runs/knot-inputs
+confomeval-prepare-inputs   --task KNOT-PRESENCE --data-dir data/base   --output-dir runs/knot-inputs
 confomeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta runs/knot-inputs/sequences.fasta   --output-dir runs/esm8-knot-features --sequence-only --local-files-only
-confomeval-fit-readers   --task KNOT-PRESENCE --data-dir data/v0.3.1   --feature-manifest runs/esm8-knot-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-knot
+confomeval-fit-readers   --task KNOT-PRESENCE --data-dir data/base   --feature-manifest runs/esm8-knot-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-knot
 ```
 
 Expected: **569 unique sequences**, **734 samples**, **283 groups**, and **5 × 3** folds. [Full-task commands](full_evaluation.md) cover PU ranking and generic residue training. The [small NumPy example](../examples/README.md) also exercises training without model downloads.

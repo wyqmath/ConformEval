@@ -7,8 +7,8 @@ import tempfile
 import unittest
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / 'data/v0.3.1'
-REFERENCE = ROOT / 'results/esm2_existing_v0.3'
+DATA = ROOT / 'data/base'
+REFERENCE = ROOT / 'results/esm2_reference'
 PROTOCOL = ROOT / 'configs/scoring_protocol.json'
 from confomeval.evaluate_predictions import evaluate, load_predictions, rank_positive
 

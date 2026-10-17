@@ -18,7 +18,7 @@ A runnable external example is included:
 confomeval-evaluate   --task KNOT-PRESENCE --data-dir examples/mini/base   --predictions examples/predictions/knot.tsv   --model-metadata examples/predictions/metadata.json   --protocol configs/scoring_protocol.json   --output-dir runs/external-knot
 ```
 
-Expected: AUROC 1.0 over 20 synthetic rows, saved to `runs/external-knot/metrics.json`. For the full benchmark point `--data-dir` to `data/v0.3.1` and supply complete predictions for its frozen sample set.
+Expected: AUROC 1.0 over 20 synthetic rows, saved to `runs/external-knot/metrics.json`. For the full benchmark point `--data-dir` to `data/base` and supply complete predictions for its frozen sample set.
 
 ## Residue task
 
@@ -34,7 +34,7 @@ Optional `arm` names multiple complete prediction sets. Every selected, labeled 
 confomeval-evaluate-residues   --task-dir examples/mini/residue   --predictions examples/predictions/residues.tsv   --model-metadata examples/predictions/metadata.json   --output-dir runs/external-residue --example
 ```
 
-Expected: 554 synthetic residue rows and mean per-protein AP 1.0, saved in `runs/external-residue/metrics.json`. For benchmark predictions use `--task-dir data/disorder_reference_v1` and omit `--example`.
+Expected: 554 synthetic residue rows and mean per-protein AP 1.0, saved in `runs/external-residue/metrics.json`. For benchmark predictions use `--task-dir data/disorder_reference` and omit `--example`.
 
 ## Metadata template
 

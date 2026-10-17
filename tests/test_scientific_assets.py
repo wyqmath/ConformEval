@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class ScientificAssetTests(unittest.TestCase):
 
     def test_base_identities_masks_coordinates_and_groups(self):
-        data = ROOT / 'data/v0.3.1'
+        data = ROOT / 'data/base'
         verify_dataset(data)
         self.assertEqual(validation.verify_sequences(data)['fasta_sequences'], 11684)
         validation.verify_masks(data)
@@ -31,18 +31,18 @@ class ScientificAssetTests(unittest.TestCase):
         validation.verify_group_splits(data, tasks)
 
     def test_reference_prediction_coverage_and_assignment(self):
-        predictions = ROOT / 'results/esm2_existing_v0.3/predictions.tsv.gz'
+        predictions = ROOT / 'results/esm2_reference/predictions.tsv.gz'
         self.assertEqual(sum(validation.verify_predictions(predictions).values()), 67291)
-        validation.verify_prediction_assignments(predictions, ROOT / 'data/v0.3.1')
+        validation.verify_prediction_assignments(predictions, ROOT / 'data/base')
 
     def test_disorder_reference_identities_and_folds(self):
-        samples, labels, folds, hashes = load_task(ROOT / 'data/disorder_reference_v1')
+        samples, labels, folds, hashes = load_task(ROOT / 'data/disorder_reference')
         self.assertEqual(len(samples), 1279)
         self.assertEqual(sum(map(len, labels.values())), 391718)
         self.assertEqual(set(samples), set(folds))
 
     def test_stable_control_labels(self):
-        actual = validation.verify_stable_controls(ROOT / 'data/fs_region_controls_v1')
+        actual = validation.verify_stable_controls(ROOT / 'data/fs_region_controls')
         self.assertEqual(actual['endpoints'], 20)
         self.assertEqual(actual['primary'], {'1': 124, '0': 848, 'NA': 4746})
 
@@ -60,7 +60,7 @@ class ScientificAssetTests(unittest.TestCase):
                 check_manifest(root)
 
     def test_control_identity_mask_coordinate_and_coverage_failures(self):
-        source = ROOT / 'data/fs_region_controls_v1'
+        source = ROOT / 'data/fs_region_controls'
         for field, value, message in [
             ('sequence_sha256', 'a' * 64, 'endpoint identity'),
             ('mask', 'invalid', 'not masked'),

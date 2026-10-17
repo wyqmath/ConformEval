@@ -144,7 +144,7 @@ def main():
     if out.exists():
         raise ValueError('output directory already exists')
     if a.reference:
-        bundle = task.parent.parent / 'results/disorder_reference_esm2_v1'
+        bundle = task.parent.parent / 'results/disorder_reference_esm2'
         check_manifest(bundle)
         if pred != bundle / 'residue_predictions.tsv.gz':
             raise ValueError('reference mode requires the archived reference predictions')

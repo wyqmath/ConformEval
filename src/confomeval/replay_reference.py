@@ -31,7 +31,7 @@ def main():
         raise ValueError('output directory already exists')
     out.mkdir(parents=True)
     started = now()
-    ref = root / 'results/esm2_existing_v0.3'
+    ref = root / 'results/esm2_reference'
     with gzip.open(ref / 'predictions.tsv.gz', 'rt', encoding='utf-8-sig', newline='') as f:
         rows = list(csv.DictReader(f, delimiter='\t'))
     arms = sorted({r['arm'] for r in rows})
@@ -45,7 +45,7 @@ def main():
         preds = out / f'{arm}.tsv.gz'
         write_gzip_tsv(preds, [{k: r[k] for k in ['task_id', 'sample_id', 'outer_fold', 'score']} for r in rows if r['arm'] == arm], ['task_id', 'sample_id', 'outer_fold', 'score'])
         target = out / arm
-        evaluate(root / 'data/v0.3.1', preds, meta, root / 'configs/scoring_protocol.json', target)
+        evaluate(root / 'data/base', preds, meta, root / 'configs/scoring_protocol.json', target)
         actual = json.loads((target / 'metrics.json').read_text(encoding='utf-8-sig'))['metrics']
         for task, m in actual.items():
             expected = json.loads((ref / f'metrics_{task}.json').read_text(encoding='utf-8-sig'))['arms'][arm]
@@ -68,11 +68,11 @@ def main():
                         compare(value, float(original) if isinstance(value, (int, float)) else original, 'FS case-rank/' + arm + '/' + field)
             checks.append({'task_id': task, 'arm': arm, 'metrics_and_group_intervals': 'MATCH'})
         print(f'Replayed {arm}: both task metrics and group intervals MATCH', flush=True)
-    task = root / 'data/disorder_reference_v1'
+    task = root / 'data/disorder_reference'
     dest = out / 'disorder_reference'
-    subprocess.run([sys.executable, '-m', 'confomeval.evaluate_residue_predictions', '--task-dir', str(task), '--predictions', str(root / 'results/disorder_reference_esm2_v1/residue_predictions.tsv.gz'), '--reference', '--output-dir', str(dest)], check=True)
+    subprocess.run([sys.executable, '-m', 'confomeval.evaluate_residue_predictions', '--task-dir', str(task), '--predictions', str(root / 'results/disorder_reference_esm2/residue_predictions.tsv.gz'), '--reference', '--output-dir', str(dest)], check=True)
     actual = json.loads((dest / 'metrics.json').read_text(encoding='utf-8-sig'))
-    expected = json.loads((root / 'results/disorder_reference_esm2_v1/metrics.json').read_text(encoding='utf-8-sig'))
+    expected = json.loads((root / 'results/disorder_reference_esm2/metrics.json').read_text(encoding='utf-8-sig'))
     compare(actual, expected, 'disorder_reference_all_metrics_and_bootstraps')
     checks.append({'task_id': 'DISORDER-STRUCTURE-REFERENCE-CANDIDATE', 'arms': 7, 'all_metrics_and_bootstraps': 'MATCH'})
     record = {'status': 'PASS', 'started_at': started, 'ended_at': now(), 'scope': 'Archived prediction rescoring; no encoder inference, reader refitting, or full inner-selection trajectory replay. KNOT/FS check point metrics, group intervals and all FS case ranks; disorder checks full metrics and 2000 group-bootstrap intervals.', 'numeric_tolerance': 1e-10, 'checks': checks}

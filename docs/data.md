@@ -2,15 +2,15 @@
 
 ## Purpose and version
 
-ConformEval examines protein sequence representations for topology, disorder, fold switching and condition-dependent states. This repository snapshot uses software version 0.4.0 and retains the original scientific data versions. It retains the base `data/v0.3.1/` scientific lock and adds separately versioned accepted disorder reference and fold-switch region annotation bundles.
+ConformEval examines protein sequence representations for topology, disorder, fold switching and condition-dependent states. Directory names are independent of the original scientific data versions. It retains the base `data/base/` scientific lock and adds separately versioned accepted disorder reference and fold-switch region annotation bundles.
 
 ## Data inventory
 
 | Bundle | Contents | Evaluation state |
 |---|---|---|
-| `data/v0.3.1/` | 11,684 unique sequences; 14,223 task-to-sequence rows; 14,937 task sample rows; strict labels, source references and group folds | KNOT-PRESENCE: 734 samples/283 groups. FS-L2: 8,879 ranking units/8,767 groups. Other task rows retain their individual eligibility status. |
-| `data/disorder_reference_v1/` | 1,279 records/1,275 sequences/1,029 groups; 391,718 labeled protein-residue rows | Accepted separate 5 × 3 grouped development evaluation; 2,742,026 predictions across seven arms |
-| `data/fs_region_controls_v1/` | 10 experimental pairs/20 endpoints/5,718 positions; 124 inherited positives; 848 primary negatives; 4,746 unknown | Accepted structural-reference annotation. Three dual-class cases; no scoring folds or model result. Strict sensitivity has 580 negatives. |
+| `data/base/` | 11,684 unique sequences; 14,223 task-to-sequence rows; 14,937 task sample rows; strict labels, source references and group folds | KNOT-PRESENCE: 734 samples/283 groups. FS-L2: 8,879 ranking units/8,767 groups. Other task rows retain their individual eligibility status. |
+| `data/disorder_reference/` | 1,279 records/1,275 sequences/1,029 groups; 391,718 labeled protein-residue rows | Accepted separate 5 × 3 grouped development evaluation; 2,742,026 predictions across seven arms |
+| `data/fs_region_controls/` | 10 experimental pairs/20 endpoints/5,718 positions; 124 inherited positives; 848 primary negatives; 4,746 unknown | Accepted structural-reference annotation. Three dual-class cases; no scoring folds or model result. Strict sensitivity has 580 negatives. |
 
 Counts refer to different units. The task catalog declares those units explicitly. A repeated sequence record or two endpoints of one case are not independent proteins.
 
@@ -40,7 +40,7 @@ Independent disorder review checked all prediction identities, metrics, paramete
 
 ## Sources and traceability
 
-Sources include DisProt, UniProt, RCSB PDB/SIFTS, KnotProt-derived legacy annotations and primary literature. The base source table is `data/v0.3.1/sources.tsv`; 37 portable case source references resolve through `case_sources.tsv`. Supplementary bundle manifests preserve scientific artifact integrity. [Upstream provenance](../data/provenance/upstream_artifacts.json) records the original source fingerprints. Local provenance paths are replaced by portable references without altering labels or predictions.
+Sources include DisProt, UniProt, RCSB PDB/SIFTS, KnotProt-derived legacy annotations and primary literature. The base source table is `data/base/sources.tsv`; 37 portable case source references resolve through `case_sources.tsv`. Supplementary bundle manifests preserve scientific artifact integrity. [Upstream provenance](../data/provenance/upstream_artifacts.json) records the original source fingerprints. Local provenance paths are replaced by portable references without altering labels or predictions.
 
 The scored knot annotations inherit 2026-09-14/15 legacy topology tables. The separately captured 2026-10-03 KnotProt lists were candidate-audit inputs and do not reconstruct the scored label snapshot. The original legacy source snapshot remains unresolved. This distinction is retained rather than assigning a later download to earlier labels.
 
@@ -69,9 +69,9 @@ This file records the source review inherited by the v0.4.0 repository snapshot.
 | PYP, RNase A, and BPTI papers | Condition and assembly case modules | Mixed terms, including paywalled sources; one listed PYP article is CC BY 4.0 | **Unresolved by record.** No case-specific redistribution permission is inferred from repository publication |
 | ESM-2 checkpoint | Existing reference model identity | Model card records MIT; weights are excluded | No model files are bundled |
 
-The machine-readable source table is [`data/v0.3.1/sources.tsv`](../data/v0.3.1/sources.tsv). It retains the recorded source IDs, versions, terms, and disposition notes while omitting source-local file paths.
+The machine-readable source table is [`data/base/sources.tsv`](../data/base/sources.tsv). It retains the recorded source IDs, versions, terms, and disposition notes while omitting source-local file paths.
 
-Case-level source references are in [`data/v0.3.1/case_sources.tsv`](../data/v0.3.1/case_sources.tsv). Each case row resolves through its `source_ref` and retains the originating artifact hash plus any recorded DOI, PMCID, or citation note. These records improve traceability; they do not resolve the redistribution restrictions summarized above.
+Case-level source references are in [`data/base/case_sources.tsv`](../data/base/case_sources.tsv). Each case row resolves through its `source_ref` and retains the originating artifact hash plus any recorded DOI, PMCID, or citation note. These records improve traceability; they do not resolve the redistribution restrictions summarized above.
 
 ## KnotProt snapshot and terms check
 
@@ -102,3 +102,9 @@ These documents were relocated from the data and result bundles. Historical run 
 ## English metadata
 
 Human-readable source descriptions, case notes, authorization text, and status labels use English. The dataset manifest records their current export hashes and the original metadata fingerprints. Scientific identities, numeric values, labels, masks, coordinates, folds, and predictions are unchanged. Historical run hashes identify the metadata exports used by those runs; they are not checksums of the translated descriptions.
+
+## Bundle versions and paths
+
+Public directories use stable descriptive names. [Bundle metadata](../data/provenance/bundle_versions.json) records the snapshot version, original source path, and metadata fingerprint for each data, configuration, and result bundle. [The changelog](changelog.md) records layout and software changes. Dataset manifests retain their scientific version identifiers and original locks.
+
+Historical run records retain the paths and input hashes used at execution. Their original locations are provenance, while current files are reached through the bundle metadata and current result indexes. Renaming a directory does not create a new experiment or change the scientific dataset version.

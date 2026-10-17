@@ -6,7 +6,7 @@
   "prediction_table": {
     "columns": ["task_id", "sample_id", "outer_fold", "score"],
     "one_row_per_eligible_sample": true,
-    "outer_fold_source": "data/v0.3.1/folds/outer_group_holdout.tsv",
+    "outer_fold_source": "data/base/folds/outer_group_holdout.tsv",
     "labels_in_prediction_input": false
   },
   "reader_protocol": {

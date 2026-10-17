@@ -53,7 +53,7 @@ def verify_dataset(data_dir: Path) -> dict[str, str]:
     records = manifest.get('files', {})
     if not records:
         raise ValueError('dataset manifest has no file records')
-    hashes = {'data/v0.3.1/dataset_manifest.json': sha256(manifest_path)}
+    hashes = {'data/base/dataset_manifest.json': sha256(manifest_path)}
     for relative, record in records.items():
         rel = Path(relative)
         if rel.is_absolute() or '..' in rel.parts:
@@ -64,7 +64,7 @@ def verify_dataset(data_dir: Path) -> dict[str, str]:
             raise ValueError(f'dataset file hash mismatch: {relative}')
         if isinstance(record, dict) and path.stat().st_size != record.get('bytes'):
             raise ValueError(f'dataset file size mismatch: {relative}')
-        hashes[f'data/v0.3.1/{rel.as_posix()}'] = expected
+        hashes[f'data/base/{rel.as_posix()}'] = expected
     return hashes
 
 def load_protocol(path: Path) -> dict:

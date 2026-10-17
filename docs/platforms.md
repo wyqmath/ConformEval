@@ -11,7 +11,7 @@ ConformEval 0.5.1 was installed from the same pure-Python wheel on the systems b
 
 The Linux checks ran on an actual remote Linux host. These rows describe base-package installation, training/scoring interface tests and archived prediction scoring. Model encoder inference was not rerun for this patch; its actual device/precision coverage is recorded separately in [model validation](model_validation.md). No Windows installation or execution is claimed.
 
-[Machine-readable validation and logs](../results/platform_validation_v1/validation.json) record the actual Python/dependency versions, code hashes, test counts, replay summaries and source-log hashes. Local absolute paths are replaced by portable labels in exported evidence; original record/log hashes remain available. The latest full suites use the final text tests. Earlier macOS scoring records use the same final source modules; their original full-suite check remains in the source record.
+[Machine-readable validation and logs](../results/platform_validation/validation.json) record the actual Python/dependency versions, code hashes, test counts, replay summaries and source-log hashes. Local absolute paths are replaced by portable labels in exported evidence; original record/log hashes remain available. The latest full suites use the final text tests. Earlier macOS scoring records use the same final source modules; their original full-suite check remains in the source record.
 
 ## Actual dependencies
 

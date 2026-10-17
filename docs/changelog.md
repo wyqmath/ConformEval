@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Remove snapshot-version suffixes from data, configuration, and result directory names.
+- Update commands, scoring paths, tests, result indexes, and documentation to the new layout.
+- Record original snapshot versions and source locations in [bundle metadata](../data/provenance/bundle_versions.json). Scientific versions, labels, folds, predictions, and saved execution records are preserved.
+
 ## 0.5.1 — 2026-10-17
 
 - Read UTF-8 inputs explicitly, accept an optional BOM, and write new JSON/FASTA text with LF line endings.

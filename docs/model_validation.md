@@ -10,7 +10,7 @@ ConformEval 0.5.0 supplies real encoder adapters and one generic nested reader/s
 
 All real small extractions cover 30 sequences and 867 residue coordinates. Sequence hashes, archive hashes, full coordinate coverage, model identity and dimensions were checked. ESM encoder loading ignores the checkpoint's unused language-model head; no missing/mismatched encoder parameters or loading errors were reported. ProtT5 reported no missing, mismatched or unexpected parameters. The actual SentencePiece tokenizer was checked with residue-spaced amino acids and EOS exclusion. Model-specific normalization and original-sequence identities are described in [the input contract](model_input.md).
 
-[Machine-readable records](../results/adapter_validation_v1/validation.json) retain extraction manifests and completed small-task run records. [Resource measurements](resources.md) distinguish tested hardware/precision from untested devices. Base-only installed-package tests passed on Python 3.11 and 3.14. GPU inference and full ProtT5/650M runs through the new adapter remain untested.
+[Machine-readable records](../results/adapter_validation/validation.json) retain extraction manifests and completed small-task run records. [Resource measurements](resources.md) distinguish tested hardware/precision from untested devices. Base-only installed-package tests passed on Python 3.11 and 3.14. GPU inference and full ProtT5/650M runs through the new adapter remain untested.
 
 ## Complete ESM-2 8M results
 
@@ -18,9 +18,9 @@ These are frozen grouped-development scores with the same samples, folds and sco
 
 | Task | Nested-reader primary result | Saved output |
 |---|---:|---|
-| Knot presence | AUROC **0.814237** | [metrics](../results/esm2_8m_v1/knot/metrics.json), [run](../results/esm2_8m_v1/knot/run.json) |
-| Fold-switch PU ranking | Mean held-case rank percentile **0.304406**, lower is better | [metrics](../results/esm2_8m_v1/fs/metrics.json), [run](../results/esm2_8m_v1/fs/run.json) |
-| Disorder reference | Mean protein AP **0.738289** | [metrics](../results/esm2_8m_v1/residue/metrics.json), [run](../results/esm2_8m_v1/residue/run.json) |
+| Knot presence | AUROC **0.814237** | [metrics](../results/esm2_8m/knot/metrics.json), [run](../results/esm2_8m/knot/run.json) |
+| Fold-switch PU ranking | Mean held-case rank percentile **0.304406**, lower is better | [metrics](../results/esm2_8m/fs/metrics.json), [run](../results/esm2_8m/fs/run.json) |
+| Disorder reference | Mean protein AP **0.738289** | [metrics](../results/esm2_8m/residue/metrics.json), [run](../results/esm2_8m/residue/run.json) |
 
 Each directory includes complete out-of-fold predictions, fitted coefficients and preprocessing parameters, inner candidate scores, outer selections, model metadata, extraction provenance and actual environment/timestamps. The residue directory also contains per-protein metrics. These results do not establish independent prospective generalization. Layers and search grids differ from the older archived 650M experiment; this is a functioning smaller-model reference, not a controlled model-size ablation.
 

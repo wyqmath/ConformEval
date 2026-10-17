@@ -10,4 +10,4 @@ The thresholds are conservative operational definitions fixed in advance by this
 
 Hashes of input structures, sequences, and source artifacts were checked before and after execution. Full-length labels, per-residue geometric evidence, and source mappings were saved. This document records the label-generation results; existing frozen labels, scoring protocols, and model results are unchanged.
 
-The fixed rules are in [`configs/fs_region_controls_v1/protocol.json`](../../configs/fs_region_controls_v1/protocol.json), and the original generation record is in [`run.json`](../../data/fs_region_controls_v1/run.json). The historical generator belongs to the source research project; this repository provides the generated labels and per-residue geometric evidence.
+The fixed rules are in [`configs/fs_region_controls/protocol.json`](../../configs/fs_region_controls/protocol.json), and the original generation record is in [`run.json`](../../data/fs_region_controls/run.json). The historical generator belongs to the source research project; this repository provides the generated labels and per-residue geometric evidence.

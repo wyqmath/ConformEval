@@ -1,0 +1,86 @@
+{
+  "bundles": [
+    {
+      "historical_path": "configs/base_v0.3.1",
+      "metadata_path": "configs/base/data_protocol.json",
+      "metadata_sha256": "5a7042b812a98f489af7e894511e64e6174337750e69ac5a7820e4cc763a5203",
+      "path": "configs/base",
+      "snapshot_version": "0.3.1"
+    },
+    {
+      "historical_path": "configs/disorder_reference_v1",
+      "metadata_path": "configs/disorder_reference/data_protocol.json",
+      "metadata_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69",
+      "path": "configs/disorder_reference",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "configs/fs_region_controls_v1",
+      "metadata_path": "configs/fs_region_controls/protocol.json",
+      "metadata_sha256": "8af8b298ec0f9fbb6878d06999f7fc9c9ba75af840a39bdadbe668ae7dda329e",
+      "path": "configs/fs_region_controls",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "data/v0.3.1",
+      "metadata_path": "data/base/dataset_manifest.json",
+      "metadata_sha256": "29b274f0e2de9bea8154cea11dca0392d4990d230d9ab4214f0661cc363f3468",
+      "path": "data/base",
+      "snapshot_version": "0.3.1"
+    },
+    {
+      "historical_path": "data/disorder_reference_v1",
+      "metadata_path": "data/disorder_reference/manifest.json",
+      "metadata_sha256": "d8527744b6c8b8997f39dca56e49725a815207237ed4f97547d3ae0c2df7907a",
+      "path": "data/disorder_reference",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "data/fs_region_controls_v1",
+      "metadata_path": "data/fs_region_controls/manifest.json",
+      "metadata_sha256": "70b66e80f766eb11b635999d33559987916aa16de4b8f3533d1c3ab16ce74d16",
+      "path": "data/fs_region_controls",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "results/esm2_existing_v0.3",
+      "metadata_path": "results/esm2_reference/provenance.json",
+      "metadata_sha256": "0c5348968d08000ef2b89cf895d3a147044899e2aadc97022675f2cc5e5042c4",
+      "path": "results/esm2_reference",
+      "snapshot_version": "0.3"
+    },
+    {
+      "historical_path": "results/disorder_reference_esm2_v1",
+      "metadata_path": "results/disorder_reference_esm2/manifest.json",
+      "metadata_sha256": "4c512e2027ecebe404807d50a7a41390fc872d918245719a07f6cbcb6b69e39a",
+      "path": "results/disorder_reference_esm2",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "results/esm2_8m_v1",
+      "metadata_path": "results/esm2_8m/knot/run.json",
+      "metadata_sha256": "9863885bbaf64684310481d72d0cca93b76a1c1a98cb0ba222445fb2b59e7731",
+      "path": "results/esm2_8m",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "results/adapter_validation_v1",
+      "metadata_path": "results/adapter_validation/validation.json",
+      "metadata_sha256": "661aa679866bcecf3e0c408370517bafc3404f37822fa1c4475a6028e25823ac",
+      "path": "results/adapter_validation",
+      "snapshot_version": "1"
+    },
+    {
+      "historical_path": "results/platform_validation_v1",
+      "metadata_path": "results/platform_validation/validation.json",
+      "metadata_sha256": "02ec3b99bb52745ae88414425fb035a2a4cc5e28f3fda44950eeadf85581a1f7",
+      "path": "results/platform_validation",
+      "snapshot_version": "1"
+    }
+  ],
+  "historical_records": "Saved run records retain their executed paths and hashes. historical_path is source provenance, not a current filesystem alias. Scientific data versions and artifact identities are unchanged.",
+  "layout": "Unversioned public directory names; versions belong to bundle metadata and the changelog.",
+  "schema_version": 1,
+  "software_version": "0.5.1",
+  "source_repository_commit": "0f227d97f1de2b2f84297d24cb6bc963bdefb455"
+}

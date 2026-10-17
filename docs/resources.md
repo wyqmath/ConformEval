@@ -22,7 +22,7 @@ All models processed the same 30 sequences, 867 total residues, lengths 24–35.
 | ESM-2 650M | 19.06 | 2,624.4 | 8.18 | 6.65 / 0.43 / 3.61 |
 | ProtT5 XL encoder | 27.06 | 4,760.5 | 6.57 | 5.98 / 0.36 / 1.85 |
 
-The ProtT5 checkpoint is 2,416,373,051 bytes before loading. Downloads and extraction caches live outside the public repository. Download time depends on the network and is excluded from this table. [Validation records](../results/adapter_validation_v1/validation.json) contain input/checkpoint hashes, immutable revisions, dimensions, archive hashes, actual times and loading diagnostics.
+The ProtT5 checkpoint is 2,416,373,051 bytes before loading. Downloads and extraction caches live outside the public repository. Download time depends on the network and is excluded from this table. [Validation records](../results/adapter_validation/validation.json) contain input/checkpoint hashes, immutable revisions, dimensions, archive hashes, actual times and loading diagnostics.
 
 ## Complete ESM-2 8M benchmark
 

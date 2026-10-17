@@ -50,7 +50,7 @@ Set `policy: reject` to fail on sequences longer than the configured maximum. Th
 For a directory of external sequence archives, build a validated manifest with explicit layer IDs:
 
 ```bash
-confomeval-build-feature-manifest   --task KNOT-PRESENCE --data-dir data/v0.3.1   --archive-root /path/to/model-archives   --output-manifest /path/to/model-archives/representation_manifest.json   --model-id organization/model-name --model-revision immutable-revision   --pooling mean --layers 3 6   --extractor-code-sha256 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+confomeval-build-feature-manifest   --task KNOT-PRESENCE --data-dir data/base   --archive-root /path/to/model-archives   --output-manifest /path/to/model-archives/representation_manifest.json   --model-id organization/model-name --model-revision immutable-revision   --pooling mean --layers 3 6   --extractor-code-sha256 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 ```
 
 Replace the model identity and extractor fingerprint with the actual values. The command verifies sequence coverage and archive identity against the selected task before writing its manifest.
