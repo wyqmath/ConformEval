@@ -2,6 +2,19 @@
 
 ConformEval tests how well **protein language model representations** capture protein knots, fold switching, and residue-level disorder. It provides fixed sequences, labels, group folds, model adapters, training tools, and scoring commands. You can reproduce reference scores, evaluate a supported model, or supply your own representations and predictions.
 
+## Download the dataset
+
+[Zenodo record](https://zenodo.org/records/23433394) · [DOI: 10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394) · [Download ZIP (3.85 MB)](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1)
+
+The ZIP contains protein sequences, reference labels, and fixed cross-validation splits for knot presence (734 samples), fold-switch ranking (8,879 units), and disorder (1,279 protein records).
+
+```bash
+curl --fail --location "https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1" --output ConformEval-data.zip
+unzip -q ConformEval-data.zip -d datasets
+```
+
+The files are extracted to `datasets/ConformEval-data/`. See the [dataset layout and fields](docs/data.md#zenodo-dataset) or the README inside the ZIP.
+
 ## Tasks and reference results
 
 | Task | Metric | ESM-2 650M | ESM-2 8M | ProtT5 |

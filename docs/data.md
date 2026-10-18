@@ -1,5 +1,21 @@
 # ConformEval data card
 
+## Zenodo dataset
+
+The dataset is published on [Zenodo](https://zenodo.org/records/23433394) with DOI [10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394). [Download ConformEval-data.zip (3.85 MB)](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1).
+
+The archive contains 15 files under `ConformEval-data/`:
+
+| Directory | Task | Samples | Labels |
+| --- | --- | ---: | --- |
+| `knot_presence/` | Knot presence | 734 | 112 knotted, 622 unknotted |
+| `fold_switching/` | Fold-switch ranking | 8,879 | 10 confirmed pairs, 8,869 unlabeled background items |
+| `disorder/` | Residue disorder structure reference | 1,279 | 391,718 labeled residues |
+
+Each task directory contains `sequences.fasta`, `samples.tsv`, `test_splits.tsv`, and `validation_splits.tsv`. The disorder directory also contains `labels.tsv`. The root README defines the labels and split assignments; `sources.tsv` lists the data sources and recorded reuse terms. Tables use uncompressed UTF-8 text with tab-separated columns. Sequence and group identifiers are short readable identifiers shared across files.
+
+Download and extract the archive with the [README commands](../README.md#download-the-dataset). Its file names and columns are described in the bundled README; the repository input bundles used by the existing training and reference-replay commands are listed below.
+
 ## Purpose and version
 
 ConformEval examines protein sequence representations for topology, disorder, fold switching and condition-dependent states. Directory names are independent of the original scientific data versions. It retains the base `data/base/` scientific lock and adds separately versioned accepted disorder reference and fold-switch region annotation bundles.
