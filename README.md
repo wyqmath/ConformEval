@@ -46,7 +46,7 @@ and the [evaluation protocol](docs/evaluation.md).
 [Download the dataset](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1)
 (3.85 MB) · [DOI: 10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394).
 The archive includes sequences, labels, and fixed splits for the three tasks.
-[Data formats and sources](docs/data.md) describe the files and reference bundle.
+[Data formats and sources](docs/data.md) describe the files and evaluator inputs.
 
 ## Repository layout
 
@@ -54,8 +54,8 @@ The archive includes sequences, labels, and fixed splits for the three tasks.
 src/conformeval/  Model adapters, training, scoring
 configs/         Model settings and evaluation protocols
 examples/        Notebook, small datasets, prediction templates
-data/            Task and download indexes
-results/         Scores and result indexes
+data/            Task data, labels, splits, indexes
+results/         Reference predictions, parameters, scores
 docs/            Usage, data, models, evaluation
 tests/           Local tests
 ```
