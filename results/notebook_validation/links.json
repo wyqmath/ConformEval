@@ -1,15 +1,34 @@
 {
-  "status": "Pending post-publication verification",
+  "status": "PASS",
   "scope": "Published notebook links; hosted Colab execution is Not tested",
   "links": {
     "github": {
-      "url": "https://github.com/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb"
+      "url": "https://github.com/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "status": 200,
+      "resolved_url": "https://github.com/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "bytes": 259789
     },
     "raw_notebook": {
-      "url": "https://raw.githubusercontent.com/wyqmath/ConformEval/main/examples/notebooks/esm2_8m.ipynb"
+      "url": "https://raw.githubusercontent.com/wyqmath/ConformEval/main/examples/notebooks/esm2_8m.ipynb",
+      "status": 200,
+      "resolved_url": "https://raw.githubusercontent.com/wyqmath/ConformEval/main/examples/notebooks/esm2_8m.ipynb",
+      "bytes": 17476,
+      "cells": 17,
+      "sha256": "618d5b311efdeb9eec1a17559e1addf495e39418d22765404a0c5b448b75a154",
+      "matches_local": true
     },
     "colab": {
-      "url": "https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb"
+      "url": "https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "status": 200,
+      "resolved_url": "https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb",
+      "bytes": 97637
     }
+  },
+  "checked_at": "2026-10-18T00:44:15.022560+00:00",
+  "published_commit": "31eae3c9f1835e4ff122248fb1582d8d8b056ab0",
+  "hosted_colab_execution": "Not tested",
+  "colab_render": {
+    "status": "Not verified in this recheck",
+    "observation": "In-app browser navigation timed out after 60 seconds. The Colab URL returned HTTP 200; hosted runtime execution was not attempted."
   }
 }
