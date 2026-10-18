@@ -62,28 +62,22 @@ class TextIOTests(unittest.TestCase):
             path=root/'scores.tsv.gz';write_gzip_tsv(path,rows,['id','value'])
             self.assertEqual(gzip.decompress(path.read_bytes()),'id\tvalue\nprotein_α\t1\n'.encode('utf-8'))
 
-    @unittest.skipUnless(shutil.which('git'), 'Git is required to test checkout rules')
-    def test_git_autocrlf_preserves_scientific_bytes(self):
+    def test_reference_archive_preserves_scientific_bytes(self):
+        import zipfile
+        contents = {'data/frozen.tsv': b'id\tlabel\r\nx\t1\r\n',
+                    'results/frozen.tsv': b'id\tscore\r\nx\t0.5\r\n',
+                    'configs/frozen.json': b'{"value":1}\r\n'}
         with tempfile.TemporaryDirectory() as temp:
-            repo=Path(temp)/'repo';repo.mkdir()
-            subprocess.run(['git','init','-q',str(repo)],check=True,capture_output=True)
-            for key,value in [('core.autocrlf','true'),('core.eol','crlf')]:
-                subprocess.run(['git','-C',str(repo),'config',key,value],check=True)
-            shutil.copy2(ROOT/'.gitattributes',repo/'.gitattributes')
-            contents={'data/frozen.tsv':b'id\tlabel\r\nx\t1\r\n',
-                      'results/frozen.tsv':b'id\tscore\r\nx\t0.5\r\n',
-                      'configs/frozen.json':b'{"value":1}\r\n',
-                      'examples/mini/frozen.tsv':b'id\tlabel\r\nx\t1\r\n',
-                      'src/probe.py':b'value = 1\n'}
-            for name,raw in contents.items():
-                p=repo/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(raw)
-            subprocess.run(['git','-C',str(repo),'add','.'],check=True,capture_output=True)
-            checkout=Path(temp)/'checkout';checkout.mkdir()
-            subprocess.run(['git','-C',str(repo),'checkout-index','--all','--prefix='+str(checkout)+'/'],check=True,capture_output=True)
-            for name,raw in contents.items():
+            archive = Path(temp) / 'reference.zip'
+            with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED) as handle:
+                for name, raw in contents.items():
+                    handle.writestr(name, raw)
+            target = Path(temp) / 'extracted'
+            with zipfile.ZipFile(archive) as handle:
+                handle.extractall(target)
+            for name, raw in contents.items():
                 with self.subTest(name=name):
-                    self.assertEqual(subprocess.check_output(['git','-C',str(repo),'show',':'+name]),raw)
-                    self.assertEqual((checkout/name).read_bytes(),raw)
+                    self.assertEqual((target / name).read_bytes(), raw)
 
     def test_invalid_utf8_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:

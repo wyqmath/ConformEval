@@ -1,0 +1,13 @@
+{
+  "project": "ConformEval",
+  "artifacts": {
+    "dataset": {
+      "status": "Published",
+      "url": "https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1",
+      "doi": "10.5281/zenodo.23433394",
+      "bytes": 3853095,
+      "checksum": "md5:86b70450984083a5e0a020dbd1e3713a",
+      "use": "Readable sequence, label and split export; existing Zenodo publication unchanged"
+    }
+  }
+}

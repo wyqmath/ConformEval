@@ -3,6 +3,7 @@ import csv
 import gzip
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import tempfile
@@ -12,9 +13,11 @@ from conformeval import data_validation as validation
 from conformeval.evaluate_predictions import verify_dataset
 from conformeval.evaluate_residue_predictions import check_manifest, load_task
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get('CONFORMEVAL_REFERENCE_ROOT', Path(__file__).resolve().parents[1]))
 
 
+@unittest.skipUnless((ROOT / 'data/base/dataset_manifest.json').is_file(),
+                     'Set CONFORMEVAL_REFERENCE_ROOT to the extracted reference bundle')
 class ScientificAssetTests(unittest.TestCase):
 
     def test_base_identities_masks_coordinates_and_groups(self):

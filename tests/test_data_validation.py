@@ -3,11 +3,12 @@ import csv
 import gzip
 import hashlib
 import json
+import os
 import tempfile
 import unittest
 from pathlib import Path
 from conformeval import data_validation
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get('CONFORMEVAL_REFERENCE_ROOT', Path(__file__).resolve().parents[1]))
 
 
 class DataIntegrityTests(unittest.TestCase):
@@ -73,6 +74,8 @@ class ReferenceDataTests(unittest.TestCase):
             writer.writeheader()
             writer.writerows(rows)
 
+    @unittest.skipUnless((ROOT / 'data/base/dataset_manifest.json').is_file(),
+                         'Set CONFORMEVAL_REFERENCE_ROOT to the extracted reference bundle')
     def test_catalog_declares_denominator_units_and_consistent_case_counts(self):
         result = data_validation.verify_task_catalog(ROOT)
         self.assertEqual(result['registered_tasks'], 13)

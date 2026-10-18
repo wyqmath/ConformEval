@@ -2,11 +2,12 @@ from __future__ import annotations
 import csv
 import gzip
 import json
+import os
 import sys
 import tempfile
 import unittest
 from pathlib import Path
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(os.environ.get('CONFORMEVAL_REFERENCE_ROOT', Path(__file__).resolve().parents[1]))
 DATA = ROOT / 'data/base'
 REFERENCE = ROOT / 'results/esm2_reference'
 PROTOCOL = ROOT / 'configs/scoring_protocol.json'
@@ -48,6 +49,8 @@ class PredictionEvaluatorTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'exactly these fields'):
                 load_predictions(path, eligible, group_to_fold)
 
+    @unittest.skipUnless((ROOT / 'results/esm2_reference/predictions.tsv.gz').is_file(),
+                         'Set CONFORMEVAL_REFERENCE_ROOT to the extracted reference bundle')
     def test_evaluator_reproduces_existing_esm2_primary_metrics(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

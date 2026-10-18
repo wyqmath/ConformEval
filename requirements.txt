@@ -1,4 +1,0 @@
-numpy>=1.26.4,<3
-scipy>=1.11,<2
-scikit-learn>=1.5,<2
-tzdata>=2024.1; sys_platform == "win32"

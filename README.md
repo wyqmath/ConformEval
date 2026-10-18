@@ -1,104 +1,66 @@
 # ConformEval: Protein Conformation Evaluation Benchmark
 
-ConformEval tests how well **protein language model representations** capture protein knots, fold switching, and residue-level disorder. It provides fixed sequences, labels, group folds, model adapters, training tools, and scoring commands. You can reproduce reference scores, evaluate a supported model, or supply your own representations and predictions.
+Evaluate protein language model representations on protein knots, fold switching,
+and residue-level disorder using fixed data splits and shared scorers.
 
-## Download the dataset
-
-[Zenodo record](https://zenodo.org/records/23433394) · [DOI: 10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394) · [Download ZIP (3.85 MB)](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1)
-
-The ZIP contains protein sequences, reference labels, and fixed cross-validation splits for knot presence (734 samples), fold-switch ranking (8,879 units), and disorder (1,279 protein records).
-
-```bash
-curl --fail --location "https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1" --output ConformEval-data.zip
-unzip -q ConformEval-data.zip -d datasets
-```
-
-The files are extracted to `datasets/ConformEval-data/`. See the [dataset layout and fields](docs/data.md#zenodo-dataset) or the README inside the ZIP.
-
-## Tasks and reference results
-
-| Task | Metric | ESM-2 650M | ESM-2 8M | ProtT5 |
-| --- | --- | ---: | ---: | --- |
-| Knot presence | AUROC ↑ | 0.868741 | 0.814237 | Not tested |
-| Fold-switch ranking | Mean held-case rank percentile ↓ | 0.476592 | 0.304406 | Not tested |
-| Disorder structure reference | Mean protein AP ↑ | 0.789856 | 0.738289 | Not tested |
-
-The fold-switch background is unlabeled. The disorder task combines experimental disorder labels with ordered annotations and PDB-observed structural references. These are grouped-development results; model configurations differ. [Full results and baselines](results/README.md) document each configuration. The [task catalog](data/task_catalog.tsv) covers all 13 registered tasks, including the ten without model scores. The [data and table guide](docs/data_tables.md) indexes every public TSV/TSV.GZ file, its fields, and its reading method.
-
-Adapters support **ESM-2 8M, ESM-2 650M, and ProtT5**. All three passed real-checkpoint extraction and all three small-example tasks again on 2026-10-17. The 650M scores above come from archived reference runs; full ProtT5 evaluation is **Not tested**. See [model validation](docs/model_validation.md).
+[Data](https://zenodo.org/records/23433394) · [Usage](docs/usage.md) · [Colab](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb)
 
 ## Quick start
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/esm2_8m.ipynb)
-
-Run the [ESM-2 8M notebook](examples/notebooks/esm2_8m.ipynb) to download data, extract real model representations, train readers, and independently score predictions. It defaults to the complete 734-sample knot task; a switch selects a small synthetic example. [Notebook validation](docs/notebook.md) records actual execution and output checks.
-
-Use **Python 3.11+**. From a terminal on macOS or Linux:
+Open the [ESM-2 8M notebook](examples/notebooks/esm2_8m.ipynb), or run a small
+scoring example locally with Python 3.11+:
 
 ```bash
-git clone https://github.com/wyqmath/ConformEval.git
+git clone -c core.autocrlf=false https://github.com/wyqmath/ConformEval.git
 cd ConformEval
-python -m venv .venv
-source .venv/bin/activate
 python -m pip install .
+conformeval-evaluate --task KNOT-PRESENCE \
+  --data-dir examples/mini/base \
+  --predictions examples/predictions/knot.tsv \
+  --model-metadata examples/predictions/metadata.json \
+  --protocol configs/scoring_protocol.json \
+  --output-dir runs/knot-example
 ```
 
-Windows is not tested. See [installation](docs/installation.md) for compatible dependency ranges, platform commands and model extras. Exact tested versions are kept in [reproduction records](docs/reproduction/README.md).
+This writes `runs/knot-example/metrics.json` with AUROC **1.0** on 20 synthetic
+samples. For real model inference, training, and reference-score reproduction,
+follow the [usage guide](docs/usage.md).
 
-### 1. Reproduce reference scores
+## Tasks and results
 
-No model download is required:
+| Task | Samples | Metric | ESM-2 650M | ESM-2 8M | ProtT5 |
+|---|---:|---|---:|---:|---|
+| Knot presence | 734 | AUROC ↑ | 0.868741 | 0.814237 | Not tested |
+| Fold-switch ranking | 8,879 | Mean positive rank percentile ↓ | 0.476592 | 0.304406 | Not tested |
+| Residue disorder | 1,279 records | Mean protein AP ↑ | 0.789856 | 0.738289 | Not tested |
 
-```bash
-conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
-```
+The fold-switch background is unlabeled. Disorder uses experimental disorder
+labels and ordered/PDB structural references. Results use grouped development
+folds; model configurations differ. See [results and baselines](results/README.md)
+and the [evaluation protocol](docs/evaluation.md).
 
-Expected: `runs/reference-replay/REPLAY.json` reports `status: PASS`. Seven archived arms for each of the three tasks match their reference metrics and group-bootstrap intervals within `1e-10`. Use a new output directory for each run.
+[Supported models](docs/models.md): ESM-2 8M, ESM-2 650M, and ProtT5.
 
-### 2. Run a model: ESM-2 8M
+## Data
 
-This small example downloads a pinned checkpoint, extracts representations from 30 short sequences, then trains and scores a knot-presence reader:
-
-```bash
-python -m pip install ".[esm2]"
-conformeval-download --model-config configs/models/esm2_8m.json
-conformeval-extract \
-  --model-config configs/models/esm2_8m.json \
-  --input-fasta examples/mini/sequences.fasta \
-  --output-dir runs/esm8-mini-features --local-files-only
-conformeval-fit-readers \
-  --task KNOT-PRESENCE --data-dir examples/mini/base \
-  --feature-manifest runs/esm8-mini-features/representation_manifest.json \
-  --config configs/readers/linear.json --protocol configs/scoring_protocol.json \
-  --output-dir runs/esm8-mini-knot --example
-```
-
-Expected: extraction produces **30 sequence archives with 320-dimensional representations**. Training reports `status: PASS` and writes `predictions.tsv.gz` (20 samples per arm), `metrics.json`, fitted parameters, and `run.json` under `runs/esm8-mini-knot/`. These synthetic samples test the interface; their scores do not measure biological performance.
-
-[Detailed tutorials](docs/tutorials.md) cover all three small tasks and external predictions. [Full evaluation](docs/full_evaluation.md) provides commands for the biological datasets. To add another model, follow the [representation contract and adapter example](docs/model_input.md).
+[Download the dataset](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1)
+(3.85 MB) · [DOI: 10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394).
+The archive includes sequences, labels, and fixed splits for the three tasks.
+[Data formats and sources](docs/data.md) describe the files and reference bundle.
 
 ## Repository layout
 
 ```text
-ConformEval/
-├── src/conformeval/   # Model adapters, training, and scoring
-├── configs/          # Model settings and evaluation protocols
-├── data/             # Versioned task data and source metadata
-├── results/          # Reference scores and predictions
-├── examples/         # Small runnable examples and prediction templates
-├── docs/             # Tutorials, data sources, and technical details
-├── tests/            # Local tests
-├── README.md
-├── LICENSE
-└── pyproject.toml
+src/conformeval/  Model adapters, training, scoring
+configs/         Model settings and evaluation protocols
+examples/        Notebook, small datasets, prediction templates
+data/            Task and download indexes
+results/         Scores and result indexes
+docs/            Usage, data, models, evaluation
+tests/           Local tests
 ```
 
-## Documentation and checks
+## License
 
-- [Data definitions, sources, and reuse terms](docs/data.md)
-- [Prediction format and scoring your own outputs](docs/prediction_submission.md)
-- [Runtime, memory, and long-sequence handling](docs/resources.md)
-- [Operating-system validation](docs/platforms.md)
-- [Contributing](CONTRIBUTING.md)
-
-Run local tests with `python -m unittest discover -s tests -v`. [LICENSE](LICENSE) covers original software; cite the primary data sources when using the benchmark.
+[MIT](LICENSE) covers the software. Dataset sources and their terms are listed
+in the [data guide](docs/data.md#sources).
