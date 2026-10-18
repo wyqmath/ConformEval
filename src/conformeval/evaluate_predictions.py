@@ -368,13 +368,30 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
 
 def main() -> int:
     parser = argparse.ArgumentParser(description='Score complete out-of-fold predictions against the frozen ConformEval labels.')
-    parser.add_argument('--data-dir', type=Path, required=True)
+    parser.add_argument('--example', action='store_true', help='Run the bundled synthetic knot example from the repository root')
+    parser.add_argument('--data-dir', type=Path)
     parser.add_argument('--task', action='append', choices=sorted(TASKS), help='Repeat to select pooled tasks; default: both')
-    parser.add_argument('--protocol', type=Path, required=True)
-    parser.add_argument('--predictions', type=Path, required=True, help='TSV/TSV.GZ with task_id, sample_id, outer_fold, score')
-    parser.add_argument('--model-metadata', type=Path, required=True)
+    parser.add_argument('--protocol', type=Path)
+    parser.add_argument('--predictions', type=Path, help='TSV/TSV.GZ with task_id, sample_id, outer_fold, score')
+    parser.add_argument('--model-metadata', type=Path)
     parser.add_argument('--output-dir', type=Path, required=True)
     args = parser.parse_args()
+    inputs = ('data_dir', 'task', 'protocol', 'predictions', 'model_metadata')
+    if args.example:
+        supplied = ['--' + name.replace('_', '-') for name in inputs if getattr(args, name) is not None]
+        if supplied:
+            parser.error('--example cannot be combined with ' + ', '.join(supplied))
+        args.data_dir = Path('examples/mini/base')
+        args.task = [TASK_KNOT]
+        args.protocol = Path('configs/scoring_protocol.json')
+        args.predictions = Path('examples/predictions/knot.tsv')
+        args.model_metadata = Path('examples/predictions/metadata.json')
+        if not all(path.exists() for path in (args.data_dir, args.protocol, args.predictions, args.model_metadata)):
+            parser.error('--example requires the bundled files; run it from the ConformEval repository root')
+    else:
+        missing = ['--' + name.replace('_', '-') for name in inputs if name != 'task' and getattr(args, name) is None]
+        if missing:
+            parser.error('the following arguments are required without --example: ' + ', '.join(missing))
     try:
         result = evaluate(args.data_dir.resolve(), args.predictions.resolve(), args.model_metadata.resolve(), args.protocol.resolve(), args.output_dir.resolve(), set(args.task) if args.task else None)
     except (ValueError, KeyError, OSError, TypeError, json.JSONDecodeError) as error:

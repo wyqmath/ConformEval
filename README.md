@@ -12,12 +12,7 @@ Open the [ESM-2 8M notebook](examples/notebooks/esm2_8m.ipynb), or run a small s
 git clone -c core.autocrlf=false https://github.com/wyqmath/ConformEval.git
 cd ConformEval
 python -m pip install .
-conformeval-evaluate --task KNOT-PRESENCE \
-  --data-dir examples/mini/base \
-  --predictions examples/predictions/knot.tsv \
-  --model-metadata examples/predictions/metadata.json \
-  --protocol configs/scoring_protocol.json \
-  --output-dir runs/knot-example
+conformeval-evaluate --example --output-dir runs/knot-example
 ```
 
 This writes `runs/knot-example/metrics.json` with AUROC **1.0** on 20 synthetic samples. The [ESM-2 8M notebook](examples/notebooks/esm2_8m.ipynb) runs model inference and training; the [reference results](results/README.md) include the score-reproduction command.
