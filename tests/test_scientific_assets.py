@@ -8,9 +8,9 @@ import shutil
 import tempfile
 import unittest
 
-from confomeval import data_validation as validation
-from confomeval.evaluate_predictions import verify_dataset
-from confomeval.evaluate_residue_predictions import check_manifest, load_task
+from conformeval import data_validation as validation
+from conformeval.evaluate_predictions import verify_dataset
+from conformeval.evaluate_residue_predictions import check_manifest, load_task
 
 ROOT = Path(__file__).resolve().parents[1]
 

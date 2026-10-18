@@ -4,8 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 import numpy as np
-from confomeval.readers import parse_fasta
-from confomeval.runtime import digest, json_write
+from conformeval.readers import parse_fasta
+from conformeval.runtime import digest, json_write
 
 
 def main():

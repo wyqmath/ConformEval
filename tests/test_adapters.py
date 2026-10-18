@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 import numpy as np
-from confomeval.adapters import HFAdapter, load_config, token_residue_map, windows
+from conformeval.adapters import HFAdapter, load_config, token_residue_map, windows
 
 ROOT=Path(__file__).resolve().parents[1]
 

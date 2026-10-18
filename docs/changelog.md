@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Standardize the Python distribution, imports, source directory and command names as `conformeval`.
+
 - Add a runnable ESM-2 8M notebook with a Colab entry, full knot and synthetic modes, and independent rescoring checks.
 - Recheck ESM-2 8M/650M and ProtT5 on all three synthetic task pipelines; retain untested full-task states explicitly.
 
@@ -29,7 +31,7 @@
 
 ## Repository organization — 2026-10-16
 
-- Move the importable package to `src/confomeval` and use `confomeval-*` commands.
+- Move the importable package to `src/conformeval` and use `conformeval-*` commands.
 - Move usage documents to `docs`, protocols to `configs` and the task catalog to `data`.
 - Add a minimal archive example and local scientific integrity tests.
 - Remove workflows, delivery-only validators, root file inventories and internal publication records.

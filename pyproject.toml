@@ -3,7 +3,7 @@ requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "confomeval"
+name = "conformeval"
 version = "0.5.1"
 description = "Fixed benchmark data and evaluation utilities for protein physical inference tasks"
 readme = "README.md"
@@ -29,14 +29,14 @@ classifiers = [
 Repository = "https://github.com/wyqmath/ConformEval"
 
 [project.scripts]
-confomeval-extract = "confomeval.extract:main"
-confomeval-download = "confomeval.adapters:download_main"
-confomeval-prepare-inputs = "confomeval.tasks:main"
-confomeval-evaluate = "confomeval.evaluate_predictions:main"
-confomeval-build-feature-manifest = "confomeval.build_feature_manifest:main"
-confomeval-fit-readers = "confomeval.train:main"
-confomeval-evaluate-residues = "confomeval.evaluate_residue_predictions:main"
-confomeval-replay-reference = "confomeval.replay_reference:main"
+conformeval-extract = "conformeval.extract:main"
+conformeval-download = "conformeval.adapters:download_main"
+conformeval-prepare-inputs = "conformeval.tasks:main"
+conformeval-evaluate = "conformeval.evaluate_predictions:main"
+conformeval-build-feature-manifest = "conformeval.build_feature_manifest:main"
+conformeval-fit-readers = "conformeval.train:main"
+conformeval-evaluate-residues = "conformeval.evaluate_residue_predictions:main"
+conformeval-replay-reference = "conformeval.replay_reference:main"
 
 [project.optional-dependencies]
 evaluation = []

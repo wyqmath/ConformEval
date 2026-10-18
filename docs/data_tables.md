@@ -21,7 +21,7 @@ input checks are consistent with scoring:
 
 ```python
 from pathlib import Path
-from confomeval.evaluate_predictions import read_table
+from conformeval.evaluate_predictions import read_table
 
 rows = read_table(Path("data/base/task_samples.tsv.gz"))
 print(rows[0])
@@ -29,7 +29,7 @@ print(rows[0])
 
 `read_table()` returns a list of dictionaries with string values. Convert
 coordinates, labels, masks, folds, and numeric scores explicitly at the point
-of use. FASTA is read with `confomeval.readers.parse_fasta()` and JSON manifests
+of use. FASTA is read with `conformeval.readers.parse_fasta()` and JSON manifests
 with the standard `json` module.
 
 ## Frozen task data
@@ -64,7 +64,7 @@ treated as interchangeable targets.
 ## Accepted disorder-reference task
 
 These files are relative to `data/disorder_reference/` and are consumed by
-`confomeval-evaluate-residues`.
+`conformeval-evaluate-residues`.
 
 | File | Purpose | Key fields |
 |---|---|---|
@@ -154,7 +154,7 @@ To read one arm from a combined prediction file:
 
 ```python
 from pathlib import Path
-from confomeval.evaluate_predictions import read_table
+from conformeval.evaluate_predictions import read_table
 
 rows = read_table(Path("results/esm2_8m/knot/predictions.tsv.gz"))
 nested = [row for row in rows if row["arm"] == "PLM-nested"]

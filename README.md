@@ -37,7 +37,7 @@ Windows is not tested. See [installation](docs/installation.md) for compatible d
 No model download is required:
 
 ```bash
-confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
 Expected: `runs/reference-replay/REPLAY.json` reports `status: PASS`. Seven archived arms for each of the three tasks match their reference metrics and group-bootstrap intervals within `1e-10`. Use a new output directory for each run.
@@ -48,12 +48,12 @@ This small example downloads a pinned checkpoint, extracts representations from 
 
 ```bash
 python -m pip install ".[esm2]"
-confomeval-download --model-config configs/models/esm2_8m.json
-confomeval-extract \
+conformeval-download --model-config configs/models/esm2_8m.json
+conformeval-extract \
   --model-config configs/models/esm2_8m.json \
   --input-fasta examples/mini/sequences.fasta \
   --output-dir runs/esm8-mini-features --local-files-only
-confomeval-fit-readers \
+conformeval-fit-readers \
   --task KNOT-PRESENCE --data-dir examples/mini/base \
   --feature-manifest runs/esm8-mini-features/representation_manifest.json \
   --config configs/readers/linear.json --protocol configs/scoring_protocol.json \
@@ -68,7 +68,7 @@ Expected: extraction produces **30 sequence archives with 320-dimensional repres
 
 ```text
 ConformEval/
-├── src/confomeval/   # Model adapters, training, and scoring
+├── src/conformeval/   # Model adapters, training, and scoring
 ├── configs/          # Model settings and evaluation protocols
 ├── data/             # Versioned task data and source metadata
 ├── results/          # Reference scores and predictions

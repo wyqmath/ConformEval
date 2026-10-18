@@ -70,7 +70,7 @@ def main():
         print(f'Replayed {arm}: both task metrics and group intervals MATCH', flush=True)
     task = root / 'data/disorder_reference'
     dest = out / 'disorder_reference'
-    subprocess.run([sys.executable, '-m', 'confomeval.evaluate_residue_predictions', '--task-dir', str(task), '--predictions', str(root / 'results/disorder_reference_esm2/residue_predictions.tsv.gz'), '--reference', '--output-dir', str(dest)], check=True)
+    subprocess.run([sys.executable, '-m', 'conformeval.evaluate_residue_predictions', '--task-dir', str(task), '--predictions', str(root / 'results/disorder_reference_esm2/residue_predictions.tsv.gz'), '--reference', '--output-dir', str(dest)], check=True)
     actual = json.loads((dest / 'metrics.json').read_text(encoding='utf-8-sig'))
     expected = json.loads((root / 'results/disorder_reference_esm2/metrics.json').read_text(encoding='utf-8-sig'))
     compare(actual, expected, 'disorder_reference_all_metrics_and_bootstraps')

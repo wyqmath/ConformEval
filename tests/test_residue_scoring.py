@@ -1,7 +1,7 @@
 import csv, json, math, sys, tempfile, unittest
 from pathlib import Path
-from confomeval.evaluate_residue_predictions import TASK, read_scores, calculate
-from confomeval.residue_scoring_core import validate_fold_roles
+from conformeval.evaluate_residue_predictions import TASK, read_scores, calculate
+from conformeval.residue_scoring_core import validate_fold_roles
 
 class ResidueScorerTests(unittest.TestCase):
 

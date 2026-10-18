@@ -11,12 +11,12 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from confomeval.adapters import load_config
-from confomeval.data_validation import read_tsv as read_data_tsv
-from confomeval.evaluate_predictions import read_table, write_gzip_tsv
-from confomeval.readers import parse_fasta
-from confomeval.residue_scoring_core import read_tsv, write_tsv
-from confomeval.runtime import json_write
+from conformeval.adapters import load_config
+from conformeval.data_validation import read_tsv as read_data_tsv
+from conformeval.evaluate_predictions import read_table, write_gzip_tsv
+from conformeval.readers import parse_fasta
+from conformeval.residue_scoring_core import read_tsv, write_tsv
+from conformeval.runtime import json_write
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -92,7 +92,7 @@ class TextIOTests(unittest.TestCase):
                 with self.subTest(reader=reader.__module__),self.assertRaises(UnicodeDecodeError):reader(path)
 
     def test_scoring_with_bom_crlf_and_utf8_mode_disabled(self):
-        with tempfile.TemporaryDirectory(prefix='confomeval-io-') as temp:
+        with tempfile.TemporaryDirectory(prefix='conformeval-io-') as temp:
             root=Path(temp)
             metadata=json.loads((ROOT/'examples/predictions/metadata.json').read_text(encoding='utf-8'))
             metadata['prediction_method']='external prediction at 25 °C'
@@ -102,13 +102,13 @@ class TextIOTests(unittest.TestCase):
                 pred=root/filename;raw=(ROOT/'examples/predictions'/filename).read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n');pred.write_bytes(b'\xef\xbb\xbf'+raw)
                 out=root/(kind+'-out')
                 if kind=='knot':
-                    args=['-m','confomeval.evaluate_predictions','--task','KNOT-PRESENCE','--data-dir',str(ROOT/'examples/mini/base'),'--protocol',str(ROOT/'configs/scoring_protocol.json')]
+                    args=['-m','conformeval.evaluate_predictions','--task','KNOT-PRESENCE','--data-dir',str(ROOT/'examples/mini/base'),'--protocol',str(ROOT/'configs/scoring_protocol.json')]
                 else:
-                    args=['-m','confomeval.evaluate_residue_predictions','--task-dir',str(ROOT/'examples/mini/residue'),'--example']
+                    args=['-m','conformeval.evaluate_residue_predictions','--task-dir',str(ROOT/'examples/mini/residue'),'--example']
                 command=[sys.executable,'-X','utf8=0',*args,'--predictions',str(pred),'--model-metadata',str(meta),'--output-dir',str(out)]
                 run=subprocess.run(command,env=env,capture_output=True)
                 self.assertEqual(run.returncode,0,run.stderr.decode('utf-8',errors='replace'))
-                self.assertNotRegex(run.stderr.decode('utf-8',errors='replace'),r'[/\\]confomeval[/\\][^\r\n]*EncodingWarning')
+                self.assertNotRegex(run.stderr.decode('utf-8',errors='replace'),r'[/\\]conformeval[/\\][^\r\n]*EncodingWarning')
                 metrics=json.loads((out/'metrics.json').read_bytes().decode('utf-8'))
                 if kind=='knot':self.assertEqual(metrics['metrics']['KNOT-PRESENCE']['auroc'],1.0)
                 else:self.assertEqual(metrics[metadata['model_id']]['mean_per_protein_AP'],1.0)

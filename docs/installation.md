@@ -42,9 +42,9 @@ experiment.
 ## Download pinned model files
 
 ```bash
-confomeval-download --model-config configs/models/esm2_8m.json
-confomeval-download --model-config configs/models/esm2_650m.json
-confomeval-download --model-config configs/models/prott5.json
+conformeval-download --model-config configs/models/esm2_8m.json
+conformeval-download --model-config configs/models/esm2_650m.json
+conformeval-download --model-config configs/models/prott5.json
 ```
 
 Run only the download(s) you need. The command downloads the declared immutable model revision, encoder weights, configuration and tokenizer into the Hugging Face cache. It prints the resolved snapshot path. Use `--cache-dir /path/to/model-cache` to choose the cache location. Extraction uses the same `--cache-dir`, or accepts `--snapshot /path/to/downloaded/snapshot`. Add `--local-files-only` to avoid network access during extraction. Model weights are external inputs and are not committed to this repository.
@@ -55,7 +55,7 @@ For inference choose `--device cpu`, `--device cuda` or `--device mps`; the requ
 
 ```bash
 python -m unittest discover -s tests -v
-confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
 The tests run with base dependencies, without downloading models. Real-checkpoint inference and evaluation evidence is listed in [model validation](model_validation.md).
@@ -70,7 +70,7 @@ On Windows, the base dependency set includes `tzdata` for the named evaluation t
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install .
-confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
 For `cmd.exe`, activate with `.venv\Scripts\activate.bat`. Windows execution is **Not tested**. Actual macOS/Linux package-installation and scoring evidence, with Python versions, is recorded in the [platform matrix](platforms.md). The model inference device/precision coverage is separately recorded in [model validation](model_validation.md).

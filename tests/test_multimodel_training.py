@@ -7,11 +7,11 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 import numpy as np
-from confomeval.readers import parse_fasta
-from confomeval.runtime import digest, json_write
-from confomeval.train import run, load_archives, reader_config, fit_reader, select_candidates, choose_candidate
-from confomeval.evaluate_predictions import evaluate, TASK_KNOT, TASK_FS
-from confomeval.evaluate_residue_predictions import TASK as RESIDUE_TASK, load_task, read_scores, calculate
+from conformeval.readers import parse_fasta
+from conformeval.runtime import digest, json_write
+from conformeval.train import run, load_archives, reader_config, fit_reader, select_candidates, choose_candidate
+from conformeval.evaluate_predictions import evaluate, TASK_KNOT, TASK_FS
+from conformeval.evaluate_residue_predictions import TASK as RESIDUE_TASK, load_task, read_scores, calculate
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -106,14 +106,14 @@ class GenericTrainingTests(unittest.TestCase):
         data={'task':RESIDUE_TASK,'residue':True,'y':np.zeros(10),
               'sample_index':np.asarray([0,0,0,0,1,1,2,2,3,3])}
         inners=[('0',np.arange(4,10),np.arange(4)),('1',np.arange(4),np.arange(4,10))]
-        with patch('confomeval.train.fit_reader',return_value=(np.zeros(10),{})), \
-             patch('confomeval.train.selection_value',side_effect=[0.1,0.9]):
+        with patch('conformeval.train.fit_reader',return_value=(np.zeros(10),{})), \
+             patch('conformeval.train.selection_value',side_effect=[0.1,0.9]):
             rows=[];candidates=select_candidates(data,{1:np.zeros((10,2))},inners,config,0,rows,[])
         self.assertAlmostEqual(candidates[0][3],0.7)
         self.assertEqual([r['aggregation_weight'] for r in rows],[1,3])
         config={**config,'C_grid':[0.1,1.0]}
-        with patch('confomeval.train.fit_reader',return_value=(np.zeros(10),{})), \
-             patch('confomeval.train.selection_value',side_effect=[0.8,0.8+5e-13]):
+        with patch('conformeval.train.fit_reader',return_value=(np.zeros(10),{})), \
+             patch('conformeval.train.selection_value',side_effect=[0.8,0.8+5e-13]):
             candidates=select_candidates(data,{1:np.zeros((10,2))},inners[:1],config,0,[],[])
         self.assertEqual(choose_candidate(candidates,RESIDUE_TASK,1e-12)[2],0.1)
 

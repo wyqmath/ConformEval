@@ -6,7 +6,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from confomeval import data_validation
+from conformeval import data_validation
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -32,7 +32,7 @@ def download_snapshot(config: dict, cache_dir=None, local_only=False) -> Path:
     try:
         from huggingface_hub import HfApi, snapshot_download
     except ImportError as error:
-        raise ImportError('Install confomeval[esm2] or confomeval[prott5] for model inference') from error
+        raise ImportError('Install conformeval[esm2] or conformeval[prott5] for model inference') from error
     common = ['config.json', 'tokenizer_config.json', 'special_tokens_map.json', 'vocab.txt', 'spiece.model']
     if local_only:
         patterns = common + (['pytorch_model.bin'] if config['adapter']=='prott5' else ['model.safetensors'])
@@ -91,7 +91,7 @@ class HFAdapter:
             import torch
             from transformers import EsmModel, EsmTokenizer, T5EncoderModel, T5Tokenizer
         except ImportError as error:
-            raise ImportError(f'Install confomeval[{config["adapter"]}] for this adapter') from error
+            raise ImportError(f'Install conformeval[{config["adapter"]}] for this adapter') from error
         self.torch, self.config = torch, config
         self.device = config['device']
         if self.device == 'cuda' and not torch.cuda.is_available():

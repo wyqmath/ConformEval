@@ -7,7 +7,7 @@ The task data and folds are independent of the encoder. The built-in `esm2` adap
 A model configuration specifies `adapter`, `model_id`, immutable `revision`, positive 1-based transformer `layers`, `pooling` (`mean` or `max`), `dtype`, `device`, `store_residues` and `long_sequence`. Examples are in [`configs/models`](../configs/models).
 
 ```bash
-confomeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta examples/mini/sequences.fasta   --output-dir runs/esm8-features
+conformeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta examples/mini/sequences.fasta   --output-dir runs/esm8-features
 ```
 
 The input FASTA may contain repeated sequence strings under distinct sample identifiers. Extraction deduplicates by the SHA-256 of the original, full input sequence. Labels and folds are never passed to the encoder.
@@ -50,7 +50,7 @@ Set `policy: reject` to fail on sequences longer than the configured maximum. Th
 For a directory of external sequence archives, build a validated manifest with explicit layer IDs:
 
 ```bash
-confomeval-build-feature-manifest   --task KNOT-PRESENCE --data-dir data/base   --archive-root /path/to/model-archives   --output-manifest /path/to/model-archives/representation_manifest.json   --model-id organization/model-name --model-revision immutable-revision   --pooling mean --layers 3 6   --extractor-code-sha256 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+conformeval-build-feature-manifest   --task KNOT-PRESENCE --data-dir data/base   --archive-root /path/to/model-archives   --output-manifest /path/to/model-archives/representation_manifest.json   --model-id organization/model-name --model-revision immutable-revision   --pooling mean --layers 3 6   --extractor-code-sha256 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 ```
 
 Replace the model identity and extractor fingerprint with the actual values. The command verifies sequence coverage and archive identity against the selected task before writing its manifest.

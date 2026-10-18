@@ -4,10 +4,10 @@ Install with `python -m pip install -e .` and run local tests:
 
 ```bash
 python -m unittest discover -s tests -v
-confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
-Use new output directories. Code is in `src/confomeval`, model/protocol settings in `configs`, examples in `examples`, documentation in `docs`, versioned scientific inputs in `data`, and actual runs in `results`. Comments and docstrings are welcome.
+Use new output directories. Code is in `src/conformeval`, model/protocol settings in `configs`, examples in `examples`, documentation in `docs`, versioned scientific inputs in `data`, and actual runs in `results`. Comments and docstrings are welcome.
 
 ## Adding a model adapter
 

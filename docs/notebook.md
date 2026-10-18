@@ -29,7 +29,7 @@ Synthetic results are excluded from the biological model result table.
 
 ## Outputs and checks
 
-Each execution creates a new `confomeval-notebook-*` workspace. Its `runs/`
+Each execution creates a new `conformeval-notebook-*` workspace. Its `runs/`
 directory contains downloaded-file hashes, prepared inputs, representation
 archives, reader fits, out-of-fold predictions, a four-column submission TSV,
 independent scorer output and logs. The final cell prints its location and

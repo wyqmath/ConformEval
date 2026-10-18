@@ -9,7 +9,7 @@ The `mini` directory contains 30 synthetic protein sequences and complete small 
 ```bash
 python -m pip install .
 python examples/representation_archive.py --output-dir runs/numpy-example-features
-confomeval-fit-readers --task KNOT-PRESENCE --data-dir examples/mini/base --feature-manifest runs/numpy-example-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/numpy-example-knot --example
+conformeval-fit-readers --task KNOT-PRESENCE --data-dir examples/mini/base --feature-manifest runs/numpy-example-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/numpy-example-knot --example
 ```
 
 Expected: `status: PASS`, 20 scored samples per arm, and output predictions/metrics/parameters. The vectors are deterministic synthetic values, not a model-performance result.

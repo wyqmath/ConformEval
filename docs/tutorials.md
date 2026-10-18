@@ -14,7 +14,7 @@ cd ConformEval
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install .
-confomeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
 ```
 
 Expected output: `runs/reference-replay/REPLAY.json` has `status: PASS`. All seven arms for each of the three tasks match the archived metrics and group-bootstrap intervals at tolerance `1e-10`. Reference primary results are listed in [the results summary](../results/README.md). The output directory must be new. Windows activation commands and their validation status are in [installation](installation.md).
@@ -22,7 +22,7 @@ Expected output: `runs/reference-replay/REPLAY.json` has `status: PASS`. All sev
 For a small, immediate external-prediction example, the actual TSV and metadata are included:
 
 ```bash
-confomeval-evaluate   --task KNOT-PRESENCE   --data-dir examples/mini/base   --predictions examples/predictions/knot.tsv   --model-metadata examples/predictions/metadata.json   --protocol configs/scoring_protocol.json   --output-dir runs/external-knot-example
+conformeval-evaluate   --task KNOT-PRESENCE   --data-dir examples/mini/base   --predictions examples/predictions/knot.tsv   --model-metadata examples/predictions/metadata.json   --protocol configs/scoring_protocol.json   --output-dir runs/external-knot-example
 ```
 
 Expected: `runs/external-knot-example/metrics.json` reports AUROC **1.0** for 20 synthetic samples. This checks the scoring interface. [Residue predictions and metadata templates](prediction_submission.md) provide the equivalent coordinate-level example.
@@ -37,14 +37,14 @@ cd ConformEval
 python -m venv .venv-model
 source .venv-model/bin/activate
 python -m pip install ".[esm2]"
-confomeval-download --model-config configs/models/esm2_8m.json
-confomeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta examples/mini/sequences.fasta   --output-dir runs/esm8-mini-features   --local-files-only
+conformeval-download --model-config configs/models/esm2_8m.json
+conformeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta examples/mini/sequences.fasta   --output-dir runs/esm8-mini-features   --local-files-only
 
-confomeval-fit-readers   --task KNOT-PRESENCE --data-dir examples/mini/base   --feature-manifest runs/esm8-mini-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-mini-knot --example
+conformeval-fit-readers   --task KNOT-PRESENCE --data-dir examples/mini/base   --feature-manifest runs/esm8-mini-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-mini-knot --example
 
-confomeval-fit-readers   --task FS-L2-grouped-PU-ranking --data-dir examples/mini/base   --feature-manifest runs/esm8-mini-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-mini-fs --example
+conformeval-fit-readers   --task FS-L2-grouped-PU-ranking --data-dir examples/mini/base   --feature-manifest runs/esm8-mini-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-mini-fs --example
 
-confomeval-fit-readers   --task DISORDER-STRUCTURE-REFERENCE-CANDIDATE   --data-dir examples/mini/residue   --feature-manifest runs/esm8-mini-features/representation_manifest.json   --config configs/readers/linear.json   --output-dir runs/esm8-mini-residue --example
+conformeval-fit-readers   --task DISORDER-STRUCTURE-REFERENCE-CANDIDATE   --data-dir examples/mini/residue   --feature-manifest runs/esm8-mini-features/representation_manifest.json   --config configs/readers/linear.json   --output-dir runs/esm8-mini-residue --example
 ```
 
 Expected: extraction reports **30 sequences, 320 dimensions**, with layers **3 and 6**. Each training command ends with `status: PASS`. Each pooled task writes 20 out-of-fold rows per arm; the residue task writes **554 labeled rows per arm**. Outputs are `predictions.tsv.gz`, `model_metadata.json`, `metrics.json`, `inner_selection.tsv`, `outer_selections.tsv`, `parameters/` and `run.json` in the requested directories. Synthetic scores have no biological performance interpretation.
@@ -54,9 +54,9 @@ The model config chooses layers, pooling and long-sequence policy. The reader co
 For the complete benchmark, use the full task data rather than the synthetic fixture. This is a complete single-task example:
 
 ```bash
-confomeval-prepare-inputs   --task KNOT-PRESENCE --data-dir data/base   --output-dir runs/knot-inputs
-confomeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta runs/knot-inputs/sequences.fasta   --output-dir runs/esm8-knot-features --sequence-only --local-files-only
-confomeval-fit-readers   --task KNOT-PRESENCE --data-dir data/base   --feature-manifest runs/esm8-knot-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-knot
+conformeval-prepare-inputs   --task KNOT-PRESENCE --data-dir data/base   --output-dir runs/knot-inputs
+conformeval-extract   --model-config configs/models/esm2_8m.json   --input-fasta runs/knot-inputs/sequences.fasta   --output-dir runs/esm8-knot-features --sequence-only --local-files-only
+conformeval-fit-readers   --task KNOT-PRESENCE --data-dir data/base   --feature-manifest runs/esm8-knot-features/representation_manifest.json   --config configs/readers/linear.json --protocol configs/scoring_protocol.json   --output-dir runs/esm8-knot
 ```
 
 Expected: **569 unique sequences**, **734 samples**, **283 groups**, and **5 × 3** folds. [Full-task commands](full_evaluation.md) cover PU ranking and generic residue training. The [small NumPy example](../examples/README.md) also exercises training without model downloads.

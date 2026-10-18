@@ -5,10 +5,10 @@ Install the appropriate model extra, then download the pinned model selected in 
 ## KNOT-PRESENCE
 
 ```bash
-confomeval-download --model-config configs/models/esm2_8m.json
-confomeval-prepare-inputs --task KNOT-PRESENCE --data-dir data/base --output-dir runs/knot-inputs
-confomeval-extract --model-config configs/models/esm2_8m.json --input-fasta runs/knot-inputs/sequences.fasta --output-dir runs/esm8-knot-features --sequence-only --local-files-only
-confomeval-fit-readers --task KNOT-PRESENCE --data-dir data/base --feature-manifest runs/esm8-knot-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/esm8-knot
+conformeval-download --model-config configs/models/esm2_8m.json
+conformeval-prepare-inputs --task KNOT-PRESENCE --data-dir data/base --output-dir runs/knot-inputs
+conformeval-extract --model-config configs/models/esm2_8m.json --input-fasta runs/knot-inputs/sequences.fasta --output-dir runs/esm8-knot-features --sequence-only --local-files-only
+conformeval-fit-readers --task KNOT-PRESENCE --data-dir data/base --feature-manifest runs/esm8-knot-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/esm8-knot
 ```
 
 Expected coverage: 569 unique sequences, 734 samples, 283 groups, 5 outer and 3 inner folds. The primary metric is pooled out-of-fold AUROC; AP is secondary.
@@ -16,9 +16,9 @@ Expected coverage: 569 unique sequences, 734 samples, 283 groups, 5 outer and 3 
 ## FS-L2 grouped PU ranking
 
 ```bash
-confomeval-prepare-inputs --task FS-L2-grouped-PU-ranking --data-dir data/base --output-dir runs/fs-inputs
-confomeval-extract --model-config configs/models/esm2_8m.json --input-fasta runs/fs-inputs/sequences.fasta --output-dir runs/esm8-fs-features --sequence-only --local-files-only
-confomeval-fit-readers --task FS-L2-grouped-PU-ranking --data-dir data/base --feature-manifest runs/esm8-fs-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/esm8-fs
+conformeval-prepare-inputs --task FS-L2-grouped-PU-ranking --data-dir data/base --output-dir runs/fs-inputs
+conformeval-extract --model-config configs/models/esm2_8m.json --input-fasta runs/fs-inputs/sequences.fasta --output-dir runs/esm8-fs-features --sequence-only --local-files-only
+conformeval-fit-readers --task FS-L2-grouped-PU-ranking --data-dir data/base --feature-manifest runs/esm8-fs-features/representation_manifest.json --config configs/readers/linear.json --protocol configs/scoring_protocol.json --output-dir runs/esm8-fs
 ```
 
 Expected coverage: 8,888 unique endpoint/background sequences, 8,879 ranking items including 10 positive cases, and 10 outer folds. Each positive case is ranked only within its assigned outer test pool. A case vector averages its two validated endpoint representations. Unknown background biological targets stay masked.
@@ -26,9 +26,9 @@ Expected coverage: 8,888 unique endpoint/background sequences, 8,879 ranking ite
 ## Disorder structural reference
 
 ```bash
-confomeval-prepare-inputs --task DISORDER-STRUCTURE-REFERENCE-CANDIDATE --data-dir data/disorder_reference --output-dir runs/residue-inputs
-confomeval-extract --model-config configs/models/esm2_8m.json --input-fasta runs/residue-inputs/sequences.fasta --output-dir runs/esm8-residue-features --local-files-only
-confomeval-fit-readers --task DISORDER-STRUCTURE-REFERENCE-CANDIDATE --data-dir data/disorder_reference --feature-manifest runs/esm8-residue-features/representation_manifest.json --config configs/readers/linear.json --output-dir runs/esm8-residue
+conformeval-prepare-inputs --task DISORDER-STRUCTURE-REFERENCE-CANDIDATE --data-dir data/disorder_reference --output-dir runs/residue-inputs
+conformeval-extract --model-config configs/models/esm2_8m.json --input-fasta runs/residue-inputs/sequences.fasta --output-dir runs/esm8-residue-features --local-files-only
+conformeval-fit-readers --task DISORDER-STRUCTURE-REFERENCE-CANDIDATE --data-dir data/disorder_reference --feature-manifest runs/esm8-residue-features/representation_manifest.json --config configs/readers/linear.json --output-dir runs/esm8-residue
 ```
 
 Expected coverage: 1,275 sequences, 1,279 protein records, 391,718 labeled rows and 5 × 3 group folds. Residue archives must include every labeled position. Unknown residues are excluded. The primary selection and scoring metric is mean per-protein AP.

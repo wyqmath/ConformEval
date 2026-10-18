@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 import numpy as np
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-from confomeval.model_interface import align_residue_labels, load_mean_representation, load_residue_representation, sha256_file
+from conformeval.model_interface import align_residue_labels, load_mean_representation, load_residue_representation, sha256_file
 MODEL = 'facebook/esm2_t33_650M_UR50D'
 REVISION = 'test-revision'
 SEQ_SHA = 'a' * 64

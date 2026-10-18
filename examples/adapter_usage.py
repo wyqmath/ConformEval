@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from confomeval.adapters import HFAdapter, download_snapshot, load_config
+from conformeval.adapters import HFAdapter, download_snapshot, load_config
 
 
 def main():

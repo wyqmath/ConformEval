@@ -40,7 +40,7 @@ Install the package with base dependencies and run from the repository root:
 ```bash
 python -m pip install .
 python -m unittest discover -s tests -v
-confomeval-replay-reference --benchmark-root . --output-dir runs/platform-reference-replay
+conformeval-replay-reference --benchmark-root . --output-dir runs/platform-reference-replay
 ```
 
 The output directory must be new. `REPLAY.json` should report `PASS`, with archived point metrics and group-bootstrap intervals matching at tolerance `1e-10`. [Installation](installation.md) supplies model-specific extras and Windows activation commands; [testing](testing.md) describes the scientific failure checks.

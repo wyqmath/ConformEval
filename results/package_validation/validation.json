@@ -1,0 +1,176 @@
+{
+  "started_at": "2026-10-18T00:37:30.413407+00:00",
+  "project": "ConformEval",
+  "distribution": "conformeval",
+  "python": "3.14.5 (main, May 10 2026, 10:21:34) [Clang 21.0.0 (clang-2100.0.123.102)]",
+  "dependencies": {
+    "conformeval": "0.5.1",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1"
+  },
+  "checks": [
+    {
+      "command": "conformeval-build-feature-manifest --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-download --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-evaluate --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-evaluate-residues --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-extract --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-fit-readers --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-prepare-inputs --help",
+      "status": "PASS"
+    },
+    {
+      "command": "conformeval-replay-reference --help",
+      "status": "PASS"
+    },
+    {
+      "command": [
+        "/private/tmp/conformeval-pub16-env/bin/python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/Users/yuan/Documents/ChatGPT/PLM/deliverables/ConformEval-public-v0.5.1/tests",
+        "-v"
+      ],
+      "status": "PASS",
+      "log_sha256": "038d8d14519da7900045d387ed5ffbe87785c770d86d11dc3103658b2d078e79"
+    },
+    {
+      "command": [
+        "/private/tmp/conformeval-pub16-env/bin/conformeval-replay-reference",
+        "--benchmark-root",
+        "/Users/yuan/Documents/ChatGPT/PLM/deliverables/ConformEval-public-v0.5.1",
+        "--output-dir",
+        "/tmp/conformeval-pub16-checks/replay"
+      ],
+      "status": "PASS",
+      "log_sha256": "783d94a605a1b7d92c29f273e99517c10c8cb473efef7585fa2eaf52afbb0e32"
+    }
+  ],
+  "wheel_sha256": "e03dcf13ec184fdde6e820d6931a921be335a30ce2748fa87b8648c5f6164e34",
+  "installed_module_files": {
+    "evaluate_predictions.py": "0ef5e786ad464e34f973459aeeabf740bd861732b53ae4e3c7e8ae6eb7c2d634",
+    "readers.py": "ca8d27602fa5ddd54de51df907aa3d329973f29ae3d47805591adccb1bab915c",
+    "tasks.py": "1b424ba23383a3ae503d18cfa6277eb011a1b375ee71271dafdb13a0c91d53f4",
+    "residue_scoring_core.py": "bb0512d93df7f7b9ecb670c8275c088f9ded9bdc0431ab7b5e2a775757c676bd",
+    "replay_reference.py": "7b486bb93ac8bf14d7c62133957ab3cf0a3979bae532feacf1169a1928fca464",
+    "evaluate_residue_predictions.py": "f12739f9296f21cddc7c6c62bdd092fa0b08251dfb41921f5a1040cf6690d2ca",
+    "__init__.py": "42c4e0ce01b41b7086c00d78196cae215b9f8c292b7d694a8fff200dbeb9b5f4",
+    "runtime.py": "ec5cf22907aa429c366f88785cdf3e92198f4e4a207a47fcd36c10040544ab1a",
+    "data_validation.py": "75043fa68be4dca78fe5e5b5233723690a6fc3aeac4c7d887c3b2385fa40d26b",
+    "train.py": "d774a01289737791526eec9f88b80cf9dbf90bba7fc672ad8466da3e83cc6595",
+    "model_interface.py": "2c62faa933dc3d6e7226ea125bf058af11fe269f274007c81d7a55741248fdfb",
+    "extract.py": "3663d9894222f73e38ffacf5d5fd0cbc86508be5c79cddf1c49c12516921499a",
+    "build_feature_manifest.py": "4beac346c2a8e5f561624e71bf9609ca95e32b8a0a6f0f76753167542354bb7e",
+    "adapters.py": "a0f2676eca85b264a27baef50ade375689f06082e22bf4167d722f470fa2ee54"
+  },
+  "status": "PASS",
+  "ended_at": "2026-10-18T00:39:02.700766+00:00",
+  "legacy_import_available": false,
+  "legacy_commands_installed": false,
+  "scope": "Package-name verification and archived prediction rescoring; no new biological model performance claim.",
+  "reference_replay": {
+    "checks": [
+      {
+        "arm": "PLM-composition",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-composition",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "arm": "PLM-hidden17",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-hidden17",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "arm": "PLM-hidden33",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-hidden33",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "arm": "PLM-length",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-length",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "arm": "PLM-nearest",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-nearest",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "arm": "PLM-nested",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-nested",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "arm": "PLM-training-prior",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "FS-L2-grouped-PU-ranking"
+      },
+      {
+        "arm": "PLM-training-prior",
+        "metrics_and_group_intervals": "MATCH",
+        "task_id": "KNOT-PRESENCE"
+      },
+      {
+        "all_metrics_and_bootstraps": "MATCH",
+        "arms": 7,
+        "task_id": "DISORDER-STRUCTURE-REFERENCE-CANDIDATE"
+      }
+    ],
+    "ended_at": "2026-10-18T08:39:02+08:00",
+    "numeric_tolerance": 1e-10,
+    "scope": "Archived prediction rescoring; no encoder inference, reader refitting, or full inner-selection trajectory replay. KNOT/FS check point metrics, group intervals and all FS case ranks; disorder checks full metrics and 2000 group-bootstrap intervals.",
+    "started_at": "2026-10-18T08:38:24+08:00",
+    "status": "PASS"
+  }
+}
