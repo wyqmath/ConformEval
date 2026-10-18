@@ -42,7 +42,7 @@ folds, 320-dimensional features, and equality between independently rescored
 AUROC/intervals and the reader output. It keeps full and mini evaluation
 identities explicit.
 
-## Actual validation on 2026-10-17
+## Actual validation on 2026-10-18
 
 Both notebook modes were executed with nbclient in fresh local workspaces on
 macOS arm64, Python 3.14.6, CPU float32. Data were downloaded from GitHub in
@@ -55,14 +55,16 @@ the linked records.
 | Complete knot benchmark | 569 | 734 | AUROC 0.814237 | PASS | [Full verification](../results/notebook_validation/full.json) |
 | Synthetic interface example | 20 | 20 | Software example only | PASS | [Mini verification](../results/notebook_validation/mini.json) |
 
-The full run took 44.59 seconds with cached weights, including data download,
-installation, inference, training and rescoring. Mini mode took 28.52 seconds
+The full run took 49.66 seconds with cached weights, including data download,
+installation, inference, training and rescoring. Mini mode took 43.58 seconds
 with a fresh checkpoint cache. These are local measurements; hosted Colab
 execution is **Not tested**. Runtime availability and package resolution may
 differ in Colab. The source notebook is committed without machine-specific
 outputs; verification records preserve the actual local execution evidence.
 
-[Live link checks](../results/notebook_validation/links.json) verified the
-GitHub file page, raw notebook and Colab URL after publication. Colab loaded
-the notebook title and all 17 cells. This verifies notebook loading; a hosted
-runtime was not started.
+[Publication link checks](../results/notebook_validation/links.json) record the
+GitHub file page, raw notebook and Colab URL separately from model execution.
+Hosted Colab execution remains **Not tested**.
+
+[Original validation records](../results/notebook_validation/archive/README.md)
+retain the earlier source and notebook identities unchanged.

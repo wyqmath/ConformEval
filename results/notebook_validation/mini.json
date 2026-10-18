@@ -1,13 +1,15 @@
 {
   "status": "PASS",
   "project": "ConformEval",
-  "source_commit": "d63ecbedaef3676a70c8680c85fb56e98d1e838f",
+  "source_commit": "db2212d8f3211e9020c619f4843627259d67ff05",
   "mode": "synthetic_interface_example",
+  "distribution": "conformeval",
+  "package_version": "0.5.1",
   "task": "KNOT-PRESENCE",
   "model_id": "facebook/esm2_t6_8M_UR50D",
   "model_revision": "c731040fcd8d73dceaa04b0a8e6329b345b0f5df",
-  "started_at": "2026-10-17T10:35:17.835582+00:00",
-  "ended_at": "2026-10-17T10:35:45.777817+00:00",
+  "started_at": "2026-10-18T00:41:21.478775+00:00",
+  "ended_at": "2026-10-18T00:42:04.492871+00:00",
   "platform": "macOS-26.4-arm64-arm-64bit-Mach-O",
   "python": "3.14.6",
   "device": "cpu",
@@ -29,17 +31,18 @@
   ],
   "independent_rescoring_matches": true,
   "outputs_sha256": {
-    "download_manifest.json": "b6e2bd13ba7897cd59744c7bcd4f434382b861092c5f868ee4af89219165abf6",
+    "download_manifest.json": "18d84bed09afc49b4dc4f9f115319268d61e734c9cde94e745ffe57fa296c15d",
     "features/representation_manifest.json": "d7b2e02ce93c0ba78ed5e260f3c2f4e57c5e281024cac3d025d6021cb7b0ed20",
-    "readers/run.json": "feb90b85460086db7e7f70068faf6488d471b20e53dee4c92e77ae91eb8f0c8f",
+    "readers/run.json": "92824dede3e5286b8a8625890b4d21e66caa44bb2f101bfb574bef72b857959e",
     "readers/predictions.tsv.gz": "ec1c92ef2e71414e84dea1aca879c1051ea5639eeb1850babd5b6b0a94d80874",
     "nested_predictions.tsv": "c769ee9489fc02cdc91c9bfc11b2999aa25422f28b015577b5410a6a0917af78",
     "rescored/metrics.json": "ab5c40c10345c1f8139bb58bce0038a1a01338550e33b86c1df9ebc8bd40c5bb"
   },
-  "executed_code_sha256": "a2a549cf7a0b8dba223c4f37d00ebad819dea19133f6c5ca285d4d5b6b751a93",
-  "notebook_file_sha256": "9acbe56c5372f6faf360455348c7cf125ae4a3128dbcd317057a313157cb938d",
+  "notebook_file_sha256": "618d5b311efdeb9eec1a17559e1addf495e39418d22765404a0c5b448b75a154",
+  "executed_code_sha256": "541965b28b208e0f982df803e9f87889835662d67003c455dc31fe4ec0074b19",
   "notebook_execution": "local_nbclient",
   "hosted_colab_execution": "Not tested",
   "data_download": "fresh network download; Git blob hashes verified",
-  "checkpoint_download": "fresh empty cache download"
+  "checkpoint_download": "fresh empty cache download",
+  "wall_seconds": 43.58
 }

@@ -1,0 +1,45 @@
+{
+  "status": "PASS",
+  "project": "ConformEval",
+  "source_commit": "d63ecbedaef3676a70c8680c85fb56e98d1e838f",
+  "mode": "complete_knot_benchmark",
+  "task": "KNOT-PRESENCE",
+  "model_id": "facebook/esm2_t6_8M_UR50D",
+  "model_revision": "c731040fcd8d73dceaa04b0a8e6329b345b0f5df",
+  "started_at": "2026-10-17T10:34:06.843550+00:00",
+  "ended_at": "2026-10-17T10:34:49.403534+00:00",
+  "platform": "macOS-26.4-arm64-arm-64bit-Mach-O",
+  "python": "3.14.6",
+  "device": "cpu",
+  "dependencies": {
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "huggingface-hub": "1.32.0"
+  },
+  "unique_sequences": 569,
+  "scored_samples": 734,
+  "groups": 283,
+  "auroc": 0.8142369085898025,
+  "ci95": [
+    0.7492658574588388,
+    0.8818524975500786
+  ],
+  "independent_rescoring_matches": true,
+  "outputs_sha256": {
+    "download_manifest.json": "019a2d6193186113b4173a921557490ecd1501b463e0188b304e19e623d602ca",
+    "features/representation_manifest.json": "9ee35ec8d7f94483944cdab80287526d79cfd57c965c273ab5c79017854d3db0",
+    "readers/run.json": "4b240667e9cb3d3fb6af36378a730a8a2eeb725c7d850b2c618972ee3625561d",
+    "readers/predictions.tsv.gz": "34f77e9e011da7e5ca873e696fae35a4fa040400607312158a1c9eac3f5f26bb",
+    "nested_predictions.tsv": "25634bfca4dca3921ca7b4b82c369ec4357b51c486d714f1454478141d65f2ec",
+    "rescored/metrics.json": "7cb1daff5320f2766adcdf7af97949935eac88db6d61494a7dce985759c6ef68"
+  },
+  "executed_code_sha256": "bd63bd750d107bd5d556ea71e1453a96c857347caff76c5630d22174f12a9361",
+  "notebook_file_sha256": "9acbe56c5372f6faf360455348c7cf125ae4a3128dbcd317057a313157cb938d",
+  "notebook_execution": "local_nbclient",
+  "hosted_colab_execution": "Not tested",
+  "data_download": "fresh network download; Git blob hashes verified",
+  "checkpoint_download": "pinned download command; existing checkpoint cache reused"
+}

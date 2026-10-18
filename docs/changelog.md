@@ -31,7 +31,7 @@
 
 ## Repository organization — 2026-10-16
 
-- Move the importable package to `src/conformeval` and use `conformeval-*` commands.
+- Move the importable package under `src` and provide task-specific command-line tools.
 - Move usage documents to `docs`, protocols to `configs` and the task catalog to `data`.
 - Add a minimal archive example and local scientific integrity tests.
 - Remove workflows, delivery-only validators, root file inventories and internal publication records.

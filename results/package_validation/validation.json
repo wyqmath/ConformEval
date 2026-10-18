@@ -172,5 +172,12 @@
     "scope": "Archived prediction rescoring; no encoder inference, reader refitting, or full inner-selection trajectory replay. KNOT/FS check point metrics, group intervals and all FS case ranks; disorder checks full metrics and 2000 group-bootstrap intervals.",
     "started_at": "2026-10-18T08:38:24+08:00",
     "status": "PASS"
+  },
+  "preservation": {
+    "scientific_assets": "Data, protocols, original predictions and original run fingerprints preserved bytewise.",
+    "historical_fixture_id": "Existing mini fixture artifact IDs remain unchanged.",
+    "notebook_records": "Original full/mini/link records archived without changing their bytes; current runs identify the renamed source.",
+    "checked_original_asset_files": 397,
+    "all_original_asset_sha256_match": true
   }
 }
