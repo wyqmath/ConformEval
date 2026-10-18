@@ -17,5 +17,12 @@ value is the fixed layer-33 linear reference. The 8M headline values use inner
 layer selection. Configuration differences are recorded in each indexed run.
 For baseline comparisons, filter `arm_role=baseline` in the full index.
 
-To reproduce the archived metrics, follow the [usage guide](../docs/usage.md#reproduce-the-reference-scores).
+Run this command from the repository root to reproduce the archived metrics:
+
+```bash
+conformeval-replay-reference --benchmark-root . --output-dir runs/reference-replay
+```
+
+The command rescores the saved predictions and writes `runs/reference-replay/REPLAY.json` with `status: PASS` when the archived metrics match. Use a new output directory for each run.
+
 See [evaluation](../docs/evaluation.md) for label semantics and comparison scope.
