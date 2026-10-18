@@ -383,7 +383,7 @@ def main() -> int:
             parser.error('--example cannot be combined with ' + ', '.join(supplied))
         args.data_dir = Path('examples/mini/base')
         args.task = [TASK_KNOT]
-        args.protocol = Path('configs/scoring_protocol.json')
+        args.protocol = Path('configs/scoring.json')
         args.predictions = Path('examples/predictions/knot.tsv')
         args.model_metadata = Path('examples/predictions/metadata.json')
         if not all(path.exists() for path in (args.data_dir, args.protocol, args.predictions, args.model_metadata)):

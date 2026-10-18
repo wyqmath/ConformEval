@@ -41,7 +41,7 @@ class GenericTrainingTests(unittest.TestCase):
             for task,source in [(TASK_KNOT,'base'),(TASK_FS,'base'),(RESIDUE_TASK,'residue')]:
                 out=root/task
                 args=SimpleNamespace(task=task,data_dir=ROOT/'examples/mini'/source,feature_manifest=manifest,
-                                     config=ROOT/'configs/readers/linear.json',protocol=ROOT/'configs/scoring_protocol.json',
+                                     config=ROOT/'configs/readers/linear.json',protocol=ROOT/'configs/scoring.json',
                                      output_dir=out,example=True)
                 actual=run(args)
                 self.assertEqual(actual['status'],'PASS')
@@ -81,7 +81,7 @@ class GenericTrainingTests(unittest.TestCase):
     def test_external_prediction_examples_are_complete_and_score_one(self):
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)/'score'
-            evaluate(ROOT/'examples/mini/base',ROOT/'examples/predictions/knot.tsv',ROOT/'examples/predictions/metadata.json',ROOT/'configs/scoring_protocol.json',out,{TASK_KNOT})
+            evaluate(ROOT/'examples/mini/base',ROOT/'examples/predictions/knot.tsv',ROOT/'examples/predictions/metadata.json',ROOT/'configs/scoring.json',out,{TASK_KNOT})
             self.assertEqual(json.loads((out/'metrics.json').read_text(encoding='utf-8-sig'))['metrics'][TASK_KNOT]['auroc'],1.0)
         samples,expected,folds,_=load_task(ROOT/'examples/mini/residue',example=True)
         scores=read_scores(ROOT/'examples/predictions/residues.tsv',samples,expected,folds,{'example'},'example')

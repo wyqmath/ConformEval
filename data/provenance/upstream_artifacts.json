@@ -10,7 +10,7 @@
     {
       "historical_export_sha256": "9a814a83ef8f39b0ddd03b1cabda75cd58a2c0b67ed105e8433dad9871048648",
       "historical_transformation": "portable provenance references",
-      "path": "configs/disorder_reference/evaluation_protocol.json",
+      "path": "configs/disorder_reference/evaluation.json",
       "upstream_name": "evaluation_protocol_v01.json",
       "upstream_sha256": "77df789cf2c9d5767b4b8f38574db461e066194899f1d65055d4664cc4f105aa"
     },
@@ -59,7 +59,7 @@
     {
       "historical_export_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69",
       "historical_transformation": "byte-identical",
-      "path": "configs/disorder_reference/data_protocol.json",
+      "path": "configs/disorder_reference/data.json",
       "upstream_name": "protocol.json",
       "upstream_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69"
     },
@@ -136,7 +136,7 @@
     {
       "historical_export_sha256": "f96e0c6ab5918eaaaf5e21983105372ebab8992253920ca7b873d22cf2ba0fb1",
       "historical_transformation": "portable provenance references",
-      "path": "configs/fs_region_controls/protocol.json",
+      "path": "configs/fs_region_controls/evaluation.json",
       "upstream_name": "protocol.json",
       "upstream_sha256": "2ce799bb419a6c03f9f0b4fac8ab2907e6fe6426c4f418d3cf70e9d210a1a43f"
     },

@@ -31,7 +31,7 @@ class ExampleCLITests(unittest.TestCase):
                 '--task', 'KNOT-PRESENCE', '--data-dir', 'examples/mini/base',
                 '--predictions', 'examples/predictions/knot.tsv',
                 '--model-metadata', 'examples/predictions/metadata.json',
-                '--protocol', 'configs/scoring_protocol.json', '--output-dir', explicit,
+                '--protocol', 'configs/scoring.json', '--output-dir', explicit,
             )
             self.assertEqual(run.returncode, 0, run.stderr)
             for name in ('metrics.json', 'scored_predictions.tsv.gz'):

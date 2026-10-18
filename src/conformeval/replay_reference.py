@@ -45,7 +45,7 @@ def main():
         preds = out / f'{arm}.tsv.gz'
         write_gzip_tsv(preds, [{k: r[k] for k in ['task_id', 'sample_id', 'outer_fold', 'score']} for r in rows if r['arm'] == arm], ['task_id', 'sample_id', 'outer_fold', 'score'])
         target = out / arm
-        evaluate(root / 'data/base', preds, meta, root / 'configs/scoring_protocol.json', target)
+        evaluate(root / 'data/base', preds, meta, root / 'configs/scoring.json', target)
         actual = json.loads((target / 'metrics.json').read_text(encoding='utf-8-sig'))['metrics']
         for task, m in actual.items():
             expected = json.loads((ref / f'metrics_{task}.json').read_text(encoding='utf-8-sig'))['arms'][arm]

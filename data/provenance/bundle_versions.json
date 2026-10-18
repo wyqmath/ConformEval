@@ -2,21 +2,21 @@
   "bundles": [
     {
       "historical_path": "configs/base_v0.3.1",
-      "metadata_path": "configs/base/data_protocol.json",
+      "metadata_path": "configs/base/data.json",
       "metadata_sha256": "5a7042b812a98f489af7e894511e64e6174337750e69ac5a7820e4cc763a5203",
       "path": "configs/base",
       "snapshot_version": "0.3.1"
     },
     {
       "historical_path": "configs/disorder_reference_v1",
-      "metadata_path": "configs/disorder_reference/data_protocol.json",
+      "metadata_path": "configs/disorder_reference/data.json",
       "metadata_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69",
       "path": "configs/disorder_reference",
       "snapshot_version": "1"
     },
     {
       "historical_path": "configs/fs_region_controls_v1",
-      "metadata_path": "configs/fs_region_controls/protocol.json",
+      "metadata_path": "configs/fs_region_controls/evaluation.json",
       "metadata_sha256": "8af8b298ec0f9fbb6878d06999f7fc9c9ba75af840a39bdadbe668ae7dda329e",
       "path": "configs/fs_region_controls",
       "snapshot_version": "1"

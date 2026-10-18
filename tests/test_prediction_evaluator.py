@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(os.environ.get('CONFORMEVAL_REFERENCE_ROOT', Path(__file__).resolve().parents[1]))
 DATA = ROOT / 'data/base'
 REFERENCE = ROOT / 'results/esm2_reference'
-PROTOCOL = ROOT / 'configs/scoring_protocol.json'
+PROTOCOL = ROOT / 'configs/scoring.json'
 from conformeval.evaluate_predictions import evaluate, load_predictions, rank_positive
 
 def write_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:

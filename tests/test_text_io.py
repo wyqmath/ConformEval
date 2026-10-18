@@ -96,7 +96,7 @@ class TextIOTests(unittest.TestCase):
                 pred=root/filename;raw=(ROOT/'examples/predictions'/filename).read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n');pred.write_bytes(b'\xef\xbb\xbf'+raw)
                 out=root/(kind+'-out')
                 if kind=='knot':
-                    args=['-m','conformeval.evaluate_predictions','--task','KNOT-PRESENCE','--data-dir',str(ROOT/'examples/mini/base'),'--protocol',str(ROOT/'configs/scoring_protocol.json')]
+                    args=['-m','conformeval.evaluate_predictions','--task','KNOT-PRESENCE','--data-dir',str(ROOT/'examples/mini/base'),'--protocol',str(ROOT/'configs/scoring.json')]
                 else:
                     args=['-m','conformeval.evaluate_residue_predictions','--task-dir',str(ROOT/'examples/mini/residue'),'--example']
                 command=[sys.executable,'-X','utf8=0',*args,'--predictions',str(pred),'--model-metadata',str(meta),'--output-dir',str(out)]
