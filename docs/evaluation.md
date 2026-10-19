@@ -29,11 +29,3 @@ The released splits support retrospective grouped-development evaluation. Regist
 is checked, but complete biological-family independence has not been established;
 the source group audit retains 37 unresolved PDB-key gaps. Condition modules
 and other unscored tasks remain separately listed in the task catalog.
-
-## Local tests
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-This runs interface, failure-case and scientific-input checks without downloading models. Checks cover sample identities, label masks, residue coordinates, prediction completeness, and group isolation.

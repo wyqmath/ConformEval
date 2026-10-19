@@ -43,7 +43,6 @@ configs/         Model settings and evaluation protocols
 examples/        Runnable notebook, small inputs, prediction templates
 data/            Task inputs, labels, cross-validation splits
 docs/            Data formats, model setup, scoring rules
-tests/           Automated checks of software and scoring
 pyproject.toml   Package dependencies, installation, command names
 ```
 

@@ -42,13 +42,9 @@ conformeval-evaluate-residues = "conformeval.evaluate_residue_predictions:main"
 [project.optional-dependencies]
 esm2 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2"]
 prott5 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2", "sentencepiece>=0.2,<1", "protobuf>=4,<7"]
-test = ["scikit-learn>=1.5,<2"]
 
 [tool.setuptools]
 package-dir = { "" = "src" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
-[tool.unittest]
-start-directory = "tests"
