@@ -38,7 +38,6 @@ conformeval-evaluate = "conformeval.evaluate_predictions:main"
 conformeval-build-feature-manifest = "conformeval.build_feature_manifest:main"
 conformeval-fit-readers = "conformeval.train:main"
 conformeval-evaluate-residues = "conformeval.evaluate_residue_predictions:main"
-conformeval-replay-reference = "conformeval.replay_reference:main"
 
 [project.optional-dependencies]
 esm2 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2"]

@@ -25,15 +25,7 @@ Confidence intervals use group resampling of fixed out-of-fold predictions.
 They do not include uncertainty from retraining the encoder or selecting a
 new dataset.
 
-## Compare results
-
-The homepage reports the archived nested pooled readers, the fixed-layer 650M
-disorder reference and the 8M nested disorder reader. Detailed arms, baselines,
-configurations and metric precision remain in the [result index](../results/results_index.tsv).
-The models' candidate layer sets and original environments differ; these
-numbers are not a controlled parameter-count comparison.
-
-These are retrospective grouped-development results. Registered group isolation
+The released splits support retrospective grouped-development evaluation. Registered group isolation
 is checked, but complete biological-family independence has not been established;
 the source group audit retains 37 unresolved PDB-key gaps. Condition modules
 and other unscored tasks remain separately listed in the task catalog.
@@ -44,4 +36,4 @@ and other unscored tasks remain separately listed in the task catalog.
 python -m unittest discover -s tests -v
 ```
 
-This runs interface, failure-case and scientific-input checks without downloading models. Three checks of archived predictions are skipped when those files are absent. To run them, extract the [reference snapshot](../results/README.md#full-reference-runs) and set `CONFORMEVAL_REFERENCE_ROOT` to its directory before running the same test command. Exact run environments, predictions and parameters remain in that snapshot.
+This runs interface, failure-case and scientific-input checks without downloading models. Checks cover sample identities, label masks, residue coordinates, prediction completeness, and group isolation.

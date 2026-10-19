@@ -133,9 +133,8 @@ def main():
     ap = argparse.ArgumentParser(description='Score full out-of-fold predictions for the frozen disorder reference task.')
     ap.add_argument('--task-dir', required=True, type=Path)
     ap.add_argument('--predictions', required=True, type=Path)
-    ap.add_argument('--model-metadata', type=Path)
+    ap.add_argument('--model-metadata', required=True, type=Path)
     ap.add_argument('--example', action='store_true', help='Score the bundled synthetic software example')
-    ap.add_argument('--reference', action='store_true')
     ap.add_argument('--output-dir', required=True, type=Path)
     a = ap.parse_args()
     out = a.output_dir.resolve()
@@ -143,31 +142,21 @@ def main():
     pred = a.predictions.resolve()
     if out.exists():
         raise ValueError('output directory already exists')
-    if a.reference:
-        bundle = task.parent.parent / 'results/disorder_reference_esm2'
-        check_manifest(bundle)
-        if pred != bundle / 'residue_predictions.tsv.gz':
-            raise ValueError('reference mode requires the archived reference predictions')
-        metadata = {'model_id': 'facebook/esm2_t33_650M_UR50D', 'model_revision': '08e4846e537177426273712802403f7ba8261b6c', 'prediction_method': 'archived audited nested grouped predictions', 'arms': sorted(REFERENCE_ARMS)}
-    else:
-        if a.model_metadata is None:
-            raise ValueError('model metadata is required')
-        metadata = json.loads(a.model_metadata.read_text(encoding='utf-8-sig'))
-        for k in ['model_id', 'model_revision', 'prediction_method', 'prediction_code_sha256', 'training_protocol']:
-            if not isinstance(metadata.get(k), str) or not metadata[k].strip():
-                raise ValueError(f'missing model metadata: {k}')
-        code_hash = metadata['prediction_code_sha256']
-        if len(code_hash) != 64 or any((c not in '0123456789abcdef' for c in code_hash)):
-            raise ValueError('invalid prediction code hash')
-        if metadata['training_protocol'] != 'frozen_nested_grouped_oof_v1':
-            raise ValueError('unsupported training protocol')
-        declared = metadata.get('arms', [metadata['model_id']])
-        if not isinstance(declared, list) or not declared or any((not isinstance(x, str) or not x for x in declared)) or (len(set(declared)) != len(declared)):
-            raise ValueError('invalid declared arms')
-        metadata['arms'] = declared
+    metadata = json.loads(a.model_metadata.read_text(encoding='utf-8-sig'))
+    for k in ['model_id', 'model_revision', 'prediction_method', 'prediction_code_sha256', 'training_protocol']:
+        if not isinstance(metadata.get(k), str) or not metadata[k].strip():
+            raise ValueError(f'missing model metadata: {k}')
+    code_hash = metadata['prediction_code_sha256']
+    if len(code_hash) != 64 or any((c not in '0123456789abcdef' for c in code_hash)):
+        raise ValueError('invalid prediction code hash')
+    if metadata['training_protocol'] != 'frozen_nested_grouped_oof_v1':
+        raise ValueError('unsupported training protocol')
+    declared = metadata.get('arms', [metadata['model_id']])
+    if not isinstance(declared, list) or not declared or any((not isinstance(x, str) or not x for x in declared)) or (len(set(declared)) != len(declared)):
+        raise ValueError('invalid declared arms')
+    metadata['arms'] = declared
     inputs = {str(task / 'manifest.json'): sha256(task / 'manifest.json'), str(pred): sha256(pred), str(Path(__file__).resolve()): sha256(Path(__file__).resolve()), str(Path(__file__).with_name('residue_scoring_core.py').resolve()): sha256(Path(__file__).with_name('residue_scoring_core.py'))}
-    if a.model_metadata is not None:
-        inputs[str(a.model_metadata.resolve())] = sha256(a.model_metadata)
+    inputs[str(a.model_metadata.resolve())] = sha256(a.model_metadata)
     run = {'started_at': stamp(), 'status': 'RUNNING', 'model_metadata': metadata, 'input_sha256': inputs, 'versions': {'python': platform.python_version(), 'numpy': np.__version__, 'scipy': scipy.__version__, 'scikit_learn': sklearn.__version__}, 'scope': 'software_example' if a.example else 'retrospective_grouped_development', 'warnings': ['Scores verify identities and metrics; training history is supplied provenance.', 'Intervals condition on fixed predictions; no refitting uncertainty.']}
     out.mkdir(parents=True)
     try:

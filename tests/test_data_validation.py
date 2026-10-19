@@ -167,7 +167,7 @@ class ReferenceDataTests(unittest.TestCase):
     def test_case_source_verifier_rejects_project_relative_source_path(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            self.write_tsv(root / 'case_modules.tsv', ['module', 'case_id', 'source_path'], [{'module': 'FS-L1-PAIRED', 'case_id': 'case_A', 'source_path': 'results/private.tsv'}])
+            self.write_tsv(root / 'case_modules.tsv', ['module', 'case_id', 'source_path'], [{'module': 'FS-L1-PAIRED', 'case_id': 'case_A', 'source_path': 'runs/private.tsv'}])
             self.write_tsv(root / 'case_sources.tsv', ['source_ref', 'module', 'case_id', 'source_artifact_sha256'], [{'source_ref': 'CS0001', 'module': 'FS-L1-PAIRED', 'case_id': 'case_A', 'source_artifact_sha256': 'a' * 64}])
             with self.assertRaisesRegex(ValueError, 'source_path field remains'):
                 data_validation.verify_case_source_references(root)

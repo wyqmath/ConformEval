@@ -65,7 +65,7 @@ class TextIOTests(unittest.TestCase):
     def test_reference_archive_preserves_scientific_bytes(self):
         import zipfile
         contents = {'data/frozen.tsv': b'id\tlabel\r\nx\t1\r\n',
-                    'results/frozen.tsv': b'id\tscore\r\nx\t0.5\r\n',
+                    'runs/frozen.tsv': b'id\tscore\r\nx\t0.5\r\n',
                     'configs/frozen.json': b'{"value":1}\r\n'}
         with tempfile.TemporaryDirectory() as temp:
             archive = Path(temp) / 'reference.zip'
@@ -84,6 +84,19 @@ class TextIOTests(unittest.TestCase):
             path=Path(temp)/'invalid.tsv';path.write_bytes(b'id\n\xff\n')
             for reader in [read_table,read_data_table,read_tsv]:
                 with self.subTest(reader=reader.__module__),self.assertRaises(UnicodeDecodeError):reader(path)
+
+    def test_residue_cli_requires_model_metadata_before_creating_output(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / 'scores'
+            run = subprocess.run([
+                sys.executable, '-m', 'conformeval.evaluate_residue_predictions',
+                '--task-dir', str(ROOT / 'examples/mini/residue'), '--example',
+                '--predictions', str(ROOT / 'examples/predictions/residues.tsv'),
+                '--output-dir', str(output),
+            ], capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(run.returncode, 2)
+            self.assertIn('--model-metadata', run.stderr)
+            self.assertFalse(output.exists())
 
     def test_scoring_with_bom_crlf_and_utf8_mode_disabled(self):
         with tempfile.TemporaryDirectory(prefix='conformeval-io-') as temp:

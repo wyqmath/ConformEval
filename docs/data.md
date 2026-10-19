@@ -28,20 +28,19 @@ Tables use tab-separated UTF-8 text. Read them with
 
 ## Evaluator files
 
-The checkout includes evaluator inputs under `data/`, evaluation settings under `configs/`, and small reference score tables under `results/`. The Zenodo export has a separate reader-friendly layout. Full reference predictions and fitted parameters are available in the [reference snapshot](../results/README.md#full-reference-runs).
+The checkout includes evaluator inputs under `data/` and evaluation settings under `configs/`. The Zenodo export has a separate reader-friendly layout.
 
 | Path | Purpose |
 |---|---|
 | `data/base/` | Sequences, task labels, source records, and grouped folds |
 | `data/disorder_reference/` | Residue labels and grouped folds |
 | `data/fs_region_controls/` | Paired-structure annotations and evidence |
-| `results/` | Model and baseline score summaries |
 
 Compressed `.tsv.gz` files use the same fields as TSV. Open them with
 `gzip.open(path, "rt", encoding="utf-8", newline="")` or use
 `pandas.read_csv(path, sep="\t")`, which detects gzip automatically.
 Task manifests record the file hashes; the included README and manifests define
-fields and coordinates. The [ESM-2](../examples/notebooks/ESM-2.ipynb) notebook provides inference and training commands; the [reference results](../results/README.md) provide the score-reproduction command.
+fields and coordinates. The [ESM-2](../examples/notebooks/ESM-2.ipynb) notebook provides inference and training commands.
 
 ## Label definitions
 

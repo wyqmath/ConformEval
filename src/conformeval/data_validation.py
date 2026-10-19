@@ -253,15 +253,10 @@ def verify_task_catalog(root: Path) -> dict:
         raise ValueError('task catalog must contain 13 unique registered tasks')
     scored = {row['task_id']: row for row in rows if int(row['scored_units']) > 0}
     if set(scored) != set(EXPECTED) | {'DISORDER-STRUCTURE-REFERENCE-CANDIDATE'}:
-        raise ValueError(f'scored task set differs from included reference results: {sorted(scored)}')
+        raise ValueError(f'recorded evaluated task set differs from the task catalog: {sorted(scored)}')
     for task, row in scored.items():
         if row['status'] != 'evaluated_existing_ESM2':
             raise ValueError(f"unexpected scored task status: {task}/{row['status']}")
-    for row in rows:
-        rel = row['result_artifact'].split('#', 1)[0]
-        path = Path(rel)
-        if path.is_absolute() or '..' in path.parts or (not (root / path).is_file()):
-            raise ValueError(f"task catalog artifact path is invalid: {row['task_id']}/{rel}")
     by_task = {row['task_id']: row for row in rows}
     expected_case_counts = {'FS-L1-PAIRED': ('16', 'candidate_case', '10', 'accepted_case'), 'FS-REGION': ('10', 'case', '3', 'case_with_supported_region')}
     for task, expected in expected_case_counts.items():

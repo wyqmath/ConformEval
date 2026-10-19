@@ -3,7 +3,7 @@
 | Model | Config | Dimensions | Small three-task example | Complete tasks |
 |---|---|---:|---|---|
 | ESM-2 8M | `configs/models/esm2_8m.json` | 320 | Tested | All three |
-| ESM-2 650M | `configs/models/esm2_650m.json` | 1,280 | Tested | Archived three-task results; complete refitting with the new adapter: Not tested |
+| ESM-2 650M | `configs/models/esm2_650m.json` | 1,280 | Tested | Complete refitting with the new adapter: Not tested |
 | ProtT5 XL encoder | `configs/models/prott5.json` | 1,024 | Tested | Not tested |
 
 Install `.[esm2]` for ESM-2 or `.[prott5]` for ProtT5. Base training and scoring
