@@ -44,7 +44,5 @@ esm2 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2"]
 prott5 = ["torch>=2.6,<3", "transformers>=4.48,<6", "huggingface-hub>=0.28,<2", "sentencepiece>=0.2,<1", "protobuf>=4,<7"]
 
 [tool.setuptools]
-package-dir = { "" = "src" }
-
-[tool.setuptools.packages.find]
-where = ["src"]
+packages = ["conformeval"]
+package-dir = { "conformeval" = "src" }

@@ -38,7 +38,7 @@ The fold-switch background is unlabeled. Disorder uses experimental disorder lab
 ## Repository layout
 
 ```text
-src/conformeval/  Protein model inference, reader training, scoring
+src/             Protein model inference, reader training, scoring
 configs/         Model settings and evaluation protocols
 examples/        Runnable notebook, small inputs, prediction templates
 data/            Task inputs, labels, cross-validation splits
