@@ -8,7 +8,7 @@ Evaluate protein language model representations on protein knots, fold switching
 
 ## Quick start
 
-Open the [ESM-2](examples/notebooks/ESM-2.ipynb) notebook, or run a small scoring example locally with Python 3.11+:
+Open the [ESM-2](examples/notebooks/ESM-2.ipynb) notebook, or run a small scoring example locally with Python 3.9+:
 
 ```bash
 git clone -c core.autocrlf=false https://github.com/wyqmath/ConformEval.git

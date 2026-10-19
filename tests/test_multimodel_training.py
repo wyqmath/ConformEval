@@ -75,7 +75,7 @@ class GenericTrainingTests(unittest.TestCase):
             self.assertTrue(np.isfinite(scores).all())
         for bad in [0,-1,float('nan')]:
             with tempfile.TemporaryDirectory() as temp:
-                p=Path(temp)/'reader.json';json_write(p,{**config,'C_grid':[bad]}) if np.isfinite(bad) else p.write_text(json.dumps({**config,'C_grid':[bad]}), encoding='utf-8', newline='\n')
+                p=Path(temp)/'reader.json';json_write(p,{**config,'C_grid':[bad]}) if np.isfinite(bad) else p.write_bytes((json.dumps({**config,'C_grid':[bad]})).encode('utf-8'))
                 with self.assertRaises(ValueError):reader_config(p)
 
     def test_external_prediction_examples_are_complete_and_score_one(self):

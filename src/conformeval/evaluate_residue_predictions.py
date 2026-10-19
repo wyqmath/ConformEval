@@ -176,15 +176,15 @@ def main():
         scores = read_scores(pred, samples, expected, folds, set(metadata['arms']), metadata['model_id'])
         rows, metrics = calculate(samples, expected, folds, scores)
         write_tsv(out / 'protein_metrics.tsv', list(rows[0]), rows)
-        (out / 'metrics.json').write_text(json.dumps(metrics, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
+        (out / 'metrics.json').write_bytes((json.dumps(metrics, indent=2, sort_keys=True) + '\n').encode('utf-8'))
         if load_task(task, example=a.example)[3] != data_hashes or any((sha256(Path(p)) != h for p, h in inputs.items())):
             raise ValueError('input or code changed during scoring')
         run.update(status='COMPLETE', ended_at=stamp(), n_predictions=sum((len(ps) for arm in scores.values() for ps in arm.values())), output_sha256={p.name: sha256(p) for p in out.iterdir() if p.is_file()})
     except Exception as e:
         run.update(status='FAILED', ended_at=stamp(), error=str(e))
-        (out / 'run.json').write_text(json.dumps(run, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
+        (out / 'run.json').write_bytes((json.dumps(run, indent=2, sort_keys=True) + '\n').encode('utf-8'))
         raise
-    (out / 'run.json').write_text(json.dumps(run, indent=2, sort_keys=True) + '\n', encoding='utf-8', newline='\n')
+    (out / 'run.json').write_bytes((json.dumps(run, indent=2, sort_keys=True) + '\n').encode('utf-8'))
     print(json.dumps({'status': run['status'], 'n_predictions': run['n_predictions'], 'output_dir': str(out)}, indent=2))
     return 0
 if __name__ == '__main__':

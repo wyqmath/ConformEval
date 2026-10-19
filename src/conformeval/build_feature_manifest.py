@@ -101,7 +101,7 @@ def build(args) -> dict:
     sequence_info, eligible = required_sequences(data_dir, set(args.task) if args.task else None)
     archive_rows, dimension = scan_archives(archive_root, sequence_info, args.model_id, args.model_revision, tuple(args.layers))
     manifest = {'model_id': args.model_id, 'model_revision': args.model_revision, 'pooling': args.pooling, 'extractor_code_sha256': args.extractor_code_sha256.lower(), 'candidate_layers': list(args.layers), 'archives': archive_rows}
-    output.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
+    output.write_bytes((json.dumps(manifest, ensure_ascii=False, indent=2) + '\n').encode('utf-8'))
     return {'status': 'PASS', 'manifest': str(output), 'eligible_samples': len(eligible), 'unique_sequences': len(sequence_info), 'validated_archives': len(archive_rows), 'representation_dimension': dimension}
 
 def main() -> int:

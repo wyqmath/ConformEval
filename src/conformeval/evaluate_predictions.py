@@ -353,7 +353,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     scored_path = output_dir / 'scored_predictions.tsv.gz'
     write_gzip_tsv(scored_path, scored_rows, ['task_id', 'sample_id', 'outer_fold', 'binding_group_id', 'score', 'learning_label', 'learning_mask', 'biological_target', 'biological_mask', 'label', 'mask'])
     metrics_path = output_dir / 'metrics.json'
-    metrics_path.write_text(json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
+    metrics_path.write_bytes((json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
     if sha256(code_path) != code_hash:
         raise ValueError('scoring code changed during evaluation')
     output_hashes = {path.name: sha256(path) for path in (scored_path, metrics_path)}
@@ -363,7 +363,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     if dataset_metadata.get('scope') == 'software_example':
         run['scope'] = 'software_example'
         run['benchmark_data_version'] = dataset_metadata['artifact_id']
-    run_path.write_text(json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
+    run_path.write_bytes((json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
     return run
 
 def main() -> int:

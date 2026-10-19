@@ -66,12 +66,12 @@ class ScientificAssetTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             payload = root / 'labels.tsv'
-            payload.write_text('label\tmask\n1\t1\n', encoding='utf-8', newline='\n')
+            payload.write_bytes(('label\tmask\n1\t1\n').encode('utf-8'))
             record = {'sha256': hashlib.sha256(payload.read_bytes()).hexdigest(),
                       'bytes': payload.stat().st_size}
-            (root / 'manifest.json').write_text(json.dumps({'files': {'labels.tsv': record}}), encoding='utf-8', newline='\n')
+            (root / 'manifest.json').write_bytes((json.dumps({'files': {'labels.tsv': record}})).encode('utf-8'))
             check_manifest(root)
-            payload.write_text('label\tmask\n0\t1\n', encoding='utf-8', newline='\n')
+            payload.write_bytes(('label\tmask\n0\t1\n').encode('utf-8'))
             with self.assertRaisesRegex(ValueError, 'hash/size mismatch'):
                 check_manifest(root)
 
@@ -102,7 +102,7 @@ class ScientificAssetTests(unittest.TestCase):
                     'sha256': hashlib.sha256(table.read_bytes()).hexdigest(),
                     'bytes': table.stat().st_size,
                 }
-                manifest_path.write_text(json.dumps(manifest), encoding='utf-8', newline='\n')
+                manifest_path.write_bytes((json.dumps(manifest)).encode('utf-8'))
                 with self.assertRaisesRegex(ValueError, message):
                     validation.verify_stable_controls(root)
 

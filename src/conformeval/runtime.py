@@ -22,7 +22,7 @@ def digest(path: Path) -> str:
 
 
 def json_write(path: Path, obj) -> None:
-    Path(path).write_text(json.dumps(obj, indent=2, sort_keys=True, allow_nan=False) + '\n', encoding='utf-8', newline='\n')
+    Path(path).write_bytes((json.dumps(obj, indent=2, sort_keys=True, allow_nan=False) + '\n').encode('utf-8'))
 
 
 def safe_path(root: Path, name: str) -> Path:

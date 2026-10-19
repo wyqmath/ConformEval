@@ -25,7 +25,7 @@ class DataIntegrityTests(unittest.TestCase):
     def fixture(self, root: Path):
         sequence = 'ACD'
         digest = hashlib.sha256(sequence.encode('ascii')).hexdigest()
-        (root / 'sequences.fasta').write_text(f'>SEQ_{digest}\n{sequence}\n', encoding='utf-8', newline='\n')
+        (root / 'sequences.fasta').write_bytes((f'>SEQ_{digest}\n{sequence}\n').encode('utf-8'))
         self.write_tsv(root / 'sample_sequences.tsv.gz', ['task_id', 'sample_id', 'endpoint_role', 'sequence_id', 'sequence_sha256', 'length'], [{'task_id': 'FS-REGION', 'sample_id': 'case_A', 'endpoint_role': 'A', 'sequence_id': f'SEQ_{digest}', 'sequence_sha256': digest, 'length': '3'}], compressed=True)
         label_fields = ['sample_id', 'sequence_sha256', 'position', 'label', 'mask']
         row = {'sample_id': 'DP00001', 'sequence_sha256': digest, 'position': '1', 'label': '1', 'mask': '1'}

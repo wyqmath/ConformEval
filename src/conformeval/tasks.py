@@ -55,7 +55,7 @@ def main():
             if p.is_file() and p.suffix != '.md':
                 record.track(p)
         sequences = required_sequences(args.data_dir, args.task, args.example)
-        (record.output / 'sequences.fasta').write_text(''.join(f'>{sid}\n{seq}\n' for sid,seq in sorted(sequences.items())), encoding='utf-8', newline='\n')
+        (record.output / 'sequences.fasta').write_bytes((''.join(f'>{sid}\n{seq}\n' for sid,seq in sorted(sequences.items()))).encode('utf-8'))
         record.data['unique_sequences'] = len(sequences)
     except Exception as error:
         record.finish(error)

@@ -50,7 +50,7 @@ class AdapterTests(unittest.TestCase):
         original=json.loads((ROOT/'configs/models/esm2_8m.json').read_text(encoding='utf-8-sig'))
         for field,value in [('layers',[0]),('revision','main'),('pooling','include_special_tokens')]:
             with self.subTest(field=field),tempfile.TemporaryDirectory() as temp:
-                invalid={**original,field:value};path=Path(temp)/'model.json';path.write_text(json.dumps(invalid), encoding='utf-8', newline='\n')
+                invalid={**original,field:value};path=Path(temp)/'model.json';path.write_bytes((json.dumps(invalid)).encode('utf-8'))
                 with self.assertRaises(ValueError):load_config(path)
 
 

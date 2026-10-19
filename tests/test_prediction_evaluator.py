@@ -69,7 +69,7 @@ class PredictionEvaluatorTests(unittest.TestCase):
             configuration = json.loads((REFERENCE / 'configuration.json').read_text(encoding='utf-8-sig'))
             metadata = {'model_id': provenance['encoder']['id'], 'model_revision': provenance['encoder']['revision'], 'prediction_method': 'nested balanced logistic regression', 'prediction_code_sha256': provenance['evaluator_sha256'], 'training_protocol': 'frozen_nested_grouped_oof_v1', 'candidate_layers': configuration['encoder']['selected_candidates'], 'pooling': 'mean_over_residues_without_special_tokens'}
             metadata_path = root / 'model_metadata.json'
-            metadata_path.write_text(json.dumps(metadata), encoding='utf-8', newline='\n')
+            metadata_path.write_bytes((json.dumps(metadata)).encode('utf-8'))
             result = evaluate(DATA, prediction_path, metadata_path, PROTOCOL, root / 'score')
             observed = json.loads((root / 'score/metrics.json').read_text(encoding='utf-8-sig'))['metrics']
             expected_knot = json.loads((REFERENCE / 'metrics_KNOT-PRESENCE.json').read_text(encoding='utf-8-sig'))
