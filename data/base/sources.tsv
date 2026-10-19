@@ -17,7 +17,7 @@ paper_bpti12	Krokoszynska 1998 JMB (BPTI single-disulfide variants)	10.1006/jmbi
 knotprot_2019	KnotProt 2.0 database methods paper	10.1093/nar/gky1140	NAR 47:D367-D375	Open access (CC BY)	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
 disprot_2022	DisProt 2022 database paper	10.1093/nar/gkab1082	NAR 50:D480-D487	Open access (CC BY)	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
 graphpart_methods	GraphPart methods paper	10.1093/nargab/lqad088	NAR Genom Bioinform 5:lqad088	Open access (CC BY)	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
-lin_2023	Lin 2023 Science (ESM structure prediction)	10.1126/science.ade2577	Science 379:1123-1130	AAAS copyright	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
+lin_2023	Lin 2023 Science (ESM structure prediction)	10.1126/science.ade2574	Science 379:1123-1130	AAAS copyright	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
 saprot_2024	SaProt ICLR 2024	https://openreview.net/forum?id=6MRB4tnaKZ	ICLR 2024	OA	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
 hermann_2024	Hermann 2024 MLCB (pretraining leakage)	https://proceedings.mlr.press/v261/hermann24a.html	PMLR 261:106-116	OA	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included
 rives_2021	Rives 2021 PNAS (ESM pretraining and emergent structure)	10.1073/pnas.2016239118	PNAS 118:e2016239118	PNAS copyright	SOURCE_SPECIFIC_REVIEW_REQUIRED; no full text is included

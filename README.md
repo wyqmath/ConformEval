@@ -1,6 +1,6 @@
 # ConformEval: Protein Conformation Evaluation Benchmark
 
-Protein function depends on the structures a sequence can adopt and the behavior of regions that remain disordered. Understanding how protein language models encode these properties helps assess their usefulness for studying the physical behavior of proteins. ConformEval (Protein Conformation Evaluation Benchmark) evaluates model representations through three tasks: protein knot detection, fold-switch ranking, and residue-level disorder prediction. It combines curated sequences and reference annotations with tools for extracting representations, training downstream predictors, and computing task-specific scores. The datasets comprise 734 knot samples, 8,879 fold-switch ranking items, and 1,279 disorder records. Adapters for ESM-2 and ProtT5 and runnable examples let researchers evaluate their own models and examine how model layers and downstream predictors affect performance.
+Protein function depends on the structures a sequence can adopt and the behavior of regions that remain disordered. Understanding how protein language models encode these properties helps assess their usefulness for studying the physical behavior of proteins. ConformEval (Protein Conformation Evaluation Benchmark) evaluates model representations through three tasks: protein knot detection, fold-switch ranking, and residue-level disorder prediction. It combines curated sequences and reference annotations with tools for extracting representations, training downstream predictors, and computing task-specific scores. The datasets comprise 734 knot samples, 8,879 fold-switch ranking items, and 1,279 disorder records. Adapters for [ESM-2](https://doi.org/10.1126/science.ade2574) and [ProtT5](https://doi.org/10.1109/TPAMI.2021.3095381) and runnable examples let researchers evaluate their own models and examine how model layers and downstream predictors affect performance.
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23433394.svg)](https://doi.org/10.5281/zenodo.23433394)
 
@@ -17,7 +17,7 @@ python -m pip install .
 conformeval-evaluate --example --output-dir runs/knot-example
 ```
 
-The score is written to `runs/knot-example/metrics.json`. The [ConformEval tutorial](examples/notebooks/ConformEval_tutorial.ipynb) covers data download, representation extraction, predictor training, and scoring, using ESM-2 8M as an example model.
+The score is written to `runs/knot-example/metrics.json`. The [ConformEval tutorial](examples/notebooks/ConformEval_tutorial.ipynb) covers data download, representation extraction, predictor training, and scoring, using [ESM-2 8M](https://huggingface.co/facebook/esm2_t6_8M_UR50D) as an example model.
 
 ## Tasks
 
@@ -33,9 +33,9 @@ Knot presence includes 112 knotted and 622 unknotted samples. Fold-switch rankin
 
 | Model | Configuration | Dimensions | Small three-task example | Full benchmark |
 |---|---|---:|---|---|
-| ESM-2 8M | [esm2_8m.json](configs/models/esm2_8m.json) | 320 | Tested | All three tasks |
-| ESM-2 650M | [esm2_650m.json](configs/models/esm2_650m.json) | 1,280 | Tested | Refitting with the new adapter: Not tested |
-| ProtT5 XL encoder | [prott5.json](configs/models/prott5.json) | 1,024 | Tested | Not tested |
+| [ESM-2 8M](https://huggingface.co/facebook/esm2_t6_8M_UR50D) | [esm2_8m.json](configs/models/esm2_8m.json) | 320 | Tested | All three tasks |
+| [ESM-2 650M](https://huggingface.co/facebook/esm2_t33_650M_UR50D) | [esm2_650m.json](configs/models/esm2_650m.json) | 1,280 | Tested | Refitting with the new adapter: Not tested |
+| [ProtT5 XL encoder](https://huggingface.co/Rostlab/prot_t5_xl_half_uniref50-enc) | [prott5.json](configs/models/prott5.json) | 1,024 | Tested | Not tested |
 
 Install the inference dependencies for your model:
 
