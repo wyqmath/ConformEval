@@ -41,41 +41,6 @@
       "metadata_sha256": "70b66e80f766eb11b635999d33559987916aa16de4b8f3533d1c3ab16ce74d16",
       "path": "data/fs_region_controls",
       "snapshot_version": "1"
-    },
-    {
-      "historical_path": "results/esm2_existing_v0.3",
-      "metadata_path": "results/esm2_reference/provenance.json",
-      "metadata_sha256": "0c5348968d08000ef2b89cf895d3a147044899e2aadc97022675f2cc5e5042c4",
-      "path": "results/esm2_reference",
-      "snapshot_version": "0.3"
-    },
-    {
-      "historical_path": "results/disorder_reference_esm2_v1",
-      "metadata_path": "results/disorder_reference_esm2/manifest.json",
-      "metadata_sha256": "4c512e2027ecebe404807d50a7a41390fc872d918245719a07f6cbcb6b69e39a",
-      "path": "results/disorder_reference_esm2",
-      "snapshot_version": "1"
-    },
-    {
-      "historical_path": "results/esm2_8m_v1",
-      "metadata_path": "results/esm2_8m/knot/run.json",
-      "metadata_sha256": "9863885bbaf64684310481d72d0cca93b76a1c1a98cb0ba222445fb2b59e7731",
-      "path": "results/esm2_8m",
-      "snapshot_version": "1"
-    },
-    {
-      "historical_path": "results/adapter_validation_v1",
-      "metadata_path": "results/adapter_validation/validation.json",
-      "metadata_sha256": "661aa679866bcecf3e0c408370517bafc3404f37822fa1c4475a6028e25823ac",
-      "path": "results/adapter_validation",
-      "snapshot_version": "1"
-    },
-    {
-      "historical_path": "results/platform_validation_v1",
-      "metadata_path": "results/platform_validation/validation.json",
-      "metadata_sha256": "02ec3b99bb52745ae88414425fb035a2a4cc5e28f3fda44950eeadf85581a1f7",
-      "path": "results/platform_validation",
-      "snapshot_version": "1"
     }
   ],
   "historical_records": "Saved run records retain their executed paths and hashes. historical_path is source provenance, not a current filesystem alias. Scientific data versions and artifact identities are unchanged.",

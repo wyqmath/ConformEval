@@ -42,7 +42,7 @@ src/conformeval/  Protein model inference, reader training, scoring
 configs/         Model settings and evaluation protocols
 examples/        Runnable notebook, small inputs, prediction templates
 data/            Task inputs, labels, fixed cross-validation splits
-results/         Reference scores, predictions, fitted parameters
+results/         Model and baseline score summaries
 docs/            Data formats, model setup, scoring rules
 tests/           Automated checks of software and scoring
 pyproject.toml   Package dependencies, installation, command names

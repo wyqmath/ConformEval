@@ -33,11 +33,16 @@ class ScientificAssetTests(unittest.TestCase):
                      if r['task_id'] in validation.EXPECTED}
         validation.verify_group_splits(data, tasks)
 
+    @unittest.skipUnless((ROOT / 'results/esm2_reference/predictions.tsv.gz').is_file(),
+                         'Set CONFORMEVAL_REFERENCE_ROOT to the extracted reference snapshot')
     def test_reference_prediction_coverage_and_assignment(self):
         predictions = ROOT / 'results/esm2_reference/predictions.tsv.gz'
         self.assertEqual(sum(validation.verify_predictions(predictions).values()), 67291)
         validation.verify_prediction_assignments(predictions, ROOT / 'data/base')
 
+    @unittest.skipUnless(all((ROOT / f'results/esm2_8m/{task}/predictions.tsv.gz').is_file()
+                             for task in ('knot', 'fs')),
+                         'Set CONFORMEVAL_REFERENCE_ROOT to the extracted reference snapshot')
     def test_8m_predictions_use_one_combined_table_per_task(self):
         expected = {'knot': (734, 7), 'fs': (8879, 7)}
         for task, (rows_per_arm, arm_count) in expected.items():

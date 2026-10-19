@@ -28,17 +28,14 @@ Tables use tab-separated UTF-8 text. Read them with
 
 ## Evaluator files
 
-The checkout includes original evaluator inputs under `data/`, fixed protocols
-under `configs/`, and reference predictions and fitted parameters under `results/`.
-The [result index](../results/results_index.tsv) uses paths relative to the
-repository root. The Zenodo export has a separate reader-friendly layout.
+The checkout includes evaluator inputs under `data/`, evaluation settings under `configs/`, and small reference score tables under `results/`. The Zenodo export has a separate reader-friendly layout. Full reference predictions and fitted parameters are available in the [reference snapshot](../results/README.md#full-reference-runs).
 
 | Path | Purpose |
 |---|---|
 | `data/base/` | Sequences, task labels, source records, and grouped folds |
 | `data/disorder_reference/` | Residue labels and grouped folds |
 | `data/fs_region_controls/` | Paired-structure annotations and evidence |
-| `results/` | Reference predictions, fitted parameters, scores, and run metadata |
+| `results/` | Model and baseline score summaries |
 
 Compressed `.tsv.gz` files use the same fields as TSV. Open them with
 `gzip.open(path, "rt", encoding="utf-8", newline="")` or use

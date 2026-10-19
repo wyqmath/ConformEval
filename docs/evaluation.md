@@ -44,6 +44,4 @@ and other unscored tasks remain separately listed in the task catalog.
 python -m unittest discover -s tests -v
 ```
 
-This runs interface, failure-case and scientific-asset checks without downloading
-models. Exact run environments, predictions and parameters accompany the
-corresponding reference results.
+This runs interface, failure-case and scientific-input checks without downloading models. Three checks of archived predictions are skipped when those files are absent. To run them, extract the [reference snapshot](../results/README.md#full-reference-runs) and set `CONFORMEVAL_REFERENCE_ROOT` to its directory before running the same test command. Exact run environments, predictions and parameters remain in that snapshot.
