@@ -1,4 +1,3 @@
-"""Fit configured readers for pooled and residue tasks using the fixed group folds."""
 from __future__ import annotations
 import argparse
 from collections import defaultdict

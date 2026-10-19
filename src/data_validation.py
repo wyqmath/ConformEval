@@ -1,8 +1,3 @@
-"""Scientific integrity checks for versioned data and reference predictions.
-
-These functions validate scoring inputs. They do not register repository files,
-restrict source comments, or approve a delivery.
-"""
 from __future__ import annotations
 import csv
 import gzip

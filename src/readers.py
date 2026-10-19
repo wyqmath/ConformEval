@@ -1,4 +1,3 @@
-"""Model-independent grouped readers and sequence features."""
 from __future__ import annotations
 import json
 import math

@@ -1,4 +1,3 @@
-"""Extract sequence and residue representations without consuming task labels."""
 from __future__ import annotations
 import argparse
 import json

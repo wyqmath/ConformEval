@@ -1,4 +1,3 @@
-"""Task identities, fixed folds and model-independent inference input preparation."""
 from __future__ import annotations
 import argparse
 import json

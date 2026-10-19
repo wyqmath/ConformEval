@@ -1,4 +1,3 @@
-"""Call the real model adapter API on one short protein sequence."""
 import argparse
 import json
 from pathlib import Path

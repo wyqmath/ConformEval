@@ -1,4 +1,3 @@
-"""Index sequence representations for pooled evaluation tasks."""
 from __future__ import annotations
 import argparse
 import json

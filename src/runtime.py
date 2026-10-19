@@ -1,4 +1,3 @@
-"""Run provenance and safe paths shared by inference and evaluation."""
 from __future__ import annotations
 import json
 import platform

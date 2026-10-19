@@ -1,4 +1,3 @@
-"""Write deterministic synthetic representations for the example dataset."""
 import argparse
 import json
 from pathlib import Path
