@@ -2,7 +2,7 @@
 
 Protein function depends on the structures a sequence can adopt and the behavior of regions that remain disordered. Understanding how protein language models encode these properties helps assess their usefulness for studying the physical behavior of proteins. ConformEval (Protein Conformation Evaluation Benchmark) evaluates model representations through three tasks: protein knot detection, fold-switch ranking, and residue-level disorder prediction. It combines curated sequences and reference annotations with tools for extracting representations, training downstream predictors, and computing task-specific scores. The datasets comprise 734 knot samples, 8,879 fold-switch ranking items, and 1,279 disorder records. Adapters for ESM-2 and ProtT5 and runnable examples let researchers evaluate their own models and examine how model layers and downstream predictors affect performance.
 
-[Download dataset](https://zenodo.org/records/23433394)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23433394.svg)](https://doi.org/10.5281/zenodo.23433394)
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/ESM-2.ipynb)
 
