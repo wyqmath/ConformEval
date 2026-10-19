@@ -1,5 +1,4 @@
 {
-  "builder_code_sha256": "75f1b7f999e183675370c93c6eac6edab997889db0bf52f5c788d18b06c77f99",
   "conflicts": "use frozen candidate-view label/mask exactly; strict DISORDER-RES remains unchanged",
   "created_at": "2026-10-15T20:08:23+08:00",
   "denominator": {
@@ -15,7 +14,7 @@
     "python": "3.14.6",
     "scikit_learn": "1.9.1"
   },
-  "eligibility": "development_only; both classes; complete full sequence length <= 1022; exact sequence hash and coordinate validation",
+  "eligibility": "development_only; both classes; complete full sequence length <= 1022; sequence ID, length, and coordinate validation",
   "labels": {
     "0": "direct DisProt ordered residue or amino-acid-matched residue observed in experimental PDB",
     "1": "direct DisProt disordered residue",
@@ -39,13 +38,7 @@
     "traditional_baseline": "one-hot amino-acid + relative position + centered local 15-residue amino-acid composition"
   },
   "scope_limit": "This reference task is not strict direct ordered-versus-disordered truth and does not certify family-independent generalization.",
-  "source_data_manifest_sha256": "e5b0a9249598d5d98288cfcfbc4ed533eef7f813e09ade0bafe660ff3e1b7fe1",
   "source_data_version": "data_v06 frozen labels and binding groups",
-  "source_input_sha256": {
-    "position_labels_structure_reference_candidate.tsv.gz": "2320fc1212d0e53cd4d921c00c2f3d27aaff90bd425bc4f4d56e3d84597aaacf",
-    "sequences.fasta": "5082dcc8d37f029aa149aec46069c757e705b9216988c711715c5217713b2a4b",
-    "task_samples.tsv.gz": "2a14cc9c3fe066ded670834208553ebfe9b20a1e1fe45f7b3d8bfa0c8e167af4"
-  },
   "splits": {
     "algorithm": "sklearn GroupKFold; group=locked binding_group_id; exact assignments saved",
     "inner": 3,

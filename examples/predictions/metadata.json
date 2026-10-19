@@ -3,7 +3,6 @@
   "model_id": "synthetic-external-score-example",
   "model_revision": "software-example-v1",
   "prediction_method": "predefined synthetic scores for interface testing",
-  "prediction_code_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
   "training_protocol": "frozen_nested_grouped_oof_v1",
   "candidate_layers": [
     1

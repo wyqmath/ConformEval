@@ -1,13 +1,12 @@
 """Extract sequence and residue representations without consuming task labels."""
 from __future__ import annotations
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import numpy as np
 from .adapters import HFAdapter, download_snapshot, load_config
 from .readers import parse_fasta
-from .runtime import RunRecord, digest, json_write
+from .runtime import RunRecord, json_write
 
 
 def extract(args, adapter_factory=HFAdapter):
@@ -17,9 +16,7 @@ def extract(args, adapter_factory=HFAdapter):
             config[name] = getattr(args, name)
     if getattr(args, 'sequence_only', False):
         config['store_residues'] = False
-    record = RunRecord(args.output_dir.resolve(), config,
-                       [Path(__file__), Path(__file__).with_name('adapters.py'),
-                        Path(__file__).with_name('readers.py')])
+    record = RunRecord(args.output_dir.resolve(), config)
     output = record.output
     try:
         record.track(args.model_config)
@@ -38,32 +35,24 @@ def extract(args, adapter_factory=HFAdapter):
                            checkpoint_loading=adapter.loading)
         (output / 'archives').mkdir()
         rows = []
-        seen = set()
-        for _, sequence in sorted(sequences.items()):
-            sha = hashlib.sha256(sequence.encode('ascii')).hexdigest()
-            if sha in seen:
-                continue
-            seen.add(sha)
+        for index, (sequence_id, sequence) in enumerate(sorted(sequences.items()), start=1):
             pooled, residues, segments = adapter.encode(sequence)
-            normalized = __import__('re').sub('[UZOBJ]', 'X', sequence) if config['adapter'] == 'prott5' else sequence.replace('J', 'X')
-            meta = {'seq_sha256': sha, 'len_full': len(sequence), 'len_used': len(sequence),
+            meta = {'sequence_id': sequence_id, 'len_full': len(sequence), 'len_used': len(sequence),
                     'truncated': False, 'model': config['model_id'], 'revision': config['revision'],
                     'layer_set': 'mean_' + '_'.join(map(str, config['layers'])) + '+resid_' + '_'.join(map(str, config['layers'])),
                     'pooling': config['pooling'], 'dimension': adapter.dimension,
                     'extraction_config': config, 'normalization': 'UZOBJ_to_X' if config['adapter']=='prott5' else 'J_to_X',
-                    'normalized_sequence_sha256': hashlib.sha256(normalized.encode('ascii')).hexdigest(),
                     'windows_0based_half_open': segments, 'special_tokens_excluded': True}
-            path = output / 'archives' / (sha + '.npz')
+            path = output / 'archives' / f'sequence-{index:06d}.npz'
             arrays = {'meta': np.asarray(json.dumps(meta, sort_keys=True)), 'sequence_layers': pooled}
             if config['store_residues']:
                 arrays.update(resid_layers=residues, resid_indices=np.arange(1, len(sequence)+1, dtype=np.int64))
             np.savez_compressed(path, **arrays)
-            rows.append({'sequence_sha256': sha, 'length': len(sequence), 'file': path.relative_to(output).as_posix(),
-                         'archive_sha256': digest(path)})
+            rows.append({'sequence_id': sequence_id, 'length': len(sequence), 'file': path.relative_to(output).as_posix()})
         manifest = {'schema_version': 1, 'model_id': config['model_id'], 'model_revision': config['revision'],
                     'output_dimension': adapter.dimension, 'candidate_layers': config['layers'],
                     'pooling': config['pooling'], 'extraction_config': config,
-                    'extractor_code_sha256': digest(Path(__file__)), 'archives': rows}
+                    'archives': rows}
         json_write(output / 'representation_manifest.json', manifest)
         record.data.update(unique_sequences=len(rows), total_residues=sum(r['length'] for r in rows),
                            model_id=config['model_id'], model_revision=config['revision'])

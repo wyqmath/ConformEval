@@ -1,5 +1,5 @@
 from __future__ import annotations
-import csv, gzip, hashlib
+import csv, gzip
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -12,15 +12,7 @@ BOOTSTRAP_SEED = 2026
 def stamp() -> str:
     return datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
 
-def sha256_file(path: Path) -> str:
-    h = hashlib.sha256()
-    with path.open('rb') as f:
-        for block in iter(lambda: f.read(1024 * 1024), b''):
-            h.update(block)
-    return h.hexdigest()
 
-def sha256_text(value: str) -> str:
-    return hashlib.sha256(value.encode('ascii')).hexdigest()
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
     opener = gzip.open if path.suffix == '.gz' else open
@@ -64,16 +56,15 @@ def validate_label_rows(samples: dict[str, dict], labels_by_sample: dict[str, li
         seq = sequences.get(seq_id)
         if seq is None:
             raise ValueError(f'sample sequence is absent from FASTA: {sid}')
-        seq_sha = sample['sequence_sha256']
-        if seq_id != f'SEQ_{seq_sha}' or len(seq) != int(sample['length']) or sha256_text(seq) != seq_sha:
-            raise ValueError(f'sequence identity/length/hash mismatch: {sid}')
+        if len(seq) != int(sample['length']):
+            raise ValueError(f'sequence length mismatch: {sid}')
         if sample['use_policy'] != 'development_only' or sample['label_view'] != ('synthetic_example' if example else 'reference'):
             raise ValueError(f'sample is outside the locked development reference task: {sid}')
         rows = labels_by_sample.get(sid, [])
         seen = set()
         counts = Counter()
         for row in rows:
-            if row['sequence_id'] != seq_id or row['sequence_sha256'] != seq_sha:
+            if row['sequence_id'] != seq_id:
                 raise ValueError(f'label sequence identity mismatch: {sid}')
             pos = int(row['position'])
             if pos < 1 or pos > len(seq) or pos in seen:

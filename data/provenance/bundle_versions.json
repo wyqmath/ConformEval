@@ -3,47 +3,41 @@
     {
       "historical_path": "configs/base_v0.3.1",
       "metadata_path": "configs/base/data.json",
-      "metadata_sha256": "5a7042b812a98f489af7e894511e64e6174337750e69ac5a7820e4cc763a5203",
       "path": "configs/base",
       "snapshot_version": "0.3.1"
     },
     {
       "historical_path": "configs/disorder_reference_v1",
       "metadata_path": "configs/disorder_reference/data.json",
-      "metadata_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69",
       "path": "configs/disorder_reference",
       "snapshot_version": "1"
     },
     {
       "historical_path": "configs/fs_region_controls_v1",
       "metadata_path": "configs/fs_region_controls/evaluation.json",
-      "metadata_sha256": "8af8b298ec0f9fbb6878d06999f7fc9c9ba75af840a39bdadbe668ae7dda329e",
       "path": "configs/fs_region_controls",
       "snapshot_version": "1"
     },
     {
       "historical_path": "data/v0.3.1",
       "metadata_path": "data/base/dataset_manifest.json",
-      "metadata_sha256": "29b274f0e2de9bea8154cea11dca0392d4990d230d9ab4214f0661cc363f3468",
       "path": "data/base",
       "snapshot_version": "0.3.1"
     },
     {
       "historical_path": "data/disorder_reference_v1",
       "metadata_path": "data/disorder_reference/manifest.json",
-      "metadata_sha256": "d8527744b6c8b8997f39dca56e49725a815207237ed4f97547d3ae0c2df7907a",
       "path": "data/disorder_reference",
       "snapshot_version": "1"
     },
     {
       "historical_path": "data/fs_region_controls_v1",
       "metadata_path": "data/fs_region_controls/manifest.json",
-      "metadata_sha256": "70b66e80f766eb11b635999d33559987916aa16de4b8f3533d1c3ab16ce74d16",
       "path": "data/fs_region_controls",
       "snapshot_version": "1"
     }
   ],
-  "historical_records": "Saved run records retain their executed paths and hashes. historical_path is source provenance, not a current filesystem alias. Scientific data versions and artifact identities are unchanged.",
+  "historical_records": "Historical paths identify the source bundles. Scientific data versions are recorded for each bundle.",
   "layout": "Unversioned public directory names; versions belong to bundle metadata and the changelog.",
   "schema_version": 1,
   "software_version": "0.5.1",

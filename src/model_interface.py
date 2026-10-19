@@ -1,15 +1,8 @@
 from __future__ import annotations
-import hashlib
 import json
 from pathlib import Path
 import numpy as np
 
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open('rb') as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b''):
-            digest.update(block)
-    return digest.hexdigest()
 
 def _layer_ids(meta: dict, kind: str) -> tuple[int, ...]:
     if kind not in {'mean', 'resid'}:
@@ -45,13 +38,13 @@ def _load_meta(archive: np.lib.npyio.NpzFile) -> dict:
         raise ValueError('feature archive metadata must be a JSON object')
     return meta
 
-def _validate_identity(meta: dict, expected_sha256: str, expected_length: int, expected_model: str, expected_revision: str) -> None:
+def _validate_identity(meta: dict, expected_sequence_id: str, expected_length: int, expected_model: str, expected_revision: str) -> None:
     if type(expected_length) is not int or expected_length < 1:
         raise ValueError('expected sequence length must be a positive integer')
-    if not expected_sha256:
-        raise ValueError('expected sequence SHA-256 is required')
-    if meta.get('seq_sha256') != expected_sha256:
-        raise ValueError('feature sequence hash mismatch')
+    if not expected_sequence_id:
+        raise ValueError('expected sequence ID is required')
+    if meta.get('sequence_id') != expected_sequence_id:
+        raise ValueError('feature sequence ID mismatch')
     full_length = meta.get('len_full')
     used_length = meta.get('len_used')
     if type(full_length) is not int or type(used_length) is not int or full_length != expected_length or (used_length != expected_length):
@@ -61,23 +54,15 @@ def _validate_identity(meta: dict, expected_sha256: str, expected_length: int, e
     if meta.get('model') != expected_model or meta.get('revision') != expected_revision:
         raise ValueError('feature model revision mismatch')
 
-def _check_archive_hash(path: Path, expected_archive_sha256: str) -> None:
-    if not expected_archive_sha256:
-        raise ValueError('expected archive SHA-256 is required')
-    if not path.is_file():
-        raise ValueError(f'missing feature archive: {path}')
-    if sha256_file(path) != expected_archive_sha256:
-        raise ValueError(f'feature archive hash mismatch: {path.name}')
 
-def load_mean_representation(path: Path, expected_sha256: str, expected_length: int, expected_archive_sha256: str, selected_layers: tuple[int, ...], model: str, revision: str) -> tuple[np.ndarray, int]:
-    _check_archive_hash(path, expected_archive_sha256)
+def load_mean_representation(path: Path, expected_sequence_id: str, expected_length: int, selected_layers: tuple[int, ...], model: str, revision: str) -> tuple[np.ndarray, int]:
     with np.load(path, allow_pickle=False) as archive:
         key = 'sequence_layers' if 'sequence_layers' in archive.files else 'mean_layers'
         if key not in archive.files:
             raise ValueError(f'feature archive has no mean_layers: {path.name}')
         meta = _load_meta(archive)
         values = np.asarray(archive[key])
-    _validate_identity(meta, expected_sha256, expected_length, model, revision)
+    _validate_identity(meta, expected_sequence_id, expected_length, model, revision)
     layer_ids = _layer_ids(meta, 'mean')
     if values.ndim != 2 or values.shape[0] != len(layer_ids) or values.shape[1] < 1:
         raise ValueError(f'invalid mean representation shape: {path.name} {values.shape}')
@@ -94,8 +79,7 @@ def load_mean_representation(path: Path, expected_sha256: str, expected_length: 
         raise ValueError(f'mean representation is not finite after float32 conversion: {path.name}')
     return (selected, int(values.shape[1]))
 
-def load_residue_representation(path: Path, expected_sha256: str, expected_length: int, expected_archive_sha256: str, selected_layers: tuple[int, ...], model: str, revision: str) -> tuple[np.ndarray, np.ndarray, int]:
-    _check_archive_hash(path, expected_archive_sha256)
+def load_residue_representation(path: Path, expected_sequence_id: str, expected_length: int, selected_layers: tuple[int, ...], model: str, revision: str) -> tuple[np.ndarray, np.ndarray, int]:
     with np.load(path, allow_pickle=False) as archive:
         required = {'resid_layers', 'resid_indices'}
         if not required.issubset(archive.files):
@@ -103,7 +87,7 @@ def load_residue_representation(path: Path, expected_sha256: str, expected_lengt
         meta = _load_meta(archive)
         values = np.asarray(archive['resid_layers'])
         raw_indices = np.asarray(archive['resid_indices'])
-    _validate_identity(meta, expected_sha256, expected_length, model, revision)
+    _validate_identity(meta, expected_sequence_id, expected_length, model, revision)
     layer_ids = _layer_ids(meta, 'resid')
     if values.ndim != 3 or values.shape[0] != len(layer_ids) or values.shape[1] < 1 or (values.shape[2] < 1):
         raise ValueError(f'invalid residue representation shape: {path.name} {values.shape}')
@@ -127,7 +111,7 @@ def load_residue_representation(path: Path, expected_sha256: str, expected_lengt
         raise ValueError(f'residue representation is not finite after float32 conversion: {path.name}')
     return (selected, indices, int(values.shape[2]))
 
-def align_residue_labels(residue_values: np.ndarray, residue_indices_1based: np.ndarray, sequence_length: int, label_rows: list[dict[str, str]], expected_sha256: str) -> dict[str, np.ndarray | int]:
+def align_residue_labels(residue_values: np.ndarray, residue_indices_1based: np.ndarray, sequence_length: int, label_rows: list[dict[str, str]], expected_sequence_id: str) -> dict[str, np.ndarray | int]:
     values = np.asarray(residue_values)
     indices = np.asarray(residue_indices_1based)
     if values.ndim != 3 or values.shape[0] < 1 or values.shape[1] != len(indices) or (values.shape[2] < 1):
@@ -144,8 +128,8 @@ def align_residue_labels(residue_values: np.ndarray, residue_indices_1based: np.
     labels: dict[int, int] = {}
     seen_positions = set()
     for row in label_rows:
-        if row.get('sequence_sha256') != expected_sha256:
-            raise ValueError('residue label sequence hash mismatch')
+        if row.get('sequence_id') != expected_sequence_id:
+            raise ValueError('residue label sequence ID mismatch')
         try:
             position = int(row['position'])
         except (KeyError, ValueError) as exc:

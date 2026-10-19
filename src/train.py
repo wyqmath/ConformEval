@@ -15,7 +15,7 @@ from .evaluate_residue_predictions import TASK as RESIDUE_TASK, load_task, calcu
 from .model_interface import load_mean_representation, load_residue_representation
 from .readers import parse_fasta, validate_sample_sequence_mappings, fold_indices, sequence_aux, nearest_neighbor, fs_rank_percentiles
 from .residue_scoring_core import validate_fold_roles, write_tsv
-from .runtime import RunRecord, digest, json_write, safe_path
+from .runtime import RunRecord, json_write, safe_path
 
 
 def reader_config(path: Path):
@@ -73,27 +73,26 @@ def load_archives(path, required, residue=False):
     layers=manifest.get('candidate_layers')
     if not isinstance(layers,list) or not layers or len(set(layers))!=len(layers) or any(type(l) is not int or l<1 for l in layers):
         raise ValueError('invalid candidate layer manifest')
-    for field in ['model_id','model_revision','pooling','extractor_code_sha256']:
+    for field in ['model_id','model_revision','pooling']:
         if not isinstance(manifest.get(field),str) or not manifest[field]:
             raise ValueError(f'missing representation metadata: {field}')
     if manifest['pooling'] not in {'mean','max','mean_over_residues_without_special_tokens'}:
         raise ValueError('unsupported declared pooling')
     entries={}
     for row in manifest['archives']:
-        sha=row['sequence_sha256']
-        if sha in entries:
+        sequence_id=row['sequence_id']
+        if sequence_id in entries:
             raise ValueError('duplicate representation sequence identity')
-        entries[sha]=row
+        entries[sequence_id]=row
     missing=set(required)-set(entries)
     if missing:
         raise ValueError(f'missing representation sequence coverage: {sorted(missing)[:5]}')
-    arrays,hashes,dimensions={}, {},set()
-    for sha,length in required.items():
-        row=entries[sha]
+    arrays,archive_paths,dimensions={}, [],set()
+    for sequence_id,length in required.items():
+        row=entries[sequence_id]
         if type(row['length']) is not int or row['length']!=length:
             raise ValueError('representation sequence length mismatch')
         archive=safe_path(path.parent,row['file'])
-        expected=row['archive_sha256']
         with np.load(archive,allow_pickle=False) as z:
             meta=json.loads(str(z['meta'].item()))
         if 'pooling' in meta and meta['pooling']!=manifest['pooling']:
@@ -101,19 +100,19 @@ def load_archives(path, required, residue=False):
         if 'extraction_config' in manifest and meta.get('extraction_config')!=manifest['extraction_config']:
             raise ValueError('archive extraction configuration mismatch')
         if residue:
-            array,positions,dimension=load_residue_representation(archive,sha,length,expected,tuple(layers),manifest['model_id'],manifest['model_revision'])
-            arrays[sha]=(array,{int(p):i for i,p in enumerate(positions)})
+            array,positions,dimension=load_residue_representation(archive,sequence_id,length,tuple(layers),manifest['model_id'],manifest['model_revision'])
+            arrays[sequence_id]=(array,{int(p):i for i,p in enumerate(positions)})
         else:
-            array,dimension=load_mean_representation(archive,sha,length,expected,tuple(layers),manifest['model_id'],manifest['model_revision'])
-            arrays[sha]=array
-        dimensions.add(dimension);hashes[str(archive)]=expected
+            array,dimension=load_mean_representation(archive,sequence_id,length,tuple(layers),manifest['model_id'],manifest['model_revision'])
+            arrays[sequence_id]=array
+        dimensions.add(dimension);archive_paths.append(str(archive))
     if len(dimensions)!=1 or ('output_dimension' in manifest and manifest['output_dimension']!=next(iter(dimensions))):
         raise ValueError('representation dimensions differ across archives')
-    return manifest,arrays,hashes
+    return manifest,arrays,archive_paths
 
 
 def pooled_data(data_dir,task,manifest_path,example=False):
-    hashes=verify_dataset(data_dir)
+    verify_dataset(data_dir)
     is_example=json.loads((data_dir/'dataset_manifest.json').read_text(encoding='utf-8-sig')).get('scope')=='software_example'
     if is_example != example:
         raise ValueError('software example requires explicit --example; benchmark data must omit it')
@@ -124,36 +123,36 @@ def pooled_data(data_dir,task,manifest_path,example=False):
         key=(row['task_id'],row['sample_id'])
         if key in eligible:mappings[key].append(row)
     rows=sorted(eligible.values(),key=lambda r:r['sample_id'])
-    sample_hashes=[];required={}
+    sample_sequences=[];required={}
     for row in rows:
-        shas,lengths=validate_sample_sequence_mappings((task,row['sample_id']),row,mappings[task,row['sample_id']])
-        for sha,length in zip(shas,lengths):
-            seq=sequences.get('SEQ_'+sha)
-            if seq is None or len(seq)!=length or __import__('hashlib').sha256(seq.encode('ascii')).hexdigest()!=sha:
+        sequence_ids,lengths=validate_sample_sequence_mappings((task,row['sample_id']),row,mappings[task,row['sample_id']])
+        for sequence_id,length in zip(sequence_ids,lengths):
+            seq=sequences.get(sequence_id)
+            if seq is None or len(seq)!=length:
                 raise ValueError('sample sequence identity mismatch')
-            required[sha]=length
-        sample_hashes.append(shas)
-    manifest,arrays,archive_hashes=load_archives(manifest_path,required)
-    X={layer:np.vstack([np.mean([arrays[sha][i] for sha in shas],axis=0) for shas in sample_hashes])
+            required[sequence_id]=length
+        sample_sequences.append(sequence_ids)
+    manifest,arrays,archive_paths=load_archives(manifest_path,required)
+    X={layer:np.vstack([np.mean([arrays[sequence_id][i] for sequence_id in sequence_ids],axis=0) for sequence_ids in sample_sequences])
        for i,layer in enumerate(manifest['candidate_layers'])}
-    auxiliary=np.vstack([np.mean([sequence_aux(sequences['SEQ_'+sha]) for sha in shas],axis=0) for shas in sample_hashes])
+    auxiliary=np.vstack([np.mean([sequence_aux(sequences[sequence_id]) for sequence_id in sequence_ids],axis=0) for sequence_ids in sample_sequences])
     y,plan=fold_indices(task,rows,data_dir,group_to_fold)
     return dict(task=task,rows=rows,y=y,plan=plan,X=X,auxiliary=auxiliary,
-                manifest=manifest,archive_hashes=archive_hashes,group_to_fold=group_to_fold,
-                data_hashes=hashes,residue=False)
+                manifest=manifest,archive_paths=archive_paths,group_to_fold=group_to_fold,
+                residue=False)
 
 
 def residue_data(data_dir,manifest_path,example):
-    samples,expected,folds,hashes=load_task(data_dir,example=example)
+    samples,expected,folds,_=load_task(data_dir,example=example)
     rows=sorted(samples.values(),key=lambda r:r['sample_id'])
-    required={s['sequence_sha256']:int(s['length']) for s in rows}
-    manifest,arrays,archive_hashes=load_archives(manifest_path,required,residue=True)
+    required={s['sequence_id']:int(s['length']) for s in rows}
+    manifest,arrays,archive_paths=load_archives(manifest_path,required,residue=True)
     sequences=parse_fasta(data_dir/'inputs/sequences.fasta')
     X={l:[] for l in manifest['candidate_layers']};ys=[];sample_index=[];coordinates=[];traditional=[]
     aa='ACDEFGHIKLMNPQRSTVWY';offsets={};offset=0
     for i,s in enumerate(rows):
-        sid=s['sample_id'];positions=sorted(expected[sid]);sha=s['sequence_sha256']
-        array,index=arrays[sha]
+        sid=s['sample_id'];positions=sorted(expected[sid]);sequence_id=s['sequence_id']
+        array,index=arrays[sequence_id]
         if set(positions)-set(index):raise ValueError('missing labeled residue coordinates in representation')
         for j,layer in enumerate(manifest['candidate_layers']):X[layer].append(array[j,[index[p] for p in positions]])
         ys.extend(expected[sid][p] for p in positions);sample_index.extend([i]*len(positions))
@@ -169,9 +168,9 @@ def residue_data(data_dir,manifest_path,example):
     def ix(roles,role):return np.concatenate([offsets[sid] for sid in sorted(roles) if roles[sid]==role])
     plan={o:(ix(roles,'train'),ix(roles,'test'),[(str(k),ix(inner[o,k],'train'),ix(inner[o,k],'validation')) for k in range(3)]) for o,roles in outer.items()}
     return dict(task=RESIDUE_TASK,rows=rows,y=np.asarray(ys,dtype=np.int8),plan=plan,X=X,
-                auxiliary=np.concatenate(traditional),manifest=manifest,archive_hashes=archive_hashes,
+                auxiliary=np.concatenate(traditional),manifest=manifest,archive_paths=archive_paths,
                 residue=True,samples=samples,expected=expected,folds=folds,sample_index=np.asarray(sample_index),
-                positions=np.asarray(coordinates),data_hashes=hashes)
+                positions=np.asarray(coordinates))
 
 
 def selection_value(data,held,scores):
@@ -216,7 +215,7 @@ def train_task(args,record,config):
     manifest=data['manifest'];layers=config.get('candidate_layers',manifest['candidate_layers'])
     if not layers or len(set(layers))!=len(layers) or not set(layers)<=set(data['X']):raise ValueError('configured candidate layers are absent from representation manifest')
     data['X']={l:data['X'][l] for l in layers}
-    for archive in data['archive_hashes']:record.track(Path(archive))
+    for archive in data['archive_paths']:record.track(Path(archive))
     for p in data_dir.rglob('*'):
         if p.is_file() and p.suffix!='.md':record.track(p)
     arm_scores={};selection_rows=[];outer_rows=[];warning_rows=record.data['warnings']
@@ -258,7 +257,7 @@ def train_task(args,record,config):
         print(f"Completed {task} outer fold {int(outer)+1}/{len(data['plan'])}",flush=True)
     if any(not np.isfinite(v).all() for v in arm_scores.values()):raise ValueError('outer predictions incomplete or non-finite')
     metadata={'project':'ConformEval','model_id':manifest['model_id'],'model_revision':manifest['model_revision'],
-              'prediction_method':'nested grouped configured readers','prediction_code_sha256':digest(Path(__file__)),
+              'prediction_method':'nested grouped configured readers',
               'training_protocol':'frozen_nested_grouped_oof_v1','candidate_layers':list(layers),'pooling':manifest['pooling'],
               'arms':sorted(arm_scores),'extraction_config':manifest.get('extraction_config',{}),'reader_configuration':config,
               'scope':'software_example' if args.example else 'retrospective_grouped_development'}
@@ -298,10 +297,7 @@ def train_task(args,record,config):
 
 def run(args):
     output=args.output_dir.resolve()
-    record=RunRecord(output,{'task':getattr(args,'task',None)},
-                     [p for p in Path(__file__).parent.glob('*.py')
-                      if p.name in {'train.py','readers.py','model_interface.py','evaluate_predictions.py',
-                                    'evaluate_residue_predictions.py','residue_scoring_core.py'}])
+    record=RunRecord(output,{'task':getattr(args,'task',None)})
     try:
         if not args.data_dir.is_dir():raise FileNotFoundError(args.data_dir)
         config=reader_config(args.config)

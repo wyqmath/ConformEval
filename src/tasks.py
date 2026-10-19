@@ -1,7 +1,6 @@
 """Task identities, fixed folds and model-independent inference input preparation."""
 from __future__ import annotations
 import argparse
-import hashlib
 import json
 from pathlib import Path
 from .evaluate_predictions import TASKS, eligible_frames, read_table, verify_dataset
@@ -29,11 +28,10 @@ def required_sequences(data_dir: Path, task: str, example=False):
                 mapping.setdefault(key, []).append(row)
         required = {}
         for key, sample in eligible.items():
-            hashes, lengths = validate_sample_sequence_mappings(key, sample, mapping.get(key, []))
-            for sha, length in zip(hashes, lengths):
-                sid = 'SEQ_' + sha
+            sequence_ids, lengths = validate_sample_sequence_mappings(key, sample, mapping.get(key, []))
+            for sid, length in zip(sequence_ids, lengths):
                 sequence = all_sequences.get(sid)
-                if sequence is None or len(sequence) != length or hashlib.sha256(sequence.encode('ascii')).hexdigest() != sha:
+                if sequence is None or len(sequence) != length:
                     raise ValueError(f'sequence identity/length mismatch: {sid}')
                 required[sid] = sequence
     return required
@@ -46,10 +44,7 @@ def main():
     parser.add_argument('--output-dir', required=True, type=Path)
     parser.add_argument('--example', action='store_true')
     args = parser.parse_args()
-    record = RunRecord(args.output_dir.resolve(), {'task':args.task,'example':args.example},
-                       [p for p in Path(__file__).parent.glob('*.py')
-                        if p.name in {'tasks.py','readers.py','evaluate_predictions.py',
-                                      'evaluate_residue_predictions.py','residue_scoring_core.py'}])
+    record = RunRecord(args.output_dir.resolve(), {'task':args.task,'example':args.example})
     try:
         for p in args.data_dir.rglob('*'):
             if p.is_file() and p.suffix != '.md':

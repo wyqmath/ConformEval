@@ -30,12 +30,7 @@ API or [`examples/representation_archive.py`](../examples/representation_archive
 for an external representation archive. Keep model loading and tokenization
 inside the adapter; use the shared task loaders, reader trainer and scorers.
 
-An archive contains one NPZ file per sequence and a JSON manifest with model ID,
-immutable revision, sequence identity/hash, layers, dimensions, pooling,
-extraction configuration, array filenames and hashes. Each sequence provides
-pooled layer vectors and, when requested, a residue matrix whose rows map
-exactly to the declared one-based sequence coordinates. Use the example's
-actual array keys and manifest schema.
+An archive contains one NPZ file per sequence and a JSON manifest with the model ID, revision, sequence IDs, layers, dimensions, pooling, extraction configuration, and array filenames. Each sequence provides pooled layer vectors and, when requested, a residue matrix whose rows map to one-based sequence coordinates. Use the array keys and manifest schema shown in the example.
 
 Reader config selects predictor candidates and regularization. Inner validation
 selects settings; outer held-out scores do not select a model. Layers are

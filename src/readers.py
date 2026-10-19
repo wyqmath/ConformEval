@@ -53,22 +53,21 @@ def safe_archive_path(root: Path, relative: str) -> Path:
 
 def validate_sample_sequence_mappings(key: tuple[str, str], sample: dict, mappings: list[dict]) -> tuple[list[str], list[int]]:
     try:
-        hashes = sample['sequence_sha256s'].split(';')
         sequence_ids = sample['sequence_ids'].split(';')
         lengths = [int(value) for value in sample['lengths'].split(';')]
+        expected = Counter(zip(sequence_ids, lengths))
+        observed = Counter((row.get('sequence_id'), int(row['length'])) for row in mappings)
     except (KeyError, ValueError) as exc:
         raise ValueError(f'eligible sample has invalid endpoint identity fields: {key}') from exc
-    if not hashes or len(hashes) != len(lengths) or len(hashes) != len(sequence_ids):
+    if not sequence_ids or any(not sid for sid in sequence_ids) or len(sequence_ids) != len(lengths) or any(n < 1 for n in lengths):
         raise ValueError(f'eligible sample has invalid endpoint identity fields: {key}')
-    expected = Counter(zip(sequence_ids, hashes, lengths))
-    observed = Counter(((row.get('sequence_id'), row.get('sequence_sha256'), int(row['length'])) for row in mappings))
     if expected != observed:
         raise ValueError(f'eligible sample sequence mapping does not close: {key}')
     if key[0] == TASK_FS and sample.get('unit_type') == 'positive_endpoint_pair':
-        roles = Counter((row.get('endpoint_role') for row in mappings))
+        roles = Counter(row.get('endpoint_role') for row in mappings)
         if roles != Counter({'endpoint_A': 1, 'endpoint_B': 1}):
             raise ValueError(f'fold-switch pair must map one endpoint_A and one endpoint_B: {key}')
-    return (hashes, lengths)
+    return sequence_ids, lengths
 
 def fold_indices(task: str, rows: list[dict], data_dir: Path, group_to_fold: dict):
     inner_rows = [row for row in read_table(data_dir / 'folds/inner_validation_groups.tsv.gz') if row['task_id'] == task]

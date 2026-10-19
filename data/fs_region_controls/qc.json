@@ -12,7 +12,6 @@
   "primary_negative_rows": 848,
   "primary_unique_paired_negative_positions": 424,
   "primary_unknown_rows": 4746,
-  "protocol_sha256": "2ce799bb419a6c03f9f0b4fac8ab2907e6fe6426c4f418d3cf70e9d210a1a43f",
   "sources_unchanged": true,
   "status": "ANNOTATIONS_BUILT_MECHANICALLY_VALIDATED_PENDING_INDEPENDENT_REVIEW",
   "strict_negative_rows": 580,

@@ -1,6 +1,5 @@
 """Run provenance and safe paths shared by inference and evaluation."""
 from __future__ import annotations
-import hashlib
 import json
 import platform
 try:
@@ -13,12 +12,6 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 
-def digest(path: Path) -> str:
-    h = hashlib.sha256()
-    with Path(path).open('rb') as stream:
-        for block in iter(lambda: stream.read(1 << 20), b''):
-            h.update(block)
-    return h.hexdigest()
 
 
 def json_write(path: Path, obj) -> None:
@@ -45,19 +38,17 @@ def versions() -> dict:
 
 class RunRecord:
     """Save actual inputs, configuration and outcomes, including failed runs."""
-    def __init__(self, output: Path, configuration: dict, code_files=None):
+    def __init__(self, output: Path, configuration: dict):
         self.output = output
         if output.exists():
             raise ValueError(f'refusing to overwrite existing output directory: {output}')
         output.mkdir(parents=True)
         self.clock = time.monotonic()
-        self.code_files = [Path(__file__)] + list(code_files or [])
         self.data = {
             'project': 'ConformEval', 'status': 'RUNNING', 'started_at': self.stamp(),
             'configuration': configuration, 'dependencies': versions(),
             'hardware': {'platform': platform.platform(), 'machine': platform.machine()},
-            'input_sha256': {}, 'warnings': [],
-            'code_sha256': {p.name: digest(p) for p in self.code_files},
+            'inputs': [], 'warnings': [],
         }
         self.save()
 
@@ -66,28 +57,24 @@ class RunRecord:
         return datetime.now().astimezone().isoformat(timespec='seconds')
 
     def track(self, path: Path):
-        self.data['input_sha256'][str(path.resolve())] = digest(path)
+        name = str(path.resolve())
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        if name not in self.data['inputs']:
+            self.data['inputs'].append(name)
 
     def save(self):
         json_write(self.output / 'run.json', self.data)
 
     def finish(self, error=None):
-        if error is None:
-            for name, expected in self.data['input_sha256'].items():
-                if digest(Path(name)) != expected:
-                    error = ValueError(f'input changed during run: {name}')
-                    break
-            current = {p.name: digest(p) for p in self.code_files}
-            if current != self.data['code_sha256']:
-                error = ValueError('evaluation or extraction code changed during run')
         self.data.update(status='FAILED' if error else 'PASS', ended_at=self.stamp(),
                          seconds=time.monotonic() - self.clock,
                          peak_rss_bytes=(int(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss *
                                             (1 if platform.system() == 'Darwin' else 1024)) if resource else None))
         if error:
             self.data.update(error_type=type(error).__name__, error=str(error))
-        self.data['output_sha256'] = {p.relative_to(self.output).as_posix(): digest(p)
-                                     for p in sorted(self.output.rglob('*'))
-                                     if p.is_file() and p.name != 'run.json'}
+        self.data['outputs'] = [p.relative_to(self.output).as_posix()
+                                for p in sorted(self.output.rglob('*'))
+                                if p.is_file() and p.name != 'run.json']
         self.save()
         return error

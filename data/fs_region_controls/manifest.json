@@ -1,45 +1,14 @@
 {
   "artifact_id": "fs_region_controls_v1",
-  "files": {
-    "case_coverage.tsv": {
-      "bytes": 1523,
-      "sha256": "399bc50596d5d5c447cc300123503a0c02d71bf5396969e5addf432e57689d33"
-    },
-    "endpoint_provenance.tsv": {
-      "bytes": 9613,
-      "sha256": "b9ecb2f887d6207ad355913773c07607e70efc398f486f056b7180fdb3666c9f"
-    },
-    "evaluation_eligibility.tsv": {
-      "bytes": 1428,
-      "sha256": "cfb7af57b298b27944935969eeec346b7db72a627e6885c64aba669bee2603fe"
-    },
-    "labels_primary.tsv.gz": {
-      "bytes": 52207,
-      "sha256": "612d2b3abd920af2ecf66cea88872f42025c5170cda5f9c443a754d4e83be376"
-    },
-    "labels_strict_sensitivity.tsv.gz": {
-      "bytes": 51269,
-      "sha256": "22ad3473f7d643ba902bbb54223dbac34257212362d63ceb150096cdb7a559be"
-    },
-    "pair_residue_metrics.tsv.gz": {
-      "bytes": 71646,
-      "sha256": "8fbd993e46d45c30c4b7ab62b324664578bf25a497f39c5766b92c6c242bdef1"
-    },
-    "qc.json": {
-      "bytes": 736,
-      "sha256": "b2f3113d75ee5afe96bfb57087a0f38f7eec8099240861f7161d690468d905a8"
-    },
-    "run.json": {
-      "bytes": 20112,
-      "sha256": "65176bf04e114d60c78b91e6e12d3c7e3bc1d7cf8af30f1143d4867317f37bd3"
-    },
-    "stable_reference_intervals.tsv": {
-      "bytes": 23792,
-      "sha256": "25d9389339ea69ae119a8b0ab02d2d12c16e9900e5251ef4df5d360c4b51a863"
-    },
-    "structural_reference_evidence.tsv": {
-      "bytes": 51934,
-      "sha256": "cc989bc2871984f5012a8c2380953b2b022fccdeea0405dc3536dddb90bbaf68"
-    }
-  }
+  "files": [
+    "case_coverage.tsv",
+    "endpoint_provenance.tsv",
+    "evaluation_eligibility.tsv",
+    "labels_primary.tsv.gz",
+    "labels_strict_sensitivity.tsv.gz",
+    "pair_residue_metrics.tsv.gz",
+    "qc.json",
+    "stable_reference_intervals.tsv",
+    "structural_reference_evidence.tsv"
+  ]
 }

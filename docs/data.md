@@ -39,8 +39,7 @@ The checkout includes evaluator inputs under `data/` and evaluation settings und
 Compressed `.tsv.gz` files use the same fields as TSV. Open them with
 `gzip.open(path, "rt", encoding="utf-8", newline="")` or use
 `pandas.read_csv(path, sep="\t")`, which detects gzip automatically.
-Task manifests record the file hashes; the included README and manifests define
-fields and coordinates. The [ConformEval tutorial](../examples/notebooks/ConformEval_tutorial.ipynb) notebook provides inference and training commands.
+Task manifests list the required files; the included README defines fields and coordinates. The [ConformEval tutorial](../examples/notebooks/ConformEval_tutorial.ipynb) notebook provides inference and training commands.
 
 ## Label definitions
 
@@ -58,7 +57,7 @@ scores. Group and coordinate rules are in the [evaluation guide](evaluation.md).
 
 Sequences and annotations come from UniProt, DisProt, RCSB PDB/SIFTS,
 KnotProt-derived legacy annotations, and primary publications. The source records
-retain source IDs, record versions, citations, exclusions, and original hashes.
+retain source IDs, record versions, citations, and exclusions.
 MIT covers the software; it does not grant a blanket dataset license.
 UniProt and DisProt attribution and PDB source terms are recorded in the source
 register. KnotProt redistribution terms and the original scored-label source

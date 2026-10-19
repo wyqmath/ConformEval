@@ -1,30 +1,12 @@
 {
   "artifact_id": "confomeval-software-example-pooled-v1",
-  "files": {
-    "folds/fold_qc.tsv": {
-      "bytes": 5496,
-      "sha256": "d3d6297c2643b529b8ba235fb5170707c3f7f84ac754479a894a530c9efe2415"
-    },
-    "folds/inner_validation_groups.tsv.gz": {
-      "bytes": 810,
-      "sha256": "4ee8aa1504facdc7789dc0dde9eeca5df0d97e82e9e426c557fbe9db5bb55fb4"
-    },
-    "folds/outer_group_holdout.tsv": {
-      "bytes": 1253,
-      "sha256": "8f145fac8157b95250b2d8ca9efdbd463f10de8d7ae01ea397a9aed4b8874e1f"
-    },
-    "sample_sequences.tsv.gz": {
-      "bytes": 1710,
-      "sha256": "410752b5b5054bce8e4a780804d06ec088ddd9f19158ba581bf3aee4c3a4863f"
-    },
-    "sequences.fasta": {
-      "bytes": 2997,
-      "sha256": "5314baa8f61688e3a2132e2d5acf9c9c928a23672a3db9f5db5e49614bf59a98"
-    },
-    "task_samples.tsv.gz": {
-      "bytes": 2023,
-      "sha256": "2a7896b3ef96e2a56089103cd51281e55bf42892009fa09ab8d31fd58a2341d4"
-    }
-  },
+  "files": [
+    "folds/fold_qc.tsv",
+    "folds/inner_validation_groups.tsv.gz",
+    "folds/outer_group_holdout.tsv",
+    "sample_sequences.tsv.gz",
+    "sequences.fasta",
+    "task_samples.tsv.gz"
+  ],
   "scope": "software_example"
 }

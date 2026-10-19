@@ -1,182 +1,132 @@
 {
   "artifacts": [
     {
-      "historical_export_sha256": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99",
       "historical_transformation": "byte-identical",
       "path": "docs/reference/disorder-dataset.md",
-      "upstream_name": "REPORT.md",
-      "upstream_sha256": "b95a7638c8576706ea5db47c62a6373d595e710414aaa0bff7745eddd1ba6e99"
+      "upstream_name": "REPORT.md"
     },
     {
-      "historical_export_sha256": "9a814a83ef8f39b0ddd03b1cabda75cd58a2c0b67ed105e8433dad9871048648",
       "historical_transformation": "portable provenance references",
       "path": "configs/disorder_reference/evaluation.json",
-      "upstream_name": "evaluation_protocol_v01.json",
-      "upstream_sha256": "77df789cf2c9d5767b4b8f38574db461e066194899f1d65055d4664cc4f105aa"
+      "upstream_name": "evaluation_protocol_v01.json"
     },
     {
-      "historical_export_sha256": "e630cf937393b4292a9d6af7e796f44436efc8dd536c08d0f0a021525a18b197",
       "historical_transformation": "portable provenance references",
       "path": "configs/disorder_reference/extraction_request.json",
-      "upstream_name": "extraction_request.json",
-      "upstream_sha256": "1876a41075cddcb91785710de2cd3f4a79b27524a981e2b3eb6572fbfa610cc6"
+      "upstream_name": "extraction_request.json"
     },
     {
-      "historical_export_sha256": "51bff4efa99d9720fe2aa0a7f5e7ad77428ca3bda78cb57fd18632b237a32e9f",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/fold_qc.tsv",
-      "upstream_name": "fold_qc.tsv",
-      "upstream_sha256": "51bff4efa99d9720fe2aa0a7f5e7ad77428ca3bda78cb57fd18632b237a32e9f"
+      "upstream_name": "fold_qc.tsv"
     },
     {
-      "historical_export_sha256": "43b46a6399c078cf08099586f7a0d20ef19b550d21cd704f776b8f700f9b652a",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/inner_fold_roles.tsv",
-      "upstream_name": "inner_fold_roles.tsv",
-      "upstream_sha256": "43b46a6399c078cf08099586f7a0d20ef19b550d21cd704f776b8f700f9b652a"
+      "upstream_name": "inner_fold_roles.tsv"
     },
     {
-      "historical_export_sha256": "d70b9bf3a8ca0a76eae0f2105df7f31f3a469eec58e1febbe24bdb8799016169",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/inputs/resid_index.tsv",
-      "upstream_name": "resid_index.tsv",
-      "upstream_sha256": "d70b9bf3a8ca0a76eae0f2105df7f31f3a469eec58e1febbe24bdb8799016169"
+      "upstream_name": "resid_index.tsv"
     },
     {
-      "historical_export_sha256": "8318bb9e8e6d5b9d41e4dc7f0720c2fb3c3c48ac17661e7ff1b5c9af83bc714b",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/inputs/sequences.fasta",
-      "upstream_name": "sequences.fasta",
-      "upstream_sha256": "8318bb9e8e6d5b9d41e4dc7f0720c2fb3c3c48ac17661e7ff1b5c9af83bc714b"
+      "upstream_name": "sequences.fasta"
     },
     {
-      "historical_export_sha256": "dd5f12c758f7d320177dda678a3a48cf0033b90577cf443ab6fd08d94eba1e23",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/outer_fold_roles.tsv",
-      "upstream_name": "outer_fold_roles.tsv",
-      "upstream_sha256": "dd5f12c758f7d320177dda678a3a48cf0033b90577cf443ab6fd08d94eba1e23"
+      "upstream_name": "outer_fold_roles.tsv"
     },
     {
-      "historical_export_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69",
       "historical_transformation": "byte-identical",
       "path": "configs/disorder_reference/data.json",
-      "upstream_name": "protocol.json",
-      "upstream_sha256": "5985e239fdc0926e041fc3346ba0e6f26176dc530c6f28b99d8b63a94103ac69"
+      "upstream_name": "protocol.json"
     },
     {
-      "historical_export_sha256": "dc6e34ee4db746e3102c4dc1206c840bedc90b001c411b1e7105c120d5fac55b",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/run_manifest.json",
-      "upstream_name": "run_manifest.json",
-      "upstream_sha256": "dc6e34ee4db746e3102c4dc1206c840bedc90b001c411b1e7105c120d5fac55b"
+      "upstream_name": "run_manifest.json"
     },
     {
-      "historical_export_sha256": "253563b7dabd3eb5d2cfce648f2ae3bedcd7e8b363eb5c91170f723bd647023e",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/selected_labels.tsv.gz",
-      "upstream_name": "selected_labels.tsv.gz",
-      "upstream_sha256": "253563b7dabd3eb5d2cfce648f2ae3bedcd7e8b363eb5c91170f723bd647023e"
+      "upstream_name": "selected_labels.tsv.gz"
     },
     {
-      "historical_export_sha256": "ef7fd04bc462542875b56685e9563ae509cc70eb7b87971ea6ee4a640cf95ede",
       "historical_transformation": "byte-identical",
       "path": "data/disorder_reference/selected_samples.tsv",
-      "upstream_name": "selected_samples.tsv",
-      "upstream_sha256": "ef7fd04bc462542875b56685e9563ae509cc70eb7b87971ea6ee4a640cf95ede"
+      "upstream_name": "selected_samples.tsv"
     },
     {
-      "historical_export_sha256": "ce0941338f54f6a8b1f9671238483499edd1937e053ef90d158af525b72be84e",
       "historical_transformation": "byte-identical",
       "path": "docs/reference/fold-switch-region-controls.md",
-      "upstream_name": "REPORT.md",
-      "upstream_sha256": "ce0941338f54f6a8b1f9671238483499edd1937e053ef90d158af525b72be84e"
+      "upstream_name": "REPORT.md"
     },
     {
-      "historical_export_sha256": "399bc50596d5d5c447cc300123503a0c02d71bf5396969e5addf432e57689d33",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/case_coverage.tsv",
-      "upstream_name": "case_coverage.tsv",
-      "upstream_sha256": "399bc50596d5d5c447cc300123503a0c02d71bf5396969e5addf432e57689d33"
+      "upstream_name": "case_coverage.tsv"
     },
     {
-      "historical_export_sha256": "b9ecb2f887d6207ad355913773c07607e70efc398f486f056b7180fdb3666c9f",
       "historical_transformation": "portable provenance references",
       "path": "data/fs_region_controls/endpoint_provenance.tsv",
-      "upstream_name": "endpoint_provenance.tsv",
-      "upstream_sha256": "12f2549ff0728fe6a1ecbf875cc6274e9682cfd8900472464b660bc1973d8818"
+      "upstream_name": "endpoint_provenance.tsv"
     },
     {
-      "historical_export_sha256": "cfb7af57b298b27944935969eeec346b7db72a627e6885c64aba669bee2603fe",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/evaluation_eligibility.tsv",
-      "upstream_name": "evaluation_eligibility.tsv",
-      "upstream_sha256": "cfb7af57b298b27944935969eeec346b7db72a627e6885c64aba669bee2603fe"
+      "upstream_name": "evaluation_eligibility.tsv"
     },
     {
-      "historical_export_sha256": "612d2b3abd920af2ecf66cea88872f42025c5170cda5f9c443a754d4e83be376",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/labels_primary.tsv.gz",
-      "upstream_name": "labels_primary.tsv.gz",
-      "upstream_sha256": "612d2b3abd920af2ecf66cea88872f42025c5170cda5f9c443a754d4e83be376"
+      "upstream_name": "labels_primary.tsv.gz"
     },
     {
-      "historical_export_sha256": "22ad3473f7d643ba902bbb54223dbac34257212362d63ceb150096cdb7a559be",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/labels_strict_sensitivity.tsv.gz",
-      "upstream_name": "labels_strict_sensitivity.tsv.gz",
-      "upstream_sha256": "22ad3473f7d643ba902bbb54223dbac34257212362d63ceb150096cdb7a559be"
+      "upstream_name": "labels_strict_sensitivity.tsv.gz"
     },
     {
-      "historical_export_sha256": "8fbd993e46d45c30c4b7ab62b324664578bf25a497f39c5766b92c6c242bdef1",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/pair_residue_metrics.tsv.gz",
-      "upstream_name": "pair_residue_metrics.tsv.gz",
-      "upstream_sha256": "8fbd993e46d45c30c4b7ab62b324664578bf25a497f39c5766b92c6c242bdef1"
+      "upstream_name": "pair_residue_metrics.tsv.gz"
     },
     {
-      "historical_export_sha256": "f96e0c6ab5918eaaaf5e21983105372ebab8992253920ca7b873d22cf2ba0fb1",
       "historical_transformation": "portable provenance references",
       "path": "configs/fs_region_controls/evaluation.json",
-      "upstream_name": "protocol.json",
-      "upstream_sha256": "2ce799bb419a6c03f9f0b4fac8ab2907e6fe6426c4f418d3cf70e9d210a1a43f"
+      "upstream_name": "protocol.json"
     },
     {
-      "historical_export_sha256": "b2f3113d75ee5afe96bfb57087a0f38f7eec8099240861f7161d690468d905a8",
       "historical_transformation": "portable provenance references",
       "path": "data/fs_region_controls/qc.json",
-      "upstream_name": "qc.json",
-      "upstream_sha256": "7f36189878cae140801b0f246015472b56e1b3ddde3c53a7e3babbd981a9fcec"
+      "upstream_name": "qc.json"
     },
     {
-      "historical_export_sha256": "65176bf04e114d60c78b91e6e12d3c7e3bc1d7cf8af30f1143d4867317f37bd3",
       "historical_transformation": "portable provenance references",
       "path": "data/fs_region_controls/run.json",
-      "upstream_name": "run.json",
-      "upstream_sha256": "8be348d66dd5ca1a15d8ee9b5ce9cc2fa9843db4d3404c6e779f8f5f4b4a0715"
+      "upstream_name": "run.json"
     },
     {
-      "historical_export_sha256": "25d9389339ea69ae119a8b0ab02d2d12c16e9900e5251ef4df5d360c4b51a863",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/stable_reference_intervals.tsv",
-      "upstream_name": "stable_reference_intervals.tsv",
-      "upstream_sha256": "25d9389339ea69ae119a8b0ab02d2d12c16e9900e5251ef4df5d360c4b51a863"
+      "upstream_name": "stable_reference_intervals.tsv"
     },
     {
-      "historical_export_sha256": "cc989bc2871984f5012a8c2380953b2b022fccdeea0405dc3536dddb90bbaf68",
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/structural_reference_evidence.tsv",
-      "upstream_name": "structural_reference_evidence.tsv",
-      "upstream_sha256": "cc989bc2871984f5012a8c2380953b2b022fccdeea0405dc3536dddb90bbaf68"
+      "upstream_name": "structural_reference_evidence.tsv"
     },
     {
-      "historical_export_sha256": "3355f8b97945b36ceecf979d5d315f4dd0ab9c62cbdb428c9fe054b12c64dcd6",
       "historical_transformation": "byte-identical",
       "path": "docs/reference/disorder-esm2-results.md",
-      "upstream_name": "REPORT.md",
-      "upstream_sha256": "3355f8b97945b36ceecf979d5d315f4dd0ab9c62cbdb428c9fe054b12c64dcd6"
+      "upstream_name": "REPORT.md"
     }
   ],
-  "scope": "Historical source lineage for data and configuration; hashes describe upstream or original exports, not current source files.",
+  "scope": "Source filenames and transformations for data and configuration.",
   "source_commits": {
     "DIS.REF.01": "a6bf28f",
     "FS.CTRL.01": "31976d6"

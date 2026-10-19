@@ -1,26 +1,11 @@
 {
   "artifact_id": "confomeval-software-example-residue-v1",
-  "files": {
-    "inner_fold_roles.tsv": {
-      "bytes": 4774,
-      "sha256": "56d2fc1d13cab2192e76d09d97efa3e1bd8cef62e32db9fb044e7da7941194eb"
-    },
-    "inputs/sequences.fasta": {
-      "bytes": 2997,
-      "sha256": "5314baa8f61688e3a2132e2d5acf9c9c928a23672a3db9f5db5e49614bf59a98"
-    },
-    "outer_fold_roles.tsv": {
-      "bytes": 1623,
-      "sha256": "269801e85f6858b33260aa58a7e07e5ba91d3a638ffe000013c7fe8b0d099d9b"
-    },
-    "selected_labels.tsv.gz": {
-      "bytes": 2619,
-      "sha256": "4434f2bc0e7c7cca6dea860c6312f4e96451726b1e53aec1e5b69ac857e3c620"
-    },
-    "selected_samples.tsv": {
-      "bytes": 3900,
-      "sha256": "44212a1780fb0dd097eedbd643615d1d7c8721241a689fd0417a2dc5edd6986e"
-    }
-  },
+  "files": [
+    "inner_fold_roles.tsv",
+    "inputs/sequences.fasta",
+    "outer_fold_roles.tsv",
+    "selected_labels.tsv.gz",
+    "selected_samples.tsv"
+  ],
   "scope": "software_example"
 }

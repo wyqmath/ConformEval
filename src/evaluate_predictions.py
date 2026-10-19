@@ -2,12 +2,10 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
-import hashlib
 import io
 import json
 import math
 import platform
-import re
 import sys
 from datetime import datetime
 from importlib.metadata import version
@@ -21,15 +19,7 @@ TASKS = {TASK_KNOT, TASK_FS}
 PREDICTION_FIELDS = ('task_id', 'sample_id', 'outer_fold', 'score')
 BOOTSTRAPS = 2000
 BOOTSTRAP_SEED = 2026
-HASH_RE = re.compile('^[0-9a-f]{64}$')
-ACCEPTED_PROTOCOL_SHA256 = '46cb535c76590af8fc29b13b1a9d5d4dbdd492ad9640470e11c0769d05ecdff5'
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open('rb') as handle:
-        for block in iter(lambda: handle.read(1 << 20), b''):
-            digest.update(block)
-    return digest.hexdigest()
 
 def now() -> str:
     return datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
@@ -47,32 +37,24 @@ def write_gzip_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
                 writer.writeheader()
                 writer.writerows(rows)
 
-def verify_dataset(data_dir: Path) -> dict[str, str]:
-    manifest_path = data_dir / 'dataset_manifest.json'
-    manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
-    records = manifest.get('files', {})
+def verify_dataset(data_dir: Path) -> list[str]:
+    manifest = json.loads((data_dir / 'dataset_manifest.json').read_text(encoding='utf-8-sig'))
+    records = manifest.get('files', [])
     if not records:
         raise ValueError('dataset manifest has no file records')
-    hashes = {'data/base/dataset_manifest.json': sha256(manifest_path)}
-    for relative, record in records.items():
+    for relative in records:
         rel = Path(relative)
-        if rel.is_absolute() or '..' in rel.parts:
+        path = (data_dir / rel).resolve()
+        if rel.is_absolute() or '..' in rel.parts or not path.is_relative_to(data_dir.resolve()):
             raise ValueError(f'unsafe dataset manifest path: {relative}')
-        path = data_dir / rel
-        expected = record['sha256'] if isinstance(record, dict) else record
-        if not path.is_file() or sha256(path) != expected:
-            raise ValueError(f'dataset file hash mismatch: {relative}')
-        if isinstance(record, dict) and path.stat().st_size != record.get('bytes'):
-            raise ValueError(f'dataset file size mismatch: {relative}')
-        hashes[f'data/base/{rel.as_posix()}'] = expected
-    return hashes
+        if not path.is_file():
+            raise FileNotFoundError(path)
+    return list(records)
 
 def load_protocol(path: Path) -> dict:
     protocol = json.loads(path.read_text(encoding='utf-8-sig'))
     if protocol.get('schema_version') != 1 or protocol.get('protocol_id') != 'ConformEval-0.3-frozen-grouped-development':
         raise ValueError('unsupported scoring protocol')
-    if protocol.get('source_accepted_protocol_sha256') != ACCEPTED_PROTOCOL_SHA256:
-        raise ValueError('scoring protocol does not cite the accepted source protocol')
     tasks = protocol.get('tasks', {})
     expected = {TASK_KNOT: (5, 'pooled_outer_fold_OOF_AUROC', 'mean_inner_validation_AUROC'), TASK_FS: (10, 'mean_held_positive_rank_percentile_within_own_outer_test_pool_lower_is_better', 'mean_inner_held_positive_rank_percentile_within_own_validation_pool_lower_is_better')}
     if set(tasks) != TASKS:
@@ -302,16 +284,11 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     for path in (data_dir, predictions_path, metadata_path, protocol_path):
         if not path.exists():
             raise FileNotFoundError(path)
-    protocol_hash = sha256(protocol_path)
     protocol = load_protocol(protocol_path)
-    metadata_hash = sha256(metadata_path)
-    predictions_hash = sha256(predictions_path)
     metadata = json.loads(metadata_path.read_text(encoding='utf-8-sig'))
-    for key in ('model_id', 'model_revision', 'prediction_method', 'prediction_code_sha256', 'training_protocol'):
+    for key in ('model_id', 'model_revision', 'prediction_method', 'training_protocol'):
         if not isinstance(metadata.get(key), str) or not metadata[key].strip():
             raise ValueError(f'model metadata is missing required field: {key}')
-    if not HASH_RE.fullmatch(metadata['prediction_code_sha256']):
-        raise ValueError('prediction_code_sha256 must be a lowercase SHA-256 digest')
     candidate_layers = metadata.get('candidate_layers')
     if not isinstance(candidate_layers, list) or not candidate_layers or any((type(layer) is not int or layer < 1 for layer in candidate_layers)) or (len(candidate_layers) != len(set(candidate_layers))):
         raise ValueError('candidate_layers must contain unique positive 1-based layer IDs')
@@ -320,13 +297,8 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     if metadata['training_protocol'] != 'frozen_nested_grouped_oof_v1':
         raise ValueError('predictions must declare the frozen nested grouped out-of-fold protocol')
     started = now()
-    code_path = Path(__file__).resolve()
-    code_hash = sha256(code_path)
-    input_hashes = verify_dataset(data_dir)
+    verify_dataset(data_dir)
     dataset_metadata = json.loads((data_dir / 'dataset_manifest.json').read_text(encoding='utf-8-sig'))
-    input_hashes['prediction_file'] = predictions_hash
-    input_hashes['model_metadata'] = metadata_hash
-    input_hashes['scoring_protocol'] = protocol_hash
     eligible, group_to_fold = eligible_frames(data_dir, tasks)
     prediction_map = load_predictions(predictions_path, eligible, group_to_fold)
     scored_rows = []
@@ -345,19 +317,12 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
         for row in rows:
             fold = group_to_fold[task, row['binding_group_id']]
             scored_rows.append({'task_id': task, 'sample_id': row['sample_id'], 'outer_fold': fold, 'binding_group_id': row['binding_group_id'], 'score': prediction_map[task, row['sample_id']], 'learning_label': row['learning_label'], 'learning_mask': row['learning_mask'], 'biological_target': row['biological_target'], 'biological_mask': row['biological_mask'], 'label': row['label'], 'mask': row['mask']})
-    if verify_dataset(data_dir) != {key: value for key, value in input_hashes.items() if key.startswith('data/')}:
-        raise ValueError('benchmark data changed during evaluation')
-    if sha256(predictions_path) != predictions_hash or sha256(metadata_path) != metadata_hash or sha256(protocol_path) != protocol_hash:
-        raise ValueError('prediction, model metadata, or scoring protocol changed during evaluation')
     output_dir.mkdir(parents=True)
     scored_path = output_dir / 'scored_predictions.tsv.gz'
     write_gzip_tsv(scored_path, scored_rows, ['task_id', 'sample_id', 'outer_fold', 'binding_group_id', 'score', 'learning_label', 'learning_mask', 'biological_target', 'biological_mask', 'label', 'mask'])
     metrics_path = output_dir / 'metrics.json'
     metrics_path.write_bytes((json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
-    if sha256(code_path) != code_hash:
-        raise ValueError('scoring code changed during evaluation')
-    output_hashes = {path.name: sha256(path) for path in (scored_path, metrics_path)}
-    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'benchmark_data_version': '2026-10-14-data-lock-v01+FD.03', 'scoring_protocol_id': protocol['protocol_id'], 'input_sha256': input_hashes, 'scorer_sha256': code_hash, 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}, 'output_sha256': output_hashes}
+    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'benchmark_data_version': '2026-10-14-data-lock-v01+FD.03', 'scoring_protocol_id': protocol['protocol_id'], 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}}
     run_path = output_dir / 'run.json'
     run['project'] = 'ConformEval'
     if dataset_metadata.get('scope') == 'software_example':

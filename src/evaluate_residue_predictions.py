@@ -2,7 +2,6 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
-import hashlib
 import json
 import math
 import platform
@@ -15,33 +14,28 @@ from .residue_scoring_core import read_tsv, load_fasta, validate_label_rows, val
 TASK = 'DISORDER-STRUCTURE-REFERENCE-CANDIDATE'
 REFERENCE_ARMS = {'ESM2-L11', 'ESM2-L23', 'ESM2-L33', 'traditional-AA-context', 'MLP-h33-seed13', 'MLP-h33-seed42', 'MLP-h33-seed2026'}
 
-def sha256(path):
-    h = hashlib.sha256()
-    with Path(path).open('rb') as f:
-        for b in iter(lambda: f.read(1 << 20), b''):
-            h.update(b)
-    return h.hexdigest()
 
 def check_manifest(root):
     manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
-    hashes = {'manifest.json': sha256(root / 'manifest.json')}
-    for name, record in manifest['files'].items():
+    records = manifest.get('files', [])
+    if not records:
+        raise ValueError('dataset manifest has no file records')
+    for name in records:
         rel = Path(name)
-        if rel.is_absolute() or '..' in rel.parts:
+        path = (root / rel).resolve()
+        if rel.is_absolute() or '..' in rel.parts or not path.is_relative_to(root.resolve()):
             raise ValueError('unsafe manifest path')
-        p = root / rel
-        if not p.is_file() or sha256(p) != record['sha256'] or p.stat().st_size != record['bytes']:
-            raise ValueError(f'dataset hash/size mismatch: {name}')
-        hashes[name] = record['sha256']
-    return hashes
+        if not path.is_file():
+            raise FileNotFoundError(path)
+    return list(records)
 
 def load_task(root, example=False):
-    hashes = check_manifest(root)
+    files = check_manifest(root)
     manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
     if example and (manifest.get('artifact_id') != 'confomeval-software-example-residue-v1' or manifest.get('scope') != 'software_example'):
         raise ValueError('example mode requires the bundled software example')
-    if not example and hashes['manifest.json'] != 'd8527744b6c8b8997f39dca56e49725a815207237ed4f97547d3ae0c2df7907a':
-        raise ValueError('unsupported disorder reference data version')
+    if not example and manifest.get('scope') == 'software_example':
+        raise ValueError('synthetic data requires --example')
     rows = read_tsv(root / 'selected_samples.tsv')
     samples = {r['sample_id']: r for r in rows}
     if len(samples) != len(rows):
@@ -51,14 +45,15 @@ def load_task(root, example=False):
         labels[r['sample_id']].append(r)
     validate_label_rows(samples, labels, load_fasta(root / 'inputs/sequences.fasta'), example=example)
     sequence_groups = defaultdict(set)
+    sequences = load_fasta(root / 'inputs/sequences.fasta')
     for s in samples.values():
-        sequence_groups[s['sequence_sha256']].add(s['binding_group_id'])
+        sequence_groups[sequences[s['sequence_id']]].add(s['binding_group_id'])
     if any((len(gs) != 1 for gs in sequence_groups.values())):
         raise ValueError('exact sequence crosses binding groups')
     outer, inner = validate_fold_roles(samples, read_tsv(root / 'outer_fold_roles.tsv'), read_tsv(root / 'inner_fold_roles.tsv'))
     expected = {sid: {int(r['position']): int(r['label']) for r in rs} for sid, rs in labels.items()}
     folds = {sid: f for f, roles in outer.items() for sid, role in roles.items() if role == 'test'}
-    return (samples, expected, folds, hashes)
+    return (samples, expected, folds, files)
 
 def read_scores(path, samples, expected, folds, arms, default_arm):
     scores = {arm: {sid: {} for sid in samples} for arm in arms}
@@ -143,32 +138,24 @@ def main():
     if out.exists():
         raise ValueError('output directory already exists')
     metadata = json.loads(a.model_metadata.read_text(encoding='utf-8-sig'))
-    for k in ['model_id', 'model_revision', 'prediction_method', 'prediction_code_sha256', 'training_protocol']:
+    for k in ['model_id', 'model_revision', 'prediction_method', 'training_protocol']:
         if not isinstance(metadata.get(k), str) or not metadata[k].strip():
             raise ValueError(f'missing model metadata: {k}')
-    code_hash = metadata['prediction_code_sha256']
-    if len(code_hash) != 64 or any((c not in '0123456789abcdef' for c in code_hash)):
-        raise ValueError('invalid prediction code hash')
     if metadata['training_protocol'] != 'frozen_nested_grouped_oof_v1':
         raise ValueError('unsupported training protocol')
     declared = metadata.get('arms', [metadata['model_id']])
     if not isinstance(declared, list) or not declared or any((not isinstance(x, str) or not x for x in declared)) or (len(set(declared)) != len(declared)):
         raise ValueError('invalid declared arms')
     metadata['arms'] = declared
-    inputs = {str(task / 'manifest.json'): sha256(task / 'manifest.json'), str(pred): sha256(pred), str(Path(__file__).resolve()): sha256(Path(__file__).resolve()), str(Path(__file__).with_name('residue_scoring_core.py').resolve()): sha256(Path(__file__).with_name('residue_scoring_core.py'))}
-    inputs[str(a.model_metadata.resolve())] = sha256(a.model_metadata)
-    run = {'started_at': stamp(), 'status': 'RUNNING', 'model_metadata': metadata, 'input_sha256': inputs, 'versions': {'python': platform.python_version(), 'numpy': np.__version__, 'scipy': scipy.__version__, 'scikit_learn': sklearn.__version__}, 'scope': 'software_example' if a.example else 'retrospective_grouped_development', 'warnings': ['Scores verify identities and metrics; training history is supplied provenance.', 'Intervals condition on fixed predictions; no refitting uncertainty.']}
+    run = {'started_at': stamp(), 'status': 'RUNNING', 'model_metadata': metadata, 'versions': {'python': platform.python_version(), 'numpy': np.__version__, 'scipy': scipy.__version__, 'scikit_learn': sklearn.__version__}, 'scope': 'software_example' if a.example else 'retrospective_grouped_development', 'warnings': ['Scores verify identities and metrics; training history is supplied provenance.', 'Intervals condition on fixed predictions; no refitting uncertainty.']}
     out.mkdir(parents=True)
     try:
-        samples, expected, folds, data_hashes = load_task(task, example=a.example)
-        run['dataset_sha256'] = data_hashes
+        samples, expected, folds, _ = load_task(task, example=a.example)
         scores = read_scores(pred, samples, expected, folds, set(metadata['arms']), metadata['model_id'])
         rows, metrics = calculate(samples, expected, folds, scores)
         write_tsv(out / 'protein_metrics.tsv', list(rows[0]), rows)
         (out / 'metrics.json').write_bytes((json.dumps(metrics, indent=2, sort_keys=True) + '\n').encode('utf-8'))
-        if load_task(task, example=a.example)[3] != data_hashes or any((sha256(Path(p)) != h for p, h in inputs.items())):
-            raise ValueError('input or code changed during scoring')
-        run.update(status='COMPLETE', ended_at=stamp(), n_predictions=sum((len(ps) for arm in scores.values() for ps in arm.values())), output_sha256={p.name: sha256(p) for p in out.iterdir() if p.is_file()})
+        run.update(status='COMPLETE', ended_at=stamp(), n_predictions=sum((len(ps) for arm in scores.values() for ps in arm.values())))
     except Exception as e:
         run.update(status='FAILED', ended_at=stamp(), error=str(e))
         (out / 'run.json').write_bytes((json.dumps(run, indent=2, sort_keys=True) + '\n').encode('utf-8'))

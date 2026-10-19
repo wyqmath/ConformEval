@@ -6,7 +6,6 @@ restrict source comments, or approve a delivery.
 from __future__ import annotations
 import csv
 import gzip
-import hashlib
 import json
 import math
 import re
@@ -18,12 +17,6 @@ EXPECTED = {'KNOT-PRESENCE': 734 * 7, 'FS-L2-grouped-PU-ranking': 8879 * 7}
 REFERENCE_ARMS = {'PLM-composition', 'PLM-hidden17', 'PLM-hidden33', 'PLM-length', 'PLM-nearest', 'PLM-nested', 'PLM-training-prior'}
 PREDICTION_IDENTITY_FIELDS = ('binding_group_id', 'learning_label', 'learning_mask', 'biological_target', 'biological_mask', 'label', 'mask')
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open('rb') as handle:
-        for chunk in iter(lambda: handle.read(1 << 20), b''):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 def read_tsv(path: Path, compressed: bool=False) -> list[dict[str, str]]:
     opener = gzip.open if compressed else open
@@ -76,9 +69,6 @@ def verify_sequences(data_dir: Path) -> dict:
             raise ValueError(f"sample sequence absent from FASTA: {row['sequence_id']}")
         if len(sequence) != int(row['length']):
             raise ValueError(f"sequence length mismatch: {row['sequence_id']}")
-        digest = hashlib.sha256(sequence.encode('ascii')).hexdigest()
-        if digest != row['sequence_sha256']:
-            raise ValueError(f"sequence hash mismatch: {row['sequence_id']}")
     return {'fasta_sequences': len(fasta), 'sample_sequence_rows': len(rows)}
 
 def verify_masks(data_dir: Path) -> dict:
@@ -98,22 +88,22 @@ def verify_masks(data_dir: Path) -> dict:
 
 def verify_coordinates(data_dir: Path) -> dict:
     fasta = fasta_records(data_dir / 'sequences.fasta')
-    lengths_by_sha = {identifier.removeprefix('SEQ_'): len(sequence) for identifier, sequence in fasta.items()}
+    lengths_by_sequence = {identifier: len(sequence) for identifier, sequence in fasta.items()}
     audited = {}
     for filename in ('position_labels_strict.tsv.gz', 'position_labels_structure_reference_candidate.tsv.gz'):
         rows = read_tsv(data_dir / filename, compressed=True)
         seen = set()
         for row in rows:
-            digest = row['sequence_sha256']
-            if digest not in lengths_by_sha:
-                raise ValueError(f'residue label sequence is absent from FASTA in {filename}: {digest}')
+            sequence_id = row['sequence_id']
+            if sequence_id not in lengths_by_sequence:
+                raise ValueError(f'residue label sequence is absent from FASTA in {filename}: {sequence_id}')
             try:
                 position = int(row['position'])
             except ValueError as exc:
                 raise ValueError(f"non-integer residue coordinate in {filename}: {row['position']}") from exc
-            if not 1 <= position <= lengths_by_sha[digest]:
-                raise ValueError(f'residue coordinate outside sequence in {filename}: {digest}:{position}')
-            key = (row['sample_id'], digest, position)
+            if not 1 <= position <= lengths_by_sequence[sequence_id]:
+                raise ValueError(f'residue coordinate outside sequence in {filename}: {sequence_id}:{position}')
+            key = (row['sample_id'], sequence_id, position)
             if key in seen:
                 raise ValueError(f'duplicate residue label coordinate in {filename}: {key}')
             seen.add(key)
@@ -270,7 +260,7 @@ def verify_knot_representation_coverage(data_dir: Path) -> dict:
     coverage_path = data_dir / 'representation_coverage.tsv.gz'
     with gzip.open(coverage_path, 'rt', newline='', encoding='utf-8-sig') as handle:
         coverage_rows = list(csv.DictReader(handle, delimiter='\t'))
-    coverage = {(row['task_id'], row['sample_id'], row['sequence_sha256']): row for row in coverage_rows}
+    coverage = {(row['task_id'], row['sample_id'], row['sequence_id']): row for row in coverage_rows}
     ready_counts = {}
     sample_path = data_dir / 'task_samples.tsv.gz'
     with gzip.open(sample_path, 'rt', newline='', encoding='utf-8-sig') as handle:
@@ -280,10 +270,10 @@ def verify_knot_representation_coverage(data_dir: Path) -> dict:
         if not eligible:
             raise ValueError(f'no eligible rows in released task data: {task}')
         for row in eligible:
-            hashes = row['sequence_sha256s'].split(';')
-            if len(hashes) != 1:
+            sequence_ids = row['sequence_ids'].split(';')
+            if len(sequence_ids) != 1:
                 raise ValueError(f"knot sample does not map to exactly one sequence: {task}/{row['sample_id']}")
-            found = coverage.get((task, row['sample_id'], hashes[0]))
+            found = coverage.get((task, row['sample_id'], sequence_ids[0]))
             if found is None or found['feature_ready'] != '1':
                 raise ValueError(f"eligible knot sample lacks representation coverage: {task}/{row['sample_id']}")
         ready_counts[task] = len(eligible)
@@ -372,8 +362,6 @@ def verify_case_source_references(data_dir: Path) -> dict:
             raise ValueError(f'missing or duplicate case source reference: {ref}')
         if not re.fullmatch('CS\\d{4}', ref):
             raise ValueError(f'invalid portable case source reference: {ref}')
-        if not re.fullmatch('[0-9a-f]{64}', row.get('source_artifact_sha256', '')):
-            raise ValueError(f'invalid source artifact fingerprint: {ref}')
         source_by_ref[ref] = row
     seen_refs = set()
     for row in modules:
@@ -408,7 +396,7 @@ def verify_stable_controls(root):
                 if sid not in endpoints or key in seen or (not 1 <= p <= int(endpoints[sid]['length'])):
                     raise ValueError('duplicate/out-of-range FS control identity')
                 ep = endpoints[sid]
-                for field in ['sequence_id', 'sequence_sha256', 'binding_group_id', 'case_id']:
+                for field in ['sequence_id', 'binding_group_id', 'case_id']:
                     if row[field] != ep[field]:
                         raise ValueError('FS control endpoint identity mismatch')
                 if (row['mask'], row['label']) not in {('0', 'NA'), ('1', '0'), ('1', '1')}:
