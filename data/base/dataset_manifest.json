@@ -13,15 +13,6 @@
       "unique_coordinates": 1184733
     }
   },
-  "data_version": "2026-10-14-data-lock-v01-plus-FD03-coverage-overlay-paths-v01",
-  "distribution_status": "DRAFT_NOT_CLEARED_FOR_PUBLIC_RELEASE",
-  "excluded_local_artifacts": [
-    "Original data manifest and QC include machine-specific paths.",
-    "Project-local case source paths are replaced by source_ref keys resolved in case_sources.tsv; upstream artifact names and citation identifiers are retained.",
-    "Embedding caches and model weights are not included.",
-    "Raw article full texts and PDB coordinate files are not included.",
-    "The frozen data_v06 task_status.tsv is not copied because it predates FD.03; the benchmark-level task_catalog.tsv is authoritative for this draft."
-  ],
   "files": [
     "case_modules.tsv",
     "case_samples.tsv.gz",
@@ -38,22 +29,6 @@
     "sources.tsv",
     "task_samples.tsv.gz"
   ],
-  "metadata_translation": {
-    "language": "en",
-    "scope": "English translation of descriptive source and case metadata only; scientific identities, numeric values, labels, masks, coordinates, folds and predictions are unchanged.",
-    "source_files": {
-      "case_modules.tsv": {
-        "bytes": 8423
-      },
-      "case_sources.tsv": {
-        "bytes": 6098
-      },
-      "sources.tsv": {
-        "bytes": 6797
-      }
-    },
-    "source_repository_commit": "ac21710782ccebce9ac5170f33d9464e2ad6d37f"
-  },
   "representation_coverage_rows": 14972,
   "residue_label_masks": {
     "position_labels_strict.tsv.gz": {
@@ -69,5 +44,6 @@
   "sequences": {
     "fasta_sequences": 11684,
     "sample_sequence_rows": 14223
-  }
+  },
+  "artifact_id": "conformeval-pooled"
 }

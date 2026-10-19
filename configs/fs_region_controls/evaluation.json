@@ -6,12 +6,10 @@
     "E",
     "B"
   ],
-  "authorization": "User request (English translation): Organize the existing two-state structures into reliable control labels. This authorizes this separate structural-reference annotation version; frozen labels and scoring protocols are not replaced.",
   "ca_step_distance_A": [
     2.5,
     4.5
   ],
-  "created_at": "2026-10-15T22:24:00+08:00",
   "distance_score_definition": "For identity-mapped C-alpha pairs within 15 A in either state, exclude sequence separation <2 in either state. Mean fraction of absolute distance differences below 0.5,1,2,4 A. A symmetric C-alpha-only adaptation inspired by lDDT, not the original all-atom lDDT implementation.",
   "distance_tolerance_A": [
     0.5,
@@ -23,7 +21,6 @@
   "exclude_author_range_union": true,
   "gap_bridging": false,
   "mapping": "Use sequence/experimental-entity correspondence, never structure-superposition correspondence to reassign residue identities. Require amino-acid identity, one-to-one coordinates, finite C-alpha, occupancy >=0.95 and a unique model-1 C-alpha.",
-  "metadata_finalized_at": "2026-10-15T22:30:51+08:00",
   "method_source": {
     "doi": "10.1093/bioinformatics/btt473",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3799472/",
@@ -38,8 +35,7 @@
   "neighborhood_radius_A": 15.0,
   "positive_boundary_buffer_residues": 5,
   "positive_policy": "Carry over all 124 previously accepted positive endpoint-residue rows exactly; do not add geometry-derived positives or silently repair historical coordinates.",
-  "protocol_id": "FS-REGION-PAIR-STABLE-REFERENCE-v01",
-  "review_policy": "Mechanical validation and separately implemented geometric verification are required; formal task closure still requires independent review.",
+  "protocol_id": "FS-REGION-PAIR-STABLE-REFERENCE",
   "scope": "Existing experimental structure pairs only; retrospective development annotation, without model scores or new model evaluation.",
   "source_ensemble_policy": "Require single-model original experimental structures for new negative annotations. Multi-model structures require ensemble comparison and remain unlabelled by this builder.",
   "threshold_basis": "Conservative operational annotation choices fixed before running this builder; not universal fold-switch thresholds and not optimized against positive labels or model performance. Report strict sensitivity without selecting a winning variant.",

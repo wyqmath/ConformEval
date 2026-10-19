@@ -53,7 +53,7 @@ def verify_dataset(data_dir: Path) -> list[str]:
 
 def load_protocol(path: Path) -> dict:
     protocol = json.loads(path.read_text(encoding='utf-8-sig'))
-    if protocol.get('schema_version') != 1 or protocol.get('protocol_id') != 'ConformEval-0.3-frozen-grouped-development':
+    if protocol.get('schema_version') != 1 or protocol.get('protocol_id') != 'ConformEval-grouped-evaluation':
         raise ValueError('unsupported scoring protocol')
     tasks = protocol.get('tasks', {})
     expected = {TASK_KNOT: (5, 'pooled_outer_fold_OOF_AUROC', 'mean_inner_validation_AUROC'), TASK_FS: (10, 'mean_held_positive_rank_percentile_within_own_outer_test_pool_lower_is_better', 'mean_inner_held_positive_rank_percentile_within_own_validation_pool_lower_is_better')}
@@ -294,7 +294,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
         raise ValueError('candidate_layers must contain unique positive 1-based layer IDs')
     if not isinstance(metadata.get('pooling'), str) or not metadata['pooling'].strip():
         raise ValueError('model metadata is missing pooling')
-    if metadata['training_protocol'] != 'frozen_nested_grouped_oof_v1':
+    if metadata['training_protocol'] != 'nested_grouped_oof':
         raise ValueError('predictions must declare the frozen nested grouped out-of-fold protocol')
     started = now()
     verify_dataset(data_dir)
@@ -322,12 +322,11 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     write_gzip_tsv(scored_path, scored_rows, ['task_id', 'sample_id', 'outer_fold', 'binding_group_id', 'score', 'learning_label', 'learning_mask', 'biological_target', 'biological_mask', 'label', 'mask'])
     metrics_path = output_dir / 'metrics.json'
     metrics_path.write_bytes((json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
-    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'benchmark_data_version': '2026-10-14-data-lock-v01+FD.03', 'scoring_protocol_id': protocol['protocol_id'], 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}}
+    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'dataset_id': dataset_metadata['artifact_id'], 'scoring_protocol_id': protocol['protocol_id'], 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}}
     run_path = output_dir / 'run.json'
     run['project'] = 'ConformEval'
     if dataset_metadata.get('scope') == 'software_example':
         run['scope'] = 'software_example'
-        run['benchmark_data_version'] = dataset_metadata['artifact_id']
     run_path.write_bytes((json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
     return run
 

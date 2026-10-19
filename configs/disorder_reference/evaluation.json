@@ -1,5 +1,4 @@
 {
-  "authorization": "user-authorized separately versioned candidate task; strict DISORDER-RES labels remain unchanged",
   "capacity_diagnostic": {
     "batch_size": 8192,
     "early_stopping": "maximize the primary mean per-protein AP on each frozen inner validation fold; use the median best epoch across the three inner folds for outer refit",
@@ -15,7 +14,6 @@
       2026
     ]
   },
-  "created_at": "2026-10-15T20:24:00+08:00",
   "label_semantics": {
     "claim_limit": "does not represent strict direct ordered-versus-disordered truth",
     "negative": "direct DisProt ordered residue or residue observed in experimental PDB",
@@ -53,9 +51,7 @@
     "outer": 5,
     "random_residue_split": false
   },
-  "task_dir_version": "disorder_structure_reference_candidate_v02",
   "task_id": "DISORDER-STRUCTURE-REFERENCE-CANDIDATE",
-  "task_version": "candidate_reference_v01_eval_v01",
   "traditional_baseline": {
     "features": "20-AA one-hot, relative position, and centered local 15-residue 20-AA composition",
     "preprocessing": "StandardScaler fit only on current training residues",

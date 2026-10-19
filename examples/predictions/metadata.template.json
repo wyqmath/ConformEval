@@ -3,7 +3,7 @@
   "model_id": "REPLACE_WITH_MODEL_ID",
   "model_revision": "REPLACE_WITH_IMMUTABLE_REVISION",
   "prediction_method": "REPLACE_WITH_EXTRACTION_AND_NESTED_TRAINING_METHOD",
-  "training_protocol": "frozen_nested_grouped_oof_v1",
+  "training_protocol": "nested_grouped_oof",
   "candidate_layers": [
     3,
     6

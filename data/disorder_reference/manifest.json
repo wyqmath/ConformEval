@@ -1,5 +1,5 @@
 {
-  "artifact_id": "disorder_reference_v1",
+  "artifact_id": "conformeval-disorder-reference",
   "files": [
     "fold_qc.tsv",
     "inner_fold_roles.tsv",

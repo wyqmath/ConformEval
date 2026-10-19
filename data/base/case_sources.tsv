@@ -1,11 +1,11 @@
 source_ref	module	case_id	source_artifact_id	source_artifact_filename	evidence_ids	doi	pmcid	other_source_references
 CS0001	BPTI-REDOX	predefined_stop	accepted_protocol_stop_record	confomeval_existing_20261012.json				internal audit or accepted protocol record; see case_modules detail
-CS0002	FS-L1-PAIRED	AD02C_new_01	fold_switch_cases	cases.tsv				
-CS0003	FS-L1-PAIRED	AD02C_new_02	fold_switch_cases	cases.tsv				
-CS0004	FS-L1-PAIRED	AD02C_new_03	fold_switch_cases	cases.tsv				
-CS0005	FS-L1-PAIRED	AD02C_new_04	fold_switch_cases	cases.tsv				
-CS0006	FS-L1-PAIRED	AD02C_new_05	fold_switch_cases	cases.tsv				
-CS0007	FS-L1-PAIRED	AD02C_new_06	fold_switch_cases	cases.tsv				
+CS0002	FS-L1-PAIRED	candidate_01	fold_switch_cases	cases.tsv				
+CS0003	FS-L1-PAIRED	candidate_02	fold_switch_cases	cases.tsv				
+CS0004	FS-L1-PAIRED	candidate_03	fold_switch_cases	cases.tsv				
+CS0005	FS-L1-PAIRED	candidate_04	fold_switch_cases	cases.tsv				
+CS0006	FS-L1-PAIRED	candidate_05	fold_switch_cases	cases.tsv				
+CS0007	FS-L1-PAIRED	candidate_06	fold_switch_cases	cases.tsv				
 CS0008	FS-L1-PAIRED	porter_20_5c1vA__5c1vB	fold_switch_cases	cases.tsv	EV_D0202_0020	10.1371/journal.pone.0134569	PMC4527731	
 CS0009	FS-L1-PAIRED	porter_51_1h38D__1qlnA	fold_switch_cases	cases.tsv				
 CS0010	FS-L1-PAIRED	porter_61_4gqcC__4gqcB	fold_switch_cases	cases.tsv	EV_D0202_0061	10.1021/bi301017s	PMC3549014	

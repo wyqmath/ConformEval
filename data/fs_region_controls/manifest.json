@@ -1,5 +1,5 @@
 {
-  "artifact_id": "fs_region_controls_v1",
+  "artifact_id": "conformeval-fs-region-controls",
   "files": [
     "case_coverage.tsv",
     "endpoint_provenance.tsv",

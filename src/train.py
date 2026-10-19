@@ -257,7 +257,7 @@ def train_task(args,record,config):
     if any(not np.isfinite(v).all() for v in arm_scores.values()):raise ValueError('outer predictions incomplete or non-finite')
     metadata={'project':'ConformEval','model_id':manifest['model_id'],'model_revision':manifest['model_revision'],
               'prediction_method':'nested grouped configured readers',
-              'training_protocol':'frozen_nested_grouped_oof_v1','candidate_layers':list(layers),'pooling':manifest['pooling'],
+              'training_protocol':'nested_grouped_oof','candidate_layers':list(layers),'pooling':manifest['pooling'],
               'arms':sorted(arm_scores),'extraction_config':manifest.get('extraction_config',{}),'reader_configuration':config,
               'scope':'software_example' if args.example else 'retrospective_grouped_development'}
     json_write(record.output/'model_metadata.json',metadata)

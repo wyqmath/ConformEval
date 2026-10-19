@@ -1,5 +1,5 @@
 {
-  "artifact_id": "confomeval-software-example-residue-v1",
+  "artifact_id": "conformeval-example-residue",
   "files": [
     "inner_fold_roles.tsv",
     "inputs/sequences.fasta",

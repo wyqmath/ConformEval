@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "protocol_id": "ConformEval-0.3-frozen-grouped-development",
+  "protocol_id": "ConformEval-grouped-evaluation",
   "scope": "retrospective grouped-development evaluation; not prospective or family-independent testing",
   "prediction_table": {
     "columns": [

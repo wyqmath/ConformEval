@@ -1,6 +1,5 @@
 {
   "conflicts": "use frozen candidate-view label/mask exactly; strict DISORDER-RES remains unchanged",
-  "created_at": "2026-10-15T20:08:23+08:00",
   "denominator": {
     "binding_groups": 1029,
     "negative_positions": 317952,
@@ -38,15 +37,12 @@
     "traditional_baseline": "one-hot amino-acid + relative position + centered local 15-residue amino-acid composition"
   },
   "scope_limit": "This reference task is not strict direct ordered-versus-disordered truth and does not certify family-independent generalization.",
-  "source_data_version": "data_v06 frozen labels and binding groups",
   "splits": {
     "algorithm": "sklearn GroupKFold; group=locked binding_group_id; exact assignments saved",
     "inner": 3,
     "outer": 5,
     "random_residue_split": false
   },
-  "status": "USER_AUTHORIZED_VERSIONED_CANDIDATE_TASK; scoring waits for cache and audit",
   "task_id": "DISORDER-STRUCTURE-REFERENCE-CANDIDATE",
-  "task_version": "candidate_reference_v01",
   "unit": "protein residue"
 }

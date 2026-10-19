@@ -32,7 +32,7 @@ def check_manifest(root):
 def load_task(root, example=False):
     files = check_manifest(root)
     manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
-    if example and (manifest.get('artifact_id') != 'confomeval-software-example-residue-v1' or manifest.get('scope') != 'software_example'):
+    if example and (manifest.get('artifact_id') != 'conformeval-example-residue' or manifest.get('scope') != 'software_example'):
         raise ValueError('example mode requires the bundled software example')
     if not example and manifest.get('scope') == 'software_example':
         raise ValueError('synthetic data requires --example')
@@ -141,7 +141,7 @@ def main():
     for k in ['model_id', 'model_revision', 'prediction_method', 'training_protocol']:
         if not isinstance(metadata.get(k), str) or not metadata[k].strip():
             raise ValueError(f'missing model metadata: {k}')
-    if metadata['training_protocol'] != 'frozen_nested_grouped_oof_v1':
+    if metadata['training_protocol'] != 'nested_grouped_oof':
         raise ValueError('unsupported training protocol')
     declared = metadata.get('arms', [metadata['model_id']])
     if not isinstance(declared, list) or not declared or any((not isinstance(x, str) or not x for x in declared)) or (len(set(declared)) != len(declared)):

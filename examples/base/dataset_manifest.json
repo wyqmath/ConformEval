@@ -1,5 +1,5 @@
 {
-  "artifact_id": "confomeval-software-example-pooled-v1",
+  "artifact_id": "conformeval-example-pooled",
   "files": [
     "folds/fold_qc.tsv",
     "folds/inner_validation_groups.tsv.gz",

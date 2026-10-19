@@ -3,7 +3,7 @@
   "model_id": "synthetic-external-score-example",
   "model_revision": "software-example-v1",
   "prediction_method": "predefined synthetic scores for interface testing",
-  "training_protocol": "frozen_nested_grouped_oof_v1",
+  "training_protocol": "nested_grouped_oof",
   "candidate_layers": [
     1
   ],
