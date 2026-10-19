@@ -40,7 +40,7 @@ Compressed `.tsv.gz` files use the same fields as TSV. Open them with
 `gzip.open(path, "rt", encoding="utf-8", newline="")` or use
 `pandas.read_csv(path, sep="\t")`, which detects gzip automatically.
 Task manifests record the file hashes; the included README and manifests define
-fields and coordinates. The [ESM-2](../examples/notebooks/ESM-2.ipynb) notebook provides inference and training commands.
+fields and coordinates. The [ConformEval tutorial](../examples/notebooks/ConformEval_tutorial.ipynb) notebook provides inference and training commands.
 
 ## Label definitions
 

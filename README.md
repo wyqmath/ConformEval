@@ -4,11 +4,11 @@ Protein function depends on the structures a sequence can adopt and the behavior
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23433394.svg)](https://doi.org/10.5281/zenodo.23433394)
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/ESM-2.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/ConformEval_tutorial.ipynb)
 
 ## Quick start
 
-Open the [ESM-2](examples/notebooks/ESM-2.ipynb) notebook, or run a small scoring example locally with Python 3.9+:
+Open the [ConformEval tutorial](examples/notebooks/ConformEval_tutorial.ipynb) notebook, or run a small scoring example locally with Python 3.9+:
 
 ```bash
 git clone -c core.autocrlf=false https://github.com/wyqmath/ConformEval.git
@@ -17,7 +17,7 @@ python -m pip install .
 conformeval-evaluate --example --output-dir runs/knot-example
 ```
 
-This writes the example's scores to `runs/knot-example/metrics.json`. The [ESM-2](examples/notebooks/ESM-2.ipynb) notebook runs model inference and training.
+This writes the example's scores to `runs/knot-example/metrics.json`. The [ConformEval tutorial](examples/notebooks/ConformEval_tutorial.ipynb) notebook runs model inference and training.
 
 ## Tasks
 
