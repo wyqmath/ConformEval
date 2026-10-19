@@ -1,7 +1,9 @@
 # Examples
 
 - [ESM-2](notebooks/ESM-2.ipynb): full knot task or a synthetic example.
-- `mini/`: 30 synthetic sequences, with 20 knot samples, 20 ranking items and 554 labeled residue positions.
+- `sequences.fasta`: 30 synthetic sequences.
+- `base/`: 20 knot samples and 20 ranking items.
+- `residue/`: 554 labeled residue positions.
 - `predictions/`: external prediction files and metadata templates.
 - `adapter_usage.py`: direct model-adapter calls.
 - `representation_archive.py`: deterministic NumPy representations without model downloads.

@@ -381,7 +381,7 @@ def main() -> int:
         supplied = ['--' + name.replace('_', '-') for name in inputs if getattr(args, name) is not None]
         if supplied:
             parser.error('--example cannot be combined with ' + ', '.join(supplied))
-        args.data_dir = Path('examples/mini/base')
+        args.data_dir = Path('examples/base')
         args.task = [TASK_KNOT]
         args.protocol = Path('configs/scoring.json')
         args.predictions = Path('examples/predictions/knot.tsv')

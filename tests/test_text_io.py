@@ -90,7 +90,7 @@ class TextIOTests(unittest.TestCase):
             output = Path(temp) / 'scores'
             run = subprocess.run([
                 sys.executable, '-m', 'conformeval.evaluate_residue_predictions',
-                '--task-dir', str(ROOT / 'examples/mini/residue'), '--example',
+                '--task-dir', str(ROOT / 'examples/residue'), '--example',
                 '--predictions', str(ROOT / 'examples/predictions/residues.tsv'),
                 '--output-dir', str(output),
             ], capture_output=True, text=True, encoding='utf-8')
@@ -109,9 +109,9 @@ class TextIOTests(unittest.TestCase):
                 pred=root/filename;raw=(ROOT/'examples/predictions'/filename).read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n');pred.write_bytes(b'\xef\xbb\xbf'+raw)
                 out=root/(kind+'-out')
                 if kind=='knot':
-                    args=['-m','conformeval.evaluate_predictions','--task','KNOT-PRESENCE','--data-dir',str(ROOT/'examples/mini/base'),'--protocol',str(ROOT/'configs/scoring.json')]
+                    args=['-m','conformeval.evaluate_predictions','--task','KNOT-PRESENCE','--data-dir',str(ROOT/'examples/base'),'--protocol',str(ROOT/'configs/scoring.json')]
                 else:
-                    args=['-m','conformeval.evaluate_residue_predictions','--task-dir',str(ROOT/'examples/mini/residue'),'--example']
+                    args=['-m','conformeval.evaluate_residue_predictions','--task-dir',str(ROOT/'examples/residue'),'--example']
                 command=[sys.executable,'-X','utf8=0',*args,'--predictions',str(pred),'--model-metadata',str(meta),'--output-dir',str(out)]
                 run=subprocess.run(command,env=env,capture_output=True)
                 self.assertEqual(run.returncode,0,run.stderr.decode('utf-8',errors='replace'))

@@ -19,7 +19,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def feature_fixture(root,dimension=4):
     root.mkdir()
     rng=np.random.default_rng(2026);rows=[]
-    for sequence in parse_fasta(ROOT/'examples/mini/sequences.fasta').values():
+    for sequence in parse_fasta(ROOT/'examples/sequences.fasta').values():
         sha=hashlib.sha256(sequence.encode('ascii')).hexdigest()
         residues=rng.normal(size=(2,len(sequence),dimension)).astype(np.float32)
         meta={'seq_sha256':sha,'len_full':len(sequence),'len_used':len(sequence),'truncated':False,
@@ -40,7 +40,7 @@ class GenericTrainingTests(unittest.TestCase):
             root=Path(temp);manifest=feature_fixture(root/'features')
             for task,source in [(TASK_KNOT,'base'),(TASK_FS,'base'),(RESIDUE_TASK,'residue')]:
                 out=root/task
-                args=SimpleNamespace(task=task,data_dir=ROOT/'examples/mini'/source,feature_manifest=manifest,
+                args=SimpleNamespace(task=task,data_dir=ROOT/'examples'/source,feature_manifest=manifest,
                                      config=ROOT/'configs/readers/linear.json',protocol=ROOT/'configs/scoring.json',
                                      output_dir=out,example=True)
                 actual=run(args)
@@ -81,14 +81,14 @@ class GenericTrainingTests(unittest.TestCase):
     def test_external_prediction_examples_are_complete_and_score_one(self):
         with tempfile.TemporaryDirectory() as temp:
             out=Path(temp)/'score'
-            evaluate(ROOT/'examples/mini/base',ROOT/'examples/predictions/knot.tsv',ROOT/'examples/predictions/metadata.json',ROOT/'configs/scoring.json',out,{TASK_KNOT})
+            evaluate(ROOT/'examples/base',ROOT/'examples/predictions/knot.tsv',ROOT/'examples/predictions/metadata.json',ROOT/'configs/scoring.json',out,{TASK_KNOT})
             self.assertEqual(json.loads((out/'metrics.json').read_text(encoding='utf-8-sig'))['metrics'][TASK_KNOT]['auroc'],1.0)
-        samples,expected,folds,_=load_task(ROOT/'examples/mini/residue',example=True)
+        samples,expected,folds,_=load_task(ROOT/'examples/residue',example=True)
         scores=read_scores(ROOT/'examples/predictions/residues.tsv',samples,expected,folds,{'example'},'example')
         _,metrics=calculate(samples,expected,folds,scores)
         self.assertEqual(metrics['example']['mean_per_protein_AP'],1.0)
         with self.assertRaisesRegex(ValueError,'unsupported disorder'):
-            load_task(ROOT/'examples/mini/residue')
+            load_task(ROOT/'examples/residue')
 
     def test_outer_labels_cannot_change_inner_candidate_selection(self):
         rng=np.random.default_rng(0);X={1:rng.normal(size=(12,3)),6:rng.normal(size=(12,3))}

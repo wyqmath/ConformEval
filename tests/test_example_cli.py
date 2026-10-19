@@ -28,7 +28,7 @@ class ExampleCLITests(unittest.TestCase):
             run = self.run_cli('--example', '--output-dir', short)
             self.assertEqual(run.returncode, 0, run.stderr)
             run = self.run_cli(
-                '--task', 'KNOT-PRESENCE', '--data-dir', 'examples/mini/base',
+                '--task', 'KNOT-PRESENCE', '--data-dir', 'examples/base',
                 '--predictions', 'examples/predictions/knot.tsv',
                 '--model-metadata', 'examples/predictions/metadata.json',
                 '--protocol', 'configs/scoring.json', '--output-dir', explicit,

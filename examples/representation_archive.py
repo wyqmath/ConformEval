@@ -1,4 +1,4 @@
-"""Write complete deterministic synthetic archives for the mini task fixture."""
+"""Write deterministic synthetic representations for the example dataset."""
 import argparse
 import hashlib
 import json
@@ -13,7 +13,7 @@ def main():
     p.add_argument('--output-dir',required=True,type=Path)
     args=p.parse_args();output=args.output_dir.resolve();output.mkdir(parents=True,exist_ok=False)
     layers=[1,2];dimension=8;revision='0'*40;rng=np.random.default_rng(2026);archives=[]
-    source=Path(__file__).parent/'mini/sequences.fasta'
+    source=Path(__file__).parent/'sequences.fasta'
     for sequence in parse_fasta(source).values():
         sha=hashlib.sha256(sequence.encode('ascii')).hexdigest()
         values=rng.normal(size=(len(layers),len(sequence),dimension)).astype(np.float32)
