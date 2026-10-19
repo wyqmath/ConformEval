@@ -1,11 +1,6 @@
 {
   "artifacts": [
     {
-      "historical_transformation": "byte-identical",
-      "path": "docs/reference/disorder-dataset.md",
-      "upstream_name": "REPORT.md"
-    },
-    {
       "historical_transformation": "portable provenance references",
       "path": "configs/disorder_reference/evaluation.json",
       "upstream_name": "evaluation_protocol_v01.json"
@@ -62,11 +57,6 @@
     },
     {
       "historical_transformation": "byte-identical",
-      "path": "docs/reference/fold-switch-region-controls.md",
-      "upstream_name": "REPORT.md"
-    },
-    {
-      "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/case_coverage.tsv",
       "upstream_name": "case_coverage.tsv"
     },
@@ -119,11 +109,6 @@
       "historical_transformation": "byte-identical",
       "path": "data/fs_region_controls/structural_reference_evidence.tsv",
       "upstream_name": "structural_reference_evidence.tsv"
-    },
-    {
-      "historical_transformation": "byte-identical",
-      "path": "docs/reference/disorder-esm2-results.md",
-      "upstream_name": "REPORT.md"
     }
   ],
   "scope": "Source filenames and transformations for data and configuration.",
