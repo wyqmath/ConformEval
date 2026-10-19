@@ -1,6 +1,6 @@
 # ConformEval: Protein Conformation Evaluation Benchmark
 
-Evaluate protein language model representations on protein knots, fold switching, and residue-level disorder using fixed data splits and shared scorers.
+Evaluate protein language model representations on protein knots, fold switching, and residue-level disorder.
 
 [Download dataset](https://zenodo.org/records/23433394)
 
@@ -27,13 +27,13 @@ This writes the example's scores to `runs/knot-example/metrics.json`. The [ESM-2
 | Fold-switch ranking | 8,879 | Mean positive rank percentile ↓ |
 | Residue disorder | 1,279 records | Mean protein AP ↑ |
 
-The fold-switch background is unlabeled. Disorder uses experimental disorder labels and ordered/PDB structural references. All tasks use fixed grouped folds. See [evaluation details](docs/evaluation.md).
+The fold-switch background is unlabeled. Disorder uses experimental disorder labels and ordered/PDB structural references. See [evaluation details](docs/evaluation.md).
 
 [Supported models](docs/models.md): ESM-2 8M, ESM-2 650M, and ProtT5.
 
 ## Dataset
 
-[Download the dataset](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1) (3.85 MB) · [DOI: 10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394). The archive includes sequences, labels, and fixed splits for the three tasks. [Data formats and sources](docs/data.md) describe the files and evaluator inputs.
+[Download the dataset](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1) (3.85 MB) · [DOI: 10.5281/zenodo.23433394](https://doi.org/10.5281/zenodo.23433394). The archive includes sequences, labels, and splits for the three tasks. [Data formats and sources](docs/data.md) describe the files and evaluator inputs.
 
 ## Repository layout
 
@@ -41,7 +41,7 @@ The fold-switch background is unlabeled. Disorder uses experimental disorder lab
 src/conformeval/  Protein model inference, reader training, scoring
 configs/         Model settings and evaluation protocols
 examples/        Runnable notebook, small inputs, prediction templates
-data/            Task inputs, labels, fixed cross-validation splits
+data/            Task inputs, labels, cross-validation splits
 docs/            Data formats, model setup, scoring rules
 tests/           Automated checks of software and scoring
 pyproject.toml   Package dependencies, installation, command names

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "conformeval"
 version = "0.5.1"
-description = "Fixed benchmark data and evaluation utilities for protein physical inference tasks"
+description = "Benchmark data and evaluation utilities for protein physical inference tasks"
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
