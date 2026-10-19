@@ -2,7 +2,9 @@
 
 Evaluate protein language model representations on protein knots, fold switching, and residue-level disorder using fixed data splits and shared scorers.
 
-[Download dataset](https://zenodo.org/records/23433394) · [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/ESM-2.ipynb)
+[Download dataset](https://zenodo.org/records/23433394)
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/wyqmath/ConformEval/blob/main/examples/notebooks/ESM-2.ipynb)
 
 ## Quick start
 
