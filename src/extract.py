@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import numpy as np
 from .adapters import HFAdapter, download_snapshot, load_config
-from .readers import parse_fasta
+from .datasets import parse_fasta
 from .runtime import RunRecord, json_write
 
 
@@ -69,7 +69,7 @@ def extract(args, adapter_factory=HFAdapter):
 
 
 def main():
-    p = argparse.ArgumentParser(description=__doc__)
+    p = argparse.ArgumentParser()
     p.add_argument('--input-fasta', required=True, type=Path)
     p.add_argument('--model-config', required=True, type=Path)
     p.add_argument('--output-dir', required=True, type=Path)

@@ -1,6 +1,0 @@
-outer_fold	train_samples	test_samples	train_groups	test_groups	group_overlap	inner_validation_covered_train_samples
-0	1023	256	826	203	0	1023
-1	1023	256	823	206	0	1023
-2	1023	256	822	207	0	1023
-3	1023	256	822	207	0	1023
-4	1024	255	823	206	0	1024

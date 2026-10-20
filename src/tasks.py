@@ -2,38 +2,21 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from .evaluate_predictions import TASKS, eligible_frames, read_table, verify_dataset
+from .evaluate_predictions import TASKS
 from .evaluate_residue_predictions import TASK as RESIDUE_TASK, load_task
-from .readers import parse_fasta, validate_sample_sequence_mappings
+from .datasets import load_pooled, parse_fasta, sequence_path
 from .runtime import RunRecord
 
 
 def required_sequences(data_dir: Path, task: str, example=False):
-    if task == RESIDUE_TASK:
-        samples, labels, folds, _ = load_task(data_dir, example=example)
-        all_sequences = parse_fasta(data_dir / 'inputs/sequences.fasta')
-        required = {s['sequence_id']: all_sequences[s['sequence_id']] for s in samples.values()}
+    sequences=parse_fasta(sequence_path(data_dir,task))
+    if task==RESIDUE_TASK:
+        samples,_,_,_=load_task(data_dir,example=example)
+        required={sample['sequence_id'] for sample in samples.values()}
     else:
-        verify_dataset(data_dir)
-        is_example=json.loads((data_dir/'dataset_manifest.json').read_text(encoding='utf-8-sig')).get('scope')=='software_example'
-        if is_example != example:
-            raise ValueError('software example requires explicit --example; benchmark data must omit it')
-        eligible, _ = eligible_frames(data_dir, {task})
-        all_sequences = parse_fasta(data_dir / 'sequences.fasta')
-        mapping = {}
-        for row in read_table(data_dir / 'sample_sequences.tsv.gz'):
-            key = (row['task_id'], row['sample_id'])
-            if key in eligible:
-                mapping.setdefault(key, []).append(row)
-        required = {}
-        for key, sample in eligible.items():
-            sequence_ids, lengths = validate_sample_sequence_mappings(key, sample, mapping.get(key, []))
-            for sid, length in zip(sequence_ids, lengths):
-                sequence = all_sequences.get(sid)
-                if sequence is None or len(sequence) != length:
-                    raise ValueError(f'sequence identity/length mismatch: {sid}')
-                required[sid] = sequence
-    return required
+        samples,_=load_pooled(data_dir,{task})
+        required={sid for sample in samples.values() for sid in sample['sequence_ids'].split(';')}
+    return {sid:sequences[sid] for sid in sorted(required)}
 
 
 def main():
@@ -48,6 +31,7 @@ def main():
         for p in args.data_dir.rglob('*'):
             if p.is_file() and p.suffix != '.md':
                 record.track(p)
+        record.track(sequence_path(args.data_dir,args.task))
         sequences = required_sequences(args.data_dir, args.task, args.example)
         (record.output / 'sequences.fasta').write_bytes((''.join(f'>{sid}\n{seq}\n' for sid,seq in sorted(sequences.items()))).encode('utf-8'))
         record.data['unique_sequences'] = len(sequences)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 import argparse
-from collections import defaultdict
 import json
 from pathlib import Path
 import warnings
@@ -9,11 +8,11 @@ from sklearn.exceptions import ConvergenceWarning
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from sklearn.metrics import average_precision_score, roc_auc_score
 from sklearn.preprocessing import StandardScaler
-from .evaluate_predictions import TASK_KNOT, TASK_FS, evaluate, eligible_frames, read_table, verify_dataset, write_gzip_tsv
+from .evaluate_predictions import TASK_KNOT, TASK_FS, evaluate, load_protocol, write_gzip_tsv
 from .evaluate_residue_predictions import TASK as RESIDUE_TASK, load_task, calculate, read_scores
 from .model_interface import load_mean_representation, load_residue_representation
-from .readers import parse_fasta, validate_sample_sequence_mappings, fold_indices, sequence_aux, nearest_neighbor, fs_rank_percentiles
-from .residue_scoring_core import validate_fold_roles, write_tsv
+from .readers import fold_indices, sequence_aux, nearest_neighbor, fs_rank_percentiles
+from .datasets import load_pooled, parse_fasta, sequence_path, write_tsv
 from .runtime import RunRecord, json_write, safe_path
 
 
@@ -111,42 +110,26 @@ def load_archives(path, required, residue=False):
 
 
 def pooled_data(data_dir,task,manifest_path,example=False):
-    verify_dataset(data_dir)
-    is_example=json.loads((data_dir/'dataset_manifest.json').read_text(encoding='utf-8-sig')).get('scope')=='software_example'
-    if is_example != example:
-        raise ValueError('software example requires explicit --example; benchmark data must omit it')
-    eligible,group_to_fold=eligible_frames(data_dir,{task})
-    sequences=parse_fasta(data_dir/'sequences.fasta')
-    mappings=defaultdict(list)
-    for row in read_table(data_dir/'sample_sequences.tsv.gz'):
-        key=(row['task_id'],row['sample_id'])
-        if key in eligible:mappings[key].append(row)
+    eligible,group_to_fold=load_pooled(data_dir,{task})
+    sequences=parse_fasta(sequence_path(data_dir,task))
     rows=sorted(eligible.values(),key=lambda r:r['sample_id'])
-    sample_sequences=[];required={}
-    for row in rows:
-        sequence_ids,lengths=validate_sample_sequence_mappings((task,row['sample_id']),row,mappings[task,row['sample_id']])
-        for sequence_id,length in zip(sequence_ids,lengths):
-            seq=sequences.get(sequence_id)
-            if seq is None or len(seq)!=length:
-                raise ValueError('sample sequence identity mismatch')
-            required[sequence_id]=length
-        sample_sequences.append(sequence_ids)
+    sample_sequences=[row['sequence_ids'].split(';') for row in rows]
+    required={sid:len(sequences[sid]) for ids in sample_sequences for sid in ids}
     manifest,arrays,archive_paths=load_archives(manifest_path,required)
-    X={layer:np.vstack([np.mean([arrays[sequence_id][i] for sequence_id in sequence_ids],axis=0) for sequence_ids in sample_sequences])
+    X={layer:np.vstack([np.mean([arrays[sid][i] for sid in ids],axis=0) for ids in sample_sequences])
        for i,layer in enumerate(manifest['candidate_layers'])}
-    auxiliary=np.vstack([np.mean([sequence_aux(sequences[sequence_id]) for sequence_id in sequence_ids],axis=0) for sequence_ids in sample_sequences])
+    auxiliary=np.vstack([np.mean([sequence_aux(sequences[sid]) for sid in ids],axis=0) for ids in sample_sequences])
     y,plan=fold_indices(task,rows,data_dir,group_to_fold)
     return dict(task=task,rows=rows,y=y,plan=plan,X=X,auxiliary=auxiliary,
-                manifest=manifest,archive_paths=archive_paths,group_to_fold=group_to_fold,
-                residue=False)
+                manifest=manifest,archive_paths=archive_paths,group_to_fold=group_to_fold,residue=False)
 
 
 def residue_data(data_dir,manifest_path,example):
-    samples,expected,folds,_=load_task(data_dir,example=example)
+    samples,expected,folds,inner=load_task(data_dir,example=example)
     rows=sorted(samples.values(),key=lambda r:r['sample_id'])
     required={s['sequence_id']:int(s['length']) for s in rows}
     manifest,arrays,archive_paths=load_archives(manifest_path,required,residue=True)
-    sequences=parse_fasta(data_dir/'inputs/sequences.fasta')
+    sequences=parse_fasta(sequence_path(data_dir,RESIDUE_TASK))
     X={l:[] for l in manifest['candidate_layers']};ys=[];sample_index=[];coordinates=[];traditional=[]
     aa='ACDEFGHIKLMNPQRSTVWY';offsets={};offset=0
     for i,s in enumerate(rows):
@@ -163,9 +146,16 @@ def residue_data(data_dir,manifest_path,example):
                                   np.vstack([onehot[max(0,p-7):min(len(seq),p+8)].mean(axis=0) for p in range(len(seq))])])
         traditional.append(features[np.asarray(positions)-1])
     X={l:np.concatenate(v) for l,v in X.items()}
-    outer,inner=validate_fold_roles(samples,read_table(data_dir/'outer_fold_roles.tsv'),read_table(data_dir/'inner_fold_roles.tsv'))
-    def ix(roles,role):return np.concatenate([offsets[sid] for sid in sorted(roles) if roles[sid]==role])
-    plan={o:(ix(roles,'train'),ix(roles,'test'),[(str(k),ix(inner[o,k],'train'),ix(inner[o,k],'validation')) for k in range(3)]) for o,roles in outer.items()}
+    def ix(ids):return np.concatenate([offsets[sid] for sid in sorted(ids)])
+    plan={}
+    for outer in range(5):
+        train_ids={sid for sid in samples if folds[sid]!=outer}
+        test_ids=set(samples)-train_ids
+        inners=[]
+        for k in range(3):
+            validation={sid for sid in train_ids if inner[outer][samples[sid]['binding_group_id']]==k}
+            inners.append((str(k),ix(train_ids-validation),ix(validation)))
+        plan[outer]=(ix(train_ids),ix(test_ids),inners)
     return dict(task=RESIDUE_TASK,rows=rows,y=np.asarray(ys,dtype=np.int8),plan=plan,X=X,
                 auxiliary=np.concatenate(traditional),manifest=manifest,archive_paths=archive_paths,
                 residue=True,samples=samples,expected=expected,folds=folds,sample_index=np.asarray(sample_index),
@@ -283,7 +273,7 @@ def train_task(args,record,config):
         for arm in sorted(arm_scores):
             arm_path=record.output/(arm+'.tsv.gz')
             write_gzip_tsv(arm_path,[{k:v for k,v in r.items() if k!='arm'} for r in pred_rows if r['arm']==arm],['task_id','sample_id','outer_fold','score'])
-            evaluate(data_dir,arm_path,record.output/'model_metadata.json',args.protocol,record.output/'scores'/arm,{task})
+            evaluate(data_dir,arm_path,record.output/'model_metadata.json',args.protocol,record.output/'scores'/arm,{task},example=args.example)
             metrics[arm]=json.loads((record.output/'scores'/arm/'metrics.json').read_text(encoding='utf-8-sig'))['metrics'][task]
         json_write(record.output/'metrics.json',metrics)
     record.data.update(task_id=task,scope=metadata['scope'],candidate_layers=list(layers),
@@ -302,9 +292,9 @@ def run(args):
         config=reader_config(args.config)
         record.data['configuration']={'task':args.task,'reader':config,'example':args.example}
         for p in [args.config,args.feature_manifest]:record.track(p)
-        if args.task!=RESIDUE_TASK:
-            if args.protocol is None:raise ValueError('--protocol is required for pooled tasks')
-            record.track(args.protocol)
+        if args.protocol is None:args.protocol=Path('configs/scoring.json')
+        load_protocol(args.protocol)
+        record.track(args.protocol)
         train_task(args,record,config)
     except BaseException as error:
         record.finish(error)
@@ -316,7 +306,7 @@ def run(args):
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
+    p=argparse.ArgumentParser()
     p.add_argument('--task',required=True,choices=[TASK_KNOT,TASK_FS,RESIDUE_TASK])
     p.add_argument('--data-dir',required=True,type=Path)
     p.add_argument('--feature-manifest',required=True,type=Path)

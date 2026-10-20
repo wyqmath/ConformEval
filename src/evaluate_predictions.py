@@ -10,11 +10,10 @@ import sys
 from datetime import datetime
 from importlib.metadata import version
 from pathlib import Path
+from .datasets import load_pooled, TASK_KNOT, TASK_FS, TASK_DISORDER
 from zoneinfo import ZoneInfo
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
-TASK_KNOT = 'KNOT-PRESENCE'
-TASK_FS = 'FS-L2-grouped-PU-ranking'
 TASKS = {TASK_KNOT, TASK_FS}
 PREDICTION_FIELDS = ('task_id', 'sample_id', 'outer_fold', 'score')
 BOOTSTRAPS = 2000
@@ -24,10 +23,6 @@ BOOTSTRAP_SEED = 2026
 def now() -> str:
     return datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds')
 
-def read_table(path: Path) -> list[dict[str, str]]:
-    opener = gzip.open if path.suffix == '.gz' else open
-    with opener(path, 'rt', newline='', encoding='utf-8-sig') as handle:
-        return list(csv.DictReader(handle, delimiter='\t'))
 
 def write_gzip_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
     with path.open('wb') as raw:
@@ -37,19 +32,6 @@ def write_gzip_tsv(path: Path, rows: list[dict], fields: list[str]) -> None:
                 writer.writeheader()
                 writer.writerows(rows)
 
-def verify_dataset(data_dir: Path) -> list[str]:
-    manifest = json.loads((data_dir / 'dataset_manifest.json').read_text(encoding='utf-8-sig'))
-    records = manifest.get('files', [])
-    if not records:
-        raise ValueError('dataset manifest has no file records')
-    for relative in records:
-        rel = Path(relative)
-        path = (data_dir / rel).resolve()
-        if rel.is_absolute() or '..' in rel.parts or not path.is_relative_to(data_dir.resolve()):
-            raise ValueError(f'unsafe dataset manifest path: {relative}')
-        if not path.is_file():
-            raise FileNotFoundError(path)
-    return list(records)
 
 def load_protocol(path: Path) -> dict:
     protocol = json.loads(path.read_text(encoding='utf-8-sig'))
@@ -57,143 +39,18 @@ def load_protocol(path: Path) -> dict:
         raise ValueError('unsupported scoring protocol')
     tasks = protocol.get('tasks', {})
     expected = {TASK_KNOT: (5, 'pooled_outer_fold_OOF_AUROC', 'mean_inner_validation_AUROC'), TASK_FS: (10, 'mean_held_positive_rank_percentile_within_own_outer_test_pool_lower_is_better', 'mean_inner_held_positive_rank_percentile_within_own_validation_pool_lower_is_better')}
-    if set(tasks) != TASKS:
+    if set(tasks) != TASKS | {TASK_DISORDER}:
         raise ValueError('scoring protocol task set differs from the released score-eligible tasks')
+    expected[TASK_DISORDER] = (5, 'mean_per_protein_AP', 'mean_inner_validation_per_protein_AP')
     for task, (outer, primary, inner) in expected.items():
         record = tasks[task]
         if record.get('outer_folds') != outer or record.get('inner_folds') != 3 or record.get('primary_metric') != primary or (record.get('inner_selection_metric') != inner):
-            raise ValueError(f'task metric or fold protocol differs from the accepted lock: {task}')
+            raise ValueError(f'task metric or fold protocol differs from the scoring configuration: {task}')
     uncertainty = protocol.get('uncertainty', {})
     if uncertainty.get('bootstrap_replicates') != BOOTSTRAPS or uncertainty.get('seed') != BOOTSTRAP_SEED or uncertainty.get('confidence_level') != 0.95:
-        raise ValueError('uncertainty protocol differs from the accepted lock')
+        raise ValueError('uncertainty protocol differs from the scoring configuration')
     return protocol
 
-def eligible_frames(data_dir: Path, tasks: set[str] | None = None) -> tuple[dict[tuple[str, str], dict], dict[tuple[str, str], str]]:
-    tasks = TASKS if tasks is None else set(tasks)
-    if not tasks or not tasks <= TASKS:
-        raise ValueError('unsupported or empty task selection')
-    samples = read_table(data_dir / 'task_samples.tsv.gz')
-    eligible: dict[tuple[str, str], dict] = {}
-    for row in samples:
-        task = row['task_id']
-        if task not in tasks or row['data_eligible'] != '1' or row['use_policy'] != 'development_only':
-            continue
-        if task == TASK_KNOT:
-            if row['mask'] != '1' or row['label'] not in {'0', '1'}:
-                continue
-            if row['biological_mask'] != '1' or row['biological_target'] != row['label']:
-                raise ValueError(f"KNOT-PRESENCE biological label/mask mismatch: {row['sample_id']}")
-        else:
-            if row['learning_mask'] != '1' or row['learning_label'] not in {'0', '1'}:
-                continue
-            if row['learning_label'] == '0':
-                if row['biological_target'] != 'null' or row['biological_mask'] != '0' or row['mask'] != '0' or (row['label'] != 'NA'):
-                    raise ValueError(f"FS-L2 unlabeled row was encoded as a biological negative: {row['sample_id']}")
-            elif row['biological_target'] != 'confirmed_positive' or row['biological_mask'] != '1':
-                raise ValueError(f"FS-L2 positive label/mask mismatch: {row['sample_id']}")
-        key = (task, row['sample_id'])
-        if key in eligible:
-            raise ValueError(f'duplicate benchmark sample identity: {key}')
-        eligible[key] = row
-    fold_rows = read_table(data_dir / 'folds/outer_group_holdout.tsv')
-    group_to_fold: dict[tuple[str, str], str] = {}
-    for row in fold_rows:
-        if row['task_id'] not in tasks:
-            continue
-        if row['role'] != 'test':
-            raise ValueError(f'outer fold map contains a non-test row: {row}')
-        key = (row['task_id'], row['group_id'])
-        if key in group_to_fold:
-            raise ValueError(f'binding group assigned to multiple outer folds: {key}')
-        group_to_fold[key] = row['outer_fold']
-    for task in tasks:
-        frame = [row for key, row in eligible.items() if key[0] == task]
-        if not frame:
-            raise ValueError(f'no eligible samples for scored task {task}')
-        groups = {row['binding_group_id'] for row in frame}
-        if groups != {group for t, group in group_to_fold if t == task}:
-            raise ValueError(f'outer-fold group coverage does not match eligible data: {task}')
-        folds = {group_to_fold[task, group] for group in groups}
-        expected_count = 5 if task == TASK_KNOT else 10
-        if len(folds) != expected_count:
-            raise ValueError(f'wrong frozen outer-fold count for {task}: {len(folds)}')
-    audit_nested_group_maps(data_dir, eligible, group_to_fold)
-    return (eligible, group_to_fold)
-
-def audit_nested_group_maps(data_dir: Path, eligible: dict, group_to_fold: dict) -> None:
-    tasks = {task for task, _ in eligible}
-    inner_rows = read_table(data_dir / 'folds/inner_validation_groups.tsv.gz')
-    qc_rows = read_table(data_dir / 'folds/fold_qc.tsv')
-    inner_map: dict[tuple[str, str, str], set[str]] = {}
-    for row in inner_rows:
-        task, outer, inner, group = (row['task_id'], row['outer_fold'], row['inner_fold'], row['group_id'])
-        if task not in tasks:
-            continue
-        if row['role'] != 'validation':
-            raise ValueError(f'unexpected frozen inner-fold row: {row}')
-        key = (task, outer, inner)
-        bucket = inner_map.setdefault(key, set())
-        if group in bucket:
-            raise ValueError(f'duplicate group in inner validation: {key}/{group}')
-        bucket.add(group)
-    qc = {}
-    for row in qc_rows:
-        if row['task_id'] not in tasks:
-            continue
-        key = (row['task_id'], row['stage'], row['outer_fold'], row['inner_fold'])
-        if key in qc or row['valid'] != '1':
-            raise ValueError(f'invalid or duplicate frozen fold-QC row: {key}')
-        qc[key] = row
-
-    def compare_qc(task: str, stage: str, outer: str, inner: str, train_rows: list[dict], held_rows: list[dict], train_groups: set[str], held_groups: set[str]) -> None:
-        key = (task, stage, outer, inner)
-        record = qc.get(key)
-        if record is None:
-            raise ValueError(f'missing frozen fold-QC record: {key}')
-        label_field = 'label' if task == TASK_KNOT else 'learning_label'
-        train_classes = {label: sum((row[label_field] == label for row in train_rows)) for label in ('0', '1')}
-        held_classes = {label: sum((row[label_field] == label for row in held_rows)) for label in ('0', '1')}
-        actual = (len(train_rows), len(held_rows), len(train_groups), len(held_groups), train_classes, held_classes)
-        recorded = (int(record['train_samples']), int(record['held_samples']), int(record['train_groups']), int(record['held_groups']), json.loads(record['train_classes']), json.loads(record['held_classes']))
-        if actual != recorded:
-            raise ValueError(f'fold-QC counts/classes differ from joined data: {key}')
-        if set(train_classes) - {'0', '1'} or set(held_classes) - {'0', '1'} or (not all(train_classes.values())) or (not all(held_classes.values())):
-            raise ValueError(f'frozen fold lacks both operational classes: {key}')
-    expected_qc = set()
-    for task in tasks:
-        task_rows = [row for (row_task, _), row in eligible.items() if row_task == task]
-        group_set = {row['binding_group_id'] for row in task_rows}
-        n_outer = 5 if task == TASK_KNOT else 10
-        n_inner = 3
-        for fold_num in range(n_outer):
-            outer = str(fold_num)
-            test_groups = {group for (row_task, group), fold in group_to_fold.items() if row_task == task and fold == outer}
-            train_groups = group_set - test_groups
-            if not test_groups or test_groups & train_groups:
-                raise ValueError(f'invalid outer group partition: {task}/{outer}')
-            test_rows = [row for row in task_rows if row['binding_group_id'] in test_groups]
-            train_rows = [row for row in task_rows if row['binding_group_id'] in train_groups]
-            expected_qc.add((task, 'outer', outer, 'NA'))
-            compare_qc(task, 'outer', outer, 'NA', train_rows, test_rows, train_groups, test_groups)
-            validation_sets = []
-            for inner_num in range(n_inner):
-                inner = str(inner_num)
-                key = (task, outer, inner)
-                validation = inner_map.get(key)
-                if not validation or validation & test_groups or (not validation.issubset(train_groups)):
-                    raise ValueError(f'invalid inner validation group set: {key}')
-                validation_sets.append(validation)
-                val_rows = [row for row in train_rows if row['binding_group_id'] in validation]
-                inner_train_groups = train_groups - validation
-                inner_train_rows = [row for row in train_rows if row['binding_group_id'] in inner_train_groups]
-                expected_qc.add((task, 'inner', outer, inner))
-                compare_qc(task, 'inner', outer, inner, inner_train_rows, val_rows, inner_train_groups, validation)
-            if any((left & right for i, left in enumerate(validation_sets) for right in validation_sets[i + 1:])):
-                raise ValueError(f'inner validation groups overlap: {task}/{outer}')
-            if set.union(*validation_sets) != train_groups:
-                raise ValueError(f'inner validation groups do not partition outer training: {task}/{outer}')
-    if set(qc) != expected_qc or set(inner_map) != {(task, str(outer), str(inner)) for task in tasks for outer in range(5 if task == TASK_KNOT else 10) for inner in range(3)}:
-        raise ValueError('frozen fold-QC or inner-group map has unexpected or missing records')
 
 def read_predictions(path: Path) -> list[dict[str, str]]:
     opener = gzip.open if path.suffix == '.gz' else open
@@ -277,7 +134,7 @@ def fs_metrics(rows: list[dict], score_map: dict, group_to_fold: dict, replicate
     summary = {'primary_metric': 'mean held-positive rank percentile within its own frozen outer-fold test pool; lower is better', 'mean_held_case_rank_percentile': float(values.mean()), 'mean_recall_at_1': float(np.mean([row['recall_at_1'] for row in ranks])), 'mean_recall_at_10': float(np.mean([row['recall_at_10'] for row in ranks])), 'mean_recall_at_100': float(np.mean([row['recall_at_100'] for row in ranks])), 'mean_recall_at_1000': float(np.mean([row['recall_at_1000'] for row in ranks])), 'mean_recall_at_10000': float(np.mean([row['recall_at_10000'] for row in ranks])), 'held_positive_cases': len(ranks), 'unlabeled_background_is_not_a_verified_negative': True, 'group_bootstrap_ci95': np.quantile(means, [0.025, 0.975]).tolist(), 'bootstrap_unit': 'positive binding_group_id', 'bootstrap_replicates': replicates, 'bootstrap_seed': seed, 'bootstrap_scope': 'conditional on fixed outer-fold predictions; no refitting uncertainty claim', 'case_ranks': ranks}
     return summary
 
-def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protocol_path: Path, output_dir: Path, tasks: set[str] | None = None) -> dict:
+def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protocol_path: Path, output_dir: Path, tasks: set[str] | None = None, example: bool = False) -> dict:
     tasks = TASKS if tasks is None else set(tasks)
     if output_dir.exists():
         raise ValueError(f'refusing to overwrite existing output directory: {output_dir}')
@@ -297,9 +154,7 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     if metadata['training_protocol'] != 'nested_grouped_oof':
         raise ValueError('predictions must declare the frozen nested grouped out-of-fold protocol')
     started = now()
-    verify_dataset(data_dir)
-    dataset_metadata = json.loads((data_dir / 'dataset_manifest.json').read_text(encoding='utf-8-sig'))
-    eligible, group_to_fold = eligible_frames(data_dir, tasks)
+    eligible, group_to_fold = load_pooled(data_dir, tasks)
     prediction_map = load_predictions(predictions_path, eligible, group_to_fold)
     scored_rows = []
     metrics: dict[str, dict] = {}
@@ -322,10 +177,10 @@ def evaluate(data_dir: Path, predictions_path: Path, metadata_path: Path, protoc
     write_gzip_tsv(scored_path, scored_rows, ['task_id', 'sample_id', 'outer_fold', 'binding_group_id', 'score', 'learning_label', 'learning_mask', 'biological_target', 'biological_mask', 'label', 'mask'])
     metrics_path = output_dir / 'metrics.json'
     metrics_path.write_bytes((json.dumps({'model': metadata, 'metrics': metrics}, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
-    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'dataset_id': dataset_metadata['artifact_id'], 'scoring_protocol_id': protocol['protocol_id'], 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}}
+    run = {'status': 'PASS', 'started_at': started, 'completed_at': now(), 'scope': 'frozen retrospective grouped-development predictions; model training and selection history are self-reported and not verified by this scorer', 'dataset_id': 'ConformEval', 'scoring_protocol_id': protocol['protocol_id'], 'model_metadata': metadata, 'eligible_sample_counts': {task: sum((key[0] == task for key in eligible)) for task in sorted(tasks)}, 'prediction_counts': {task: sum((key[0] == task for key in prediction_map)) for task in sorted(tasks)}, 'outer_folds': {task: len({group_to_fold[task, row['binding_group_id']] for key, row in eligible.items() if key[0] == task}) for task in sorted(tasks)}, 'scorer_uses_outer_test_labels_for_model_selection': False, 'model_training_protocol_self_attested': True, 'warnings': [], 'dependencies': {'python': platform.python_version(), 'numpy': np.__version__, 'scikit_learn': version('scikit-learn')}}
     run_path = output_dir / 'run.json'
     run['project'] = 'ConformEval'
-    if dataset_metadata.get('scope') == 'software_example':
+    if example:
         run['scope'] = 'software_example'
     run_path.write_bytes((json.dumps(run, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8'))
     return run
@@ -345,7 +200,7 @@ def main() -> int:
         supplied = ['--' + name.replace('_', '-') for name in inputs if getattr(args, name) is not None]
         if supplied:
             parser.error('--example cannot be combined with ' + ', '.join(supplied))
-        args.data_dir = Path('examples/base')
+        args.data_dir = Path('examples/knot_presence')
         args.task = [TASK_KNOT]
         args.protocol = Path('configs/scoring.json')
         args.predictions = Path('examples/predictions/knot.tsv')
@@ -357,7 +212,7 @@ def main() -> int:
         if missing:
             parser.error('the following arguments are required without --example: ' + ', '.join(missing))
     try:
-        result = evaluate(args.data_dir.resolve(), args.predictions.resolve(), args.model_metadata.resolve(), args.protocol.resolve(), args.output_dir.resolve(), set(args.task) if args.task else None)
+        result = evaluate(args.data_dir.resolve(), args.predictions.resolve(), args.model_metadata.resolve(), args.protocol.resolve(), args.output_dir.resolve(), set(args.task) if args.task else None, example=args.example)
     except (ValueError, KeyError, OSError, TypeError, json.JSONDecodeError) as error:
         print(f'Evaluation rejected: {error}', file=sys.stderr)
         return 2

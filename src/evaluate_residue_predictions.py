@@ -5,55 +5,14 @@ import gzip
 import json
 import math
 import platform
-from collections import defaultdict
 from pathlib import Path
 import numpy as np
 import scipy
 import sklearn
-from .residue_scoring_core import read_tsv, load_fasta, validate_label_rows, validate_fold_roles, protein_ap, group_bootstrap, write_tsv, stamp
-TASK = 'DISORDER-STRUCTURE-REFERENCE-CANDIDATE'
-REFERENCE_ARMS = {'ESM2-L11', 'ESM2-L23', 'ESM2-L33', 'traditional-AA-context', 'MLP-h33-seed13', 'MLP-h33-seed42', 'MLP-h33-seed2026'}
+from sklearn.metrics import average_precision_score, roc_auc_score
+from .datasets import TASK_DISORDER as TASK, load_disorder as load_task, write_tsv
+from .evaluate_predictions import now as stamp, load_protocol
 
-
-def check_manifest(root):
-    manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
-    records = manifest.get('files', [])
-    if not records:
-        raise ValueError('dataset manifest has no file records')
-    for name in records:
-        rel = Path(name)
-        path = (root / rel).resolve()
-        if rel.is_absolute() or '..' in rel.parts or not path.is_relative_to(root.resolve()):
-            raise ValueError('unsafe manifest path')
-        if not path.is_file():
-            raise FileNotFoundError(path)
-    return list(records)
-
-def load_task(root, example=False):
-    files = check_manifest(root)
-    manifest = json.loads((root / 'manifest.json').read_text(encoding='utf-8-sig'))
-    if example and (manifest.get('artifact_id') != 'conformeval-example-residue' or manifest.get('scope') != 'software_example'):
-        raise ValueError('example mode requires the bundled software example')
-    if not example and manifest.get('scope') == 'software_example':
-        raise ValueError('synthetic data requires --example')
-    rows = read_tsv(root / 'selected_samples.tsv')
-    samples = {r['sample_id']: r for r in rows}
-    if len(samples) != len(rows):
-        raise ValueError('duplicate sample identity')
-    labels = defaultdict(list)
-    for r in read_tsv(root / 'selected_labels.tsv.gz'):
-        labels[r['sample_id']].append(r)
-    validate_label_rows(samples, labels, load_fasta(root / 'inputs/sequences.fasta'), example=example)
-    sequence_groups = defaultdict(set)
-    sequences = load_fasta(root / 'inputs/sequences.fasta')
-    for s in samples.values():
-        sequence_groups[sequences[s['sequence_id']]].add(s['binding_group_id'])
-    if any((len(gs) != 1 for gs in sequence_groups.values())):
-        raise ValueError('exact sequence crosses binding groups')
-    outer, inner = validate_fold_roles(samples, read_tsv(root / 'outer_fold_roles.tsv'), read_tsv(root / 'inner_fold_roles.tsv'))
-    expected = {sid: {int(r['position']): int(r['label']) for r in rs} for sid, rs in labels.items()}
-    folds = {sid: f for f, roles in outer.items() for sid, role in roles.items() if role == 'test'}
-    return (samples, expected, folds, files)
 
 def read_scores(path, samples, expected, folds, arms, default_arm):
     scores = {arm: {sid: {} for sid in samples} for arm in arms}
@@ -102,26 +61,23 @@ def calculate(samples, expected, folds, scores):
             pos = sorted(expected[sid])
             y = np.array([expected[sid][p] for p in pos], dtype=np.int8)
             s = np.array([scores[arm][sid][p] for p in pos], dtype=np.float64)
-            ap, auc = protein_ap(s, y)
+            ap, auc = float(average_precision_score(y, s)), float(roc_auc_score(y, s))
             rows.append({'task_id': TASK, 'sample_id': sid, 'binding_group_id': samples[sid]['binding_group_id'], 'outer_fold': folds[sid], 'arm': arm, 'n_labeled_residues': len(y), 'n_positive': int(y.sum()), 'n_negative': int(len(y) - y.sum()), 'average_precision': ap, 'auroc': auc})
             pooled_scores.append(s)
             pooled_labels.append(y)
         rs = [r for r in rows if r['arm'] == arm]
         summaries[arm] = {'n_proteins': len(rs), 'mean_per_protein_AP': float(np.mean([r['average_precision'] for r in rs])), 'sd_per_protein_AP': float(np.std([r['average_precision'] for r in rs])), 'mean_per_protein_AUROC': float(np.mean([r['auroc'] for r in rs])), 'pooled_residue_AP_secondary': float(sklearn.metrics.average_precision_score(np.concatenate(pooled_labels), np.concatenate(pooled_scores)))}
-    if set(arms) == REFERENCE_ARMS:
-        summaries['group_bootstrap'] = group_bootstrap(rows, arms)
-    else:
-        groups = sorted({r['binding_group_id'] for r in rows})
-        rng = np.random.default_rng(2026)
-        draws = rng.integers(0, len(groups), size=(2000, len(groups)))
-        boot = {}
-        for arm in arms:
-            by_group = {g: [r['average_precision'] for r in rows if r['arm'] == arm and r['binding_group_id'] == g] for g in groups}
-            totals = np.array([sum(by_group[g]) for g in groups])
-            counts = np.array([len(by_group[g]) for g in groups])
-            means = totals[draws].sum(axis=1) / counts[draws].sum(axis=1)
-            boot[arm] = {'macro_ap_ci95': np.quantile(means, [0.025, 0.975]).tolist(), 'replicates': 2000, 'bootstrap_unit': 'binding_group_id'}
-        summaries['group_bootstrap'] = boot
+    groups = sorted({r['binding_group_id'] for r in rows})
+    rng = np.random.default_rng(2026)
+    draws = rng.integers(0, len(groups), size=(2000, len(groups)))
+    boot = {}
+    for arm in arms:
+        by_group = {g: [r['average_precision'] for r in rows if r['arm'] == arm and r['binding_group_id'] == g] for g in groups}
+        totals = np.array([sum(by_group[g]) for g in groups])
+        counts = np.array([len(by_group[g]) for g in groups])
+        means = totals[draws].sum(axis=1) / counts[draws].sum(axis=1)
+        boot[arm] = {'macro_ap_ci95': np.quantile(means, [0.025, 0.975]).tolist(), 'replicates': 2000, 'bootstrap_unit': 'binding_group_id'}
+    summaries['group_bootstrap'] = boot
     return (rows, summaries)
 
 def main():
@@ -129,6 +85,7 @@ def main():
     ap.add_argument('--task-dir', required=True, type=Path)
     ap.add_argument('--predictions', required=True, type=Path)
     ap.add_argument('--model-metadata', required=True, type=Path)
+    ap.add_argument('--protocol', type=Path, default=Path('configs/scoring.json'))
     ap.add_argument('--example', action='store_true', help='Score the bundled synthetic software example')
     ap.add_argument('--output-dir', required=True, type=Path)
     a = ap.parse_args()
@@ -137,6 +94,7 @@ def main():
     pred = a.predictions.resolve()
     if out.exists():
         raise ValueError('output directory already exists')
+    load_protocol(a.protocol)
     metadata = json.loads(a.model_metadata.read_text(encoding='utf-8-sig'))
     for k in ['model_id', 'model_revision', 'prediction_method', 'training_protocol']:
         if not isinstance(metadata.get(k), str) or not metadata[k].strip():

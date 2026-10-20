@@ -35,7 +35,6 @@ conformeval-extract = "conformeval.extract:main"
 conformeval-download = "conformeval.adapters:download_main"
 conformeval-prepare-inputs = "conformeval.tasks:main"
 conformeval-evaluate = "conformeval.evaluate_predictions:main"
-conformeval-build-feature-manifest = "conformeval.build_feature_manifest:main"
 conformeval-fit-readers = "conformeval.train:main"
 conformeval-evaluate-residues = "conformeval.evaluate_residue_predictions:main"
 

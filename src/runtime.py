@@ -11,8 +11,6 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 
-
-
 def json_write(path: Path, obj) -> None:
     Path(path).write_bytes((json.dumps(obj, indent=2, sort_keys=True, allow_nan=False) + '\n').encode('utf-8'))
 

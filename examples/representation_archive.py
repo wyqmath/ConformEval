@@ -2,15 +2,15 @@ import argparse
 import json
 from pathlib import Path
 import numpy as np
-from conformeval.readers import parse_fasta
+from conformeval.datasets import parse_fasta
 from conformeval.runtime import json_write
 
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__)
+    p=argparse.ArgumentParser()
     p.add_argument('--output-dir',required=True,type=Path)
     args=p.parse_args();output=args.output_dir.resolve();output.mkdir(parents=True,exist_ok=False)
-    layers=[1,2];dimension=8;revision='0'*40;rng=np.random.default_rng(2026);archives=[]
+    layers=[1,2];dimension=8;revision='example';rng=np.random.default_rng(2026);archives=[]
     source=Path(__file__).parent/'sequences.fasta'
     for index,(sequence_id,sequence) in enumerate(parse_fasta(source).items(),start=1):
         values=rng.normal(size=(len(layers),len(sequence),dimension)).astype(np.float32)

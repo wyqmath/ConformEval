@@ -47,7 +47,7 @@ python -m pip install '.[prott5]'
 
 Model configurations select the checkpoint revision, layers, pooling, precision, and sequence window settings. Inference uses CPU float32 by default. The default window contains up to 1,022 residues with a 128-residue overlap. Overlapping residue vectors are averaged at their sequence coordinates before pooling; special and padding tokens are excluded. Set `long_sequence.policy` to `reject` to reject sequences longer than the configured window.
 
-For another encoder, follow [adapter_usage.py](examples/adapter_usage.py) for adapter calls or [representation_archive.py](examples/representation_archive.py) for an external feature archive. Each archive contains one NPZ file per sequence and a JSON index recording sequence IDs, lengths, model revision, layers, dimensions, pooling, extraction settings, and filenames. Residue vectors use one-based sequence coordinates. Predictor candidates and regularization values are configured in [linear.json](configs/readers/linear.json).
+For another encoder, follow [representation_archive.py](examples/representation_archive.py) to supply an external feature archive. Each archive contains one NPZ file per sequence and a JSON index recording sequence IDs, lengths, model revision, layers, dimensions, pooling, extraction settings, and filenames. Residue vectors use one-based sequence coordinates. Predictor candidates and regularization values are configured in [training.json](configs/training.json).
 
 ## Data
 
@@ -60,39 +60,32 @@ unzip -q ConformEval-data.zip -d datasets
 
 The archive extracts into `datasets/ConformEval-data/` with `knot_presence/`, `fold_switching/`, and `disorder/` directories. Each task includes `sequences.fasta`, `samples.tsv`, `test_splits.tsv`, and `validation_splits.tsv`; disorder also includes `labels.tsv`. The source register is `sources.tsv`.
 
-Evaluator inputs in this repository use the following layout:
+The evaluator reads these task directories directly. Pass a task directory to `--data-dir` for input preparation and training, or the `ConformEval-data` directory to score both sequence-level tasks. Disorder scoring uses `--task-dir datasets/ConformEval-data/disorder`.
 
-| Path | Contents |
-|---|---|
-| `data/base/` | Sequences, task labels, source records, and grouped folds |
-| `data/disorder_reference/` | Residue labels and grouped folds |
-| `data/fs_region_controls/` | Paired-structure annotations and supporting evidence |
-
-Tables use tab-separated UTF-8 text. Read `.tsv.gz` files with `gzip.open(path, "rt", encoding="utf-8", newline="")` or `pandas.read_csv(path, sep="\t")`. Residue coordinates are one-based positions in the declared sequence. Task manifests list the required files. Case records use `source_ref` to identify entries in [case_sources.tsv](data/base/case_sources.tsv), which records source filenames and available DOI, PMCID, or source notes.
+Tables use tab-separated UTF-8 text. Residue coordinates are one-based positions in the declared sequence. The [example inputs](examples/) use the same table formats, with one shared FASTA file for their synthetic sequences.
 
 ## Evaluation
 
 Knot detection uses AUROC over chain-level predictions. Fold-switch ranking measures each held-out confirmed case's rank percentile within its test pool; the background is unlabeled and has no verified negative labels. Disorder scores known reference positions, calculates average precision for each protein record, and averages across records.
 
-All models use the same group assignments and scoring implementation. Knot and disorder tasks have five outer folds; fold-switch ranking has ten. Each outer training set has three inner validation folds for choosing model layers and predictor settings. Preprocessing is fitted on training data. Predictions are scored on outer test groups. The scoring commands accept TSV prediction files; [predictions/](examples/predictions/) contains example files and a model metadata template.
+All models use the same group assignments and scoring implementation. Knot and disorder tasks have five outer folds; fold-switch ranking has ten. Each outer training set has three inner validation folds for choosing model layers and predictor settings. Preprocessing is fitted on training data. Predictions are scored on outer test groups. The scoring commands accept TSV prediction files; [predictions/](examples/predictions/) contains example files and model metadata.
 
-The scorers check sample identities, prediction coverage, folds, coordinates, and label masks. Confidence intervals resample groups from the saved predictions and exclude uncertainty from model refitting or dataset selection. The current splits support retrospective grouped-development evaluation. Complete biological-family independence has not been established; the source group audit has 37 unresolved PDB-key gaps. The [task catalog](data/task_catalog.tsv) lists additional tasks and their data requirements.
+The scorers check sample identities, prediction coverage, folds, coordinates, and label masks. Confidence intervals resample groups from the saved predictions and exclude uncertainty from model refitting or dataset selection. The current splits support retrospective grouped-development evaluation. Complete biological-family independence has not been established; the source group audit has 37 unresolved PDB-key gaps.
 
 ## Repository layout
 
 ```text
 README.md        Project description, installation, data, models, scoring
 src/             Protein model inference, predictor training, scoring
-configs/         Model settings and evaluation protocols
-examples/        Notebook, example inputs, prediction templates
-data/            Task inputs, labels, cross-validation splits
+configs/         Three model configurations, training.json, scoring.json
+examples/        Notebook, small task inputs, external-model example
 pyproject.toml   Package dependencies, installation, command names
 ```
 
-The examples contain 30 synthetic sequences, 20 knot samples, 20 ranking items, and 554 labeled residue positions. Their scores demonstrate the software interface. The `representation_archive.py` example generates deterministic NumPy features for testing external model integration.
+The examples contain 30 synthetic sequences, 20 knot samples, 20 ranking items, and 554 labeled residue positions. Their scores demonstrate the software interface. The [external-model example](examples/representation_archive.py) generates NumPy features in the format accepted by the trainer.
 
 ## Sources and license
 
-Sequences and annotations come from UniProt, DisProt, RCSB PDB/SIFTS, KnotProt-derived legacy annotations, and primary publications. [sources.tsv](data/base/sources.tsv) records source versions, attribution requirements, and distribution terms; [case_sources.tsv](data/base/case_sources.tsv) records publication evidence. KnotProt redistribution terms and the original scored-label source snapshot remain unresolved. Literature-derived records retain their source-specific terms.
+Sequences and annotations come from [UniProt](https://www.uniprot.org/), [DisProt](https://disprot.org/), [RCSB PDB/SIFTS](https://www.ebi.ac.uk/pdbe/docs/sifts/), and KnotProt-derived annotations. Fold-switch cases follow [Porter and Looger (2018)](https://doi.org/10.1073/pnas.1800168115). The downloaded dataset's `sources.tsv` records references, source versions, and reuse terms. KnotProt redistribution terms and the original scored-label source snapshot remain unresolved.
 
 [MIT](LICENSE) covers the software. Dataset reuse follows the terms recorded for each source.
