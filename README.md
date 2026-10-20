@@ -75,11 +75,27 @@ The scorers check sample identities, prediction coverage, folds, coordinates, an
 ## Repository layout
 
 ```text
-README.md        Project description, installation, data, models, scoring
-src/             Protein model inference, predictor training, scoring
-configs/         Three model configurations, training.json, scoring.json
-examples/        Notebook, small task inputs, external-model example
-pyproject.toml   Package dependencies, installation, command names
+ConformEval/
+├── README.md
+├── LICENSE
+├── pyproject.toml
+├── src/
+├── configs/
+│   ├── models/
+│   │   ├── esm2_8m.json
+│   │   ├── esm2_650m.json
+│   │   └── prott5.json
+│   ├── training.json
+│   └── scoring.json
+└── examples/
+    ├── sequences.fasta
+    ├── knot_presence/
+    ├── fold_switching/
+    ├── disorder/
+    ├── predictions/
+    ├── representation_archive.py
+    └── notebooks/
+        └── ConformEval_tutorial.ipynb
 ```
 
 The examples contain 30 synthetic sequences, 20 knot samples, 20 ranking items, and 554 labeled residue positions. Their scores demonstrate the software interface. The [external-model example](examples/representation_archive.py) generates NumPy features in the format accepted by the trainer.
