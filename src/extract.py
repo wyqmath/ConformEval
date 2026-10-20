@@ -6,7 +6,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .adapters import HFAdapter, download_snapshot, load_config
+from .adapters import HFAdapter, download_snapshot, load_config, validate_config
 from .datasets import parse_fasta
 from .runtime import RunRecord, json_write
 
@@ -18,6 +18,7 @@ def extract(args, adapter_factory=HFAdapter):
             config[name] = getattr(args, name)
     if getattr(args, "sequence_only", False):
         config["store_residues"] = False
+    validate_config(config)
     record = RunRecord(args.output_dir.resolve(), config)
     output = record.output
     try:
@@ -53,6 +54,9 @@ def extract(args, adapter_factory=HFAdapter):
             sorted(sequences.items()), start=1
         ):
             pooled, residues, segments = adapter.encode(sequence)
+            layer_set = "mean_" + "_".join(map(str, config["layers"]))
+            if config["store_residues"]:
+                layer_set += "+resid_" + "_".join(map(str, config["layers"]))
             meta = {
                 "sequence_id": sequence_id,
                 "len_full": len(sequence),
@@ -60,10 +64,7 @@ def extract(args, adapter_factory=HFAdapter):
                 "truncated": False,
                 "model": config["model_id"],
                 "revision": config["revision"],
-                "layer_set": "mean_"
-                + "_".join(map(str, config["layers"]))
-                + "+resid_"
-                + "_".join(map(str, config["layers"])),
+                "layer_set": layer_set,
                 "pooling": config["pooling"],
                 "dimension": adapter.dimension,
                 "extraction_config": config,

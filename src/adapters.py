@@ -7,17 +7,31 @@ from pathlib import Path
 
 import numpy as np
 
-from .runtime import json_write
 
-
-def load_config(path: Path) -> dict:
-    config = json.loads(path.read_text(encoding="utf-8-sig"))
-    if config.get("schema_version") != 1 or config.get("adapter") not in {
+def validate_config(config: dict) -> dict:
+    if not isinstance(config, dict):
+        raise ValueError("model configuration must be a JSON object")
+    if type(config.get("schema_version")) is not int or config["schema_version"] != 1:
+        raise ValueError("unsupported model configuration schema")
+    if not isinstance(config.get("adapter"), str) or config["adapter"] not in {
         "esm2",
         "prott5",
     }:
-        raise ValueError("unsupported model adapter configuration")
-    if not re.fullmatch("[0-9a-f]{40}", config.get("revision", "")):
+        raise ValueError("unsupported model adapter")
+    model_id = config.get("model_id")
+    if (
+        not isinstance(model_id, str)
+        or not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9._-]*(?:/[A-Za-z0-9][A-Za-z0-9._-]*)?", model_id
+        )
+        or ".." in model_id
+        or "--" in model_id
+        or model_id.endswith((".git", ".", "-"))
+        or len(model_id.rsplit("/", 1)[-1]) > 96
+    ):
+        raise ValueError("model_id must be a nonempty model repository name")
+    revision = config.get("revision")
+    if not isinstance(revision, str) or not re.fullmatch("[0-9a-f]{40}", revision):
         raise ValueError("model revision must be an immutable 40-character commit")
     layers = config.get("layers")
     if (
@@ -27,24 +41,47 @@ def load_config(path: Path) -> dict:
         or len(set(layers)) != len(layers)
     ):
         raise ValueError("layers must be distinct positive transformer layer IDs")
-    if config.get("pooling") not in {"mean", "max"}:
+    if not isinstance(config.get("pooling"), str) or config["pooling"] not in {
+        "mean",
+        "max",
+    }:
         raise ValueError("pooling must be mean or max")
-    long = config.get("long_sequence", {})
+    long = config.get("long_sequence")
+    if not isinstance(long, dict):
+        raise ValueError("long_sequence must be a configuration object")
     limit, overlap = long.get("max_residues"), long.get("overlap")
     if (
-        long.get("policy") not in {"window", "reject"}
+        not isinstance(long.get("policy"), str)
+        or long["policy"] not in {"window", "reject"}
         or type(limit) is not int
         or limit < 1
         or type(overlap) is not int
         or not 0 <= overlap < limit
     ):
         raise ValueError("invalid long-sequence window configuration")
-    if config.get("dtype") not in {"float32", "float16", "bfloat16"}:
+    if not isinstance(config.get("dtype"), str) or config["dtype"] not in {
+        "float32",
+        "float16",
+        "bfloat16",
+    }:
         raise ValueError("unsupported inference dtype")
+    if not isinstance(config.get("device"), str) or config["device"] not in {
+        "cpu",
+        "cuda",
+        "mps",
+    }:
+        raise ValueError("device must be cpu, cuda or mps")
+    if type(config.get("store_residues")) is not bool:
+        raise ValueError("store_residues must be a boolean")
     return config
 
 
+def load_config(path: Path) -> dict:
+    return validate_config(json.loads(path.read_text(encoding="utf-8-sig")))
+
+
 def download_snapshot(config: dict, cache_dir=None, local_only=False) -> Path:
+    config = validate_config(config)
     try:
         from huggingface_hub import HfApi, snapshot_download
     except ImportError as error:
@@ -58,48 +95,38 @@ def download_snapshot(config: dict, cache_dir=None, local_only=False) -> Path:
         "vocab.txt",
         "spiece.model",
     ]
-    if local_only:
-        patterns = common + (
-            ["pytorch_model.bin"]
-            if config["adapter"] == "prott5"
-            else ["model.safetensors"]
-        )
-    else:
+    formats = ["model.safetensors", "pytorch_model.bin"]
+    if not local_only:
         info = HfApi().model_info(config["model_id"], revision=config["revision"])
         names = {s.rfilename for s in info.siblings}
-        weights = (
-            ["model.safetensors"]
-            if "model.safetensors" in names
-            else ["pytorch_model.bin"]
-        )
-        if weights[0] not in names:
+        formats = [name for name in formats if name in names][:1]
+        if not formats:
             raise ValueError(
                 "checkpoint must provide model.safetensors or pytorch_model.bin"
             )
-        patterns = common + weights
-    try:
-        return Path(
-            snapshot_download(
-                config["model_id"],
-                revision=config["revision"],
-                cache_dir=cache_dir,
-                local_files_only=local_only,
-                allow_patterns=patterns,
-                max_workers=2,
+    last_error = None
+    for filename in formats:
+        try:
+            snapshot = Path(
+                snapshot_download(
+                    config["model_id"],
+                    revision=config["revision"],
+                    cache_dir=cache_dir,
+                    local_files_only=local_only,
+                    allow_patterns=common + [filename],
+                    max_workers=2,
+                )
             )
-        )
-    except FileNotFoundError:
-        if not local_only or config["adapter"] != "esm2":
-            raise
-        return Path(
-            snapshot_download(
-                config["model_id"],
-                revision=config["revision"],
-                cache_dir=cache_dir,
-                local_files_only=True,
-                allow_patterns=common + ["pytorch_model.bin"],
-            )
-        )
+            if not (snapshot / filename).is_file():
+                raise FileNotFoundError(f"checkpoint file is absent: {filename}")
+            return snapshot
+        except FileNotFoundError as error:
+            if not local_only:
+                raise
+            last_error = error
+    raise FileNotFoundError(
+        "no complete cached checkpoint with model.safetensors or pytorch_model.bin"
+    ) from last_error
 
 
 def token_residue_map(ids, attention, special_mask, tokenizer, normalized_sequence):
@@ -134,6 +161,7 @@ def windows(length, limit, overlap, policy):
 
 class HFAdapter:
     def __init__(self, config: dict, snapshot: Path):
+        config = validate_config(config)
         if Path(snapshot).name != config["revision"]:
             raise ValueError(
                 "snapshot directory must identify the pinned model revision"
@@ -190,12 +218,19 @@ class HFAdapter:
         )
         if max(config["layers"]) > self.depth:
             raise ValueError(f"requested layer exceeds model depth {self.depth}")
-        if (
-            config["adapter"] == "esm2"
-            and config["long_sequence"]["max_residues"]
-            > int(self.model.config.max_position_embeddings) - 4
-        ):
-            raise ValueError("window exceeds the ESM positional limit")
+        if config["adapter"] == "esm2":
+            # ESM position IDs start above the padding ID; CLS/EOS also occupy positions.
+            position_offset = int(self.model.config.pad_token_id) + 1
+            special_tokens = self.tokenizer.num_special_tokens_to_add(pair=False)
+            limit = (
+                int(self.model.config.max_position_embeddings)
+                - position_offset
+                - special_tokens
+            )
+            if config["long_sequence"]["max_residues"] > limit:
+                raise ValueError(
+                    f"window exceeds the configured ESM residue limit {limit}"
+                )
 
     def encode_window(self, sequence: str):
         normalized = (

@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import math
 from collections import Counter
-from pathlib import Path
 
 import numpy as np
 from scipy.spatial.distance import cdist
 from sklearn.preprocessing import StandardScaler
 
-from .datasets import TASK_FS, TASK_KNOT, split_assignments, task_directory
+from .datasets import TASK_KNOT
+from .scoring import midrank
 
 AA20 = "ACDEFGHIKLMNPQRSTVWY"
 
@@ -21,11 +21,8 @@ def sequence_aux(sequence: str) -> np.ndarray:
     )
 
 
-def fold_indices(task: str, rows: list[dict], data_dir: Path, group_to_fold: dict):
+def fold_indices(task: str, rows: list[dict], group_to_fold: dict, assignments: dict):
     n_outer = 5 if task == TASK_KNOT else 10
-    _, assignments = split_assignments(
-        task_directory(data_dir, task), {r["sample_id"]: r for r in rows}, n_outer
-    )
     inner_group = {
         str(outer): {group: str(inner) for group, inner in groups.items()}
         for outer, groups in assignments.items()
@@ -101,10 +98,8 @@ def fs_rank_percentiles(scores: np.ndarray, labels: np.ndarray) -> np.ndarray:
         raise ValueError("PU validation fold contains no held positive")
     output = []
     for index in positives:
-        score = scores[index]
-        greater = int(np.sum(scores > score))
-        equal = int(np.sum(scores == score))
-        output.append((greater + (equal + 1) / 2) / len(scores))
+        rank, _, _ = midrank(scores, int(index))
+        output.append(rank / len(scores))
     return np.asarray(output, dtype=np.float64)
 
 

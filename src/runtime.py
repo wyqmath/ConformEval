@@ -8,7 +8,7 @@ try:
 except ImportError:
     resource = None
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
@@ -43,13 +43,16 @@ def versions() -> dict:
         "transformers",
         "sentencepiece",
         "huggingface-hub",
-        "tzdata",
     ]:
         try:
             result[name] = version(name)
         except PackageNotFoundError:
             pass
     return result
+
+
+def timestamp() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 class RunRecord:
@@ -66,7 +69,7 @@ class RunRecord:
         self.data = {
             "project": "ConformEval",
             "status": "RUNNING",
-            "started_at": self.stamp(),
+            "started_at": timestamp(),
             "configuration": configuration,
             "dependencies": versions(),
             "hardware": {
@@ -78,9 +81,12 @@ class RunRecord:
         }
         self.save()
 
-    @staticmethod
-    def stamp():
-        return datetime.now().astimezone().isoformat(timespec="seconds")
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, error, traceback):
+        self.finish(error)
+        return False
 
     def track(self, path: Path):
         name = str(path.resolve())
@@ -94,8 +100,8 @@ class RunRecord:
 
     def finish(self, error=None):
         self.data.update(
-            status="FAILED" if error else "PASS",
-            ended_at=self.stamp(),
+            status="FAILED" if error is not None else "PASS",
+            ended_at=timestamp(),
             seconds=time.monotonic() - self.clock,
             peak_rss_bytes=(
                 int(
@@ -106,7 +112,7 @@ class RunRecord:
                 else None
             ),
         )
-        if error:
+        if error is not None:
             self.data.update(error_type=type(error).__name__, error=str(error))
         self.data["outputs"] = [
             p.relative_to(self.output).as_posix()

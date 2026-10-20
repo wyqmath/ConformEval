@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = ["numpy>=1.26.4,<3", "scipy>=1.11,<2", "scikit-learn>=1.5,<2", "tzdata>=2024.1; sys_platform == 'win32'"]
+dependencies = ["numpy>=1.26.4,<3", "scipy>=1.11,<2", "scikit-learn>=1.5,<2"]
 authors = [{ name = "Jiayuan Ma" }]
 keywords = ["protein", "benchmark", "protein-language-model", "biophysics"]
 classifiers = [

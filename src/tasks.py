@@ -4,11 +4,11 @@ import argparse
 import json
 from pathlib import Path
 
-from .datasets import load_pooled, parse_fasta, sequence_path
-from .evaluate_predictions import TASKS
+from .datasets import load_pooled, parse_fasta, sequence_path, task_input_paths
 from .evaluate_residue_predictions import TASK as RESIDUE_TASK
 from .evaluate_residue_predictions import load_task
 from .runtime import RunRecord
+from .scoring import TASKS
 
 
 def required_sequences(data_dir: Path, task: str, example=False):
@@ -17,7 +17,7 @@ def required_sequences(data_dir: Path, task: str, example=False):
         samples, _, _, _ = load_task(data_dir, example=example)
         required = {sample["sequence_id"] for sample in samples.values()}
     else:
-        samples, _ = load_pooled(data_dir, {task})
+        samples, _, _ = load_pooled(data_dir, {task}, example=example)
         required = {
             sid
             for sample in samples.values()
@@ -39,10 +39,8 @@ def main():
         args.output_dir.resolve(), {"task": args.task, "example": args.example}
     )
     try:
-        for p in args.data_dir.rglob("*"):
-            if p.is_file() and p.suffix != ".md":
-                record.track(p)
-        record.track(sequence_path(args.data_dir, args.task))
+        for p in task_input_paths(args.data_dir, args.task):
+            record.track(p)
         sequences = required_sequences(args.data_dir, args.task, args.example)
         (record.output / "sequences.fasta").write_bytes(
             (

@@ -62,11 +62,11 @@ The archive extracts into `datasets/ConformEval-data/` with `knot_presence/`, `f
 
 The evaluator reads these task directories directly. Pass a task directory to `--data-dir` for input preparation and training, or the `ConformEval-data` directory to score both sequence-level tasks. Disorder scoring uses `--task-dir datasets/ConformEval-data/disorder`.
 
-Tables use tab-separated UTF-8 text. Residue coordinates are one-based positions in the declared sequence. The [example inputs](examples/) use the same table formats, with one shared FASTA file for their synthetic sequences.
+Tables use tab-separated UTF-8 text. Residue coordinates are one-based positions in the declared sequence. The [example inputs](examples/) use the same table formats, with one shared FASTA file for their synthetic sequences. Their sample tables mark `data_kind` as `synthetic` and require `--example`. Benchmark tables omit this column or use `benchmark`.
 
 ## Evaluation
 
-Knot detection uses AUROC over chain-level predictions. Fold-switch ranking measures each held-out confirmed case's rank percentile within its test pool; the background is unlabeled and has no verified negative labels. Disorder scores known reference positions, calculates average precision for each protein record, and averages across records.
+Knot detection uses AUROC over chain-level predictions. Fold-switch ranking measures each held-out confirmed case's rank percentile within its test pool; the background is unlabeled and has no verified negative labels. Disorder scores known reference positions, calculates average precision for each protein record, and averages across records. The reported SD describes AP across the evaluated records and uses `ddof=0`.
 
 All models use the same group assignments and scoring implementation. Knot and disorder tasks have five outer folds; fold-switch ranking has ten. Each outer training set has three inner validation folds for choosing model layers and predictor settings. Preprocessing is fitted on training data. Predictions are scored on outer test groups. The scoring commands accept TSV prediction files; [predictions/](examples/predictions/) contains example files and model metadata.
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import gzip
+import io
 from collections import defaultdict
 from pathlib import Path
 
@@ -31,13 +32,24 @@ def read_table(path: Path) -> list[dict[str, str]]:
 
 def write_tsv(path: Path, fields: list[str], rows: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    opener = gzip.open if path.suffix == ".gz" else open
-    with opener(path, "wt", newline="", encoding="utf-8") as stream:
+
+    def write(stream):
         writer = csv.DictWriter(
             stream, fieldnames=fields, delimiter="\t", lineterminator="\n"
         )
         writer.writeheader()
         writer.writerows(rows)
+
+    if path.suffix == ".gz":
+        with path.open("wb") as raw:
+            with gzip.GzipFile(
+                filename="", mode="wb", fileobj=raw, mtime=0, compresslevel=9
+            ) as zipped:
+                with io.TextIOWrapper(zipped, encoding="utf-8", newline="") as stream:
+                    write(stream)
+    else:
+        with path.open("w", encoding="utf-8", newline="") as stream:
+            write(stream)
 
 
 def parse_fasta(path: Path) -> dict[str, str]:
@@ -74,6 +86,22 @@ def sequence_path(root: Path, task: str) -> Path:
     directory = task_directory(root, task)
     path = directory / "sequences.fasta"
     return path if path.is_file() else directory.parent / "sequences.fasta"
+
+
+def residue_label_path(directory: Path) -> Path:
+    path = directory / "labels.tsv"
+    return path if path.is_file() else directory / "labels.tsv.gz"
+
+
+def task_input_paths(root: Path, task: str) -> list[Path]:
+    directory = task_directory(root, task)
+    paths = [sequence_path(root, task)] + [
+        directory / name
+        for name in ["samples.tsv", "test_splits.tsv", "validation_splits.tsv"]
+    ]
+    if task == TASK_DISORDER:
+        paths.append(residue_label_path(directory))
+    return paths
 
 
 def split_assignments(
@@ -118,20 +146,33 @@ def split_assignments(
             raise ValueError(
                 f"validation splits do not partition outer training: {outer}"
             )
-    if set(inner_groups) != set(range(n_outer)):
-        raise ValueError("validation splits omit an outer fold")
     return test_folds, dict(inner_groups)
 
 
-def load_samples(root: Path, task: str) -> tuple[dict, dict]:
+def load_samples(root: Path, task: str, example=False) -> tuple[dict, dict]:
     directory = task_directory(root, task)
     sequences = parse_fasta(sequence_path(root, task))
     samples = {}
     sequence_groups = defaultdict(set)
     for raw in read_table(directory / "samples.tsv"):
+        if not {"sample_id", "group_id"} <= raw.keys():
+            raise ValueError("samples require sample_id and group_id columns")
+        kind = raw.get("data_kind", "benchmark")
+        if kind not in {"benchmark", "synthetic"}:
+            raise ValueError(f"unsupported data_kind: {kind}")
+        if (kind == "synthetic") != example:
+            raise ValueError(
+                "synthetic samples require --example; benchmark samples must omit it"
+            )
         sid, group = raw["sample_id"], raw["group_id"]
         if not sid or not group or sid in samples:
             raise ValueError(f"empty or duplicate sample identity: {sid}")
+        for plural, singular in [
+            ("sequence_ids", "sequence_id"),
+            ("lengths", "length"),
+        ]:
+            if plural in raw and singular in raw and raw[plural] != raw[singular]:
+                raise ValueError(f"conflicting {singular}/{plural} fields: {sid}")
         sequence_ids = raw.get("sequence_ids", raw.get("sequence_id", "")).split(";")
         lengths = raw.get("lengths", raw.get("length", "")).split(";")
         if not sequence_ids or len(sequence_ids) != len(lengths):
@@ -153,6 +194,8 @@ def load_samples(root: Path, task: str) -> tuple[dict, dict]:
             "sequence_ids": ";".join(sequence_ids),
             "lengths": ";".join(lengths),
         }
+        if len(sequence_ids) == 1:
+            samples[sid].update(sequence_id=sequence_ids[0], length=lengths[0])
     if not samples:
         raise ValueError("sample table is empty")
     if any(len(groups) != 1 for groups in sequence_groups.values()):
@@ -160,13 +203,13 @@ def load_samples(root: Path, task: str) -> tuple[dict, dict]:
     return samples, sequences
 
 
-def load_pooled(root: Path, tasks=None) -> tuple[dict, dict]:
+def load_pooled(root: Path, tasks=None, example=False) -> tuple[dict, dict, dict]:
     tasks = {TASK_KNOT, TASK_FS} if tasks is None else set(tasks)
     if not tasks or not tasks <= {TASK_KNOT, TASK_FS}:
         raise ValueError("unsupported pooled task selection")
-    eligible, group_to_fold = {}, {}
+    eligible, group_to_fold, inner_assignments = {}, {}, {}
     for task in sorted(tasks):
-        samples, _ = load_samples(root, task)
+        samples, _ = load_samples(root, task, example=example)
         for sid, sample in samples.items():
             label = sample.get("label")
             mask = sample.get("mask", "1")
@@ -198,6 +241,7 @@ def load_pooled(root: Path, tasks=None) -> tuple[dict, dict]:
             eligible[task, sid] = sample
         n_outer = 5 if task == TASK_KNOT else 10
         folds, inner = split_assignments(task_directory(root, task), samples, n_outer)
+        inner_assignments[task] = inner
         for sid, sample in samples.items():
             group_to_fold[task, sample["binding_group_id"]] = str(folds[sid])
         label_key = "label" if task == TASK_KNOT else "learning_label"
@@ -223,17 +267,15 @@ def load_pooled(root: Path, tasks=None) -> tuple[dict, dict]:
                         raise ValueError(
                             "inner partition lacks both operational classes"
                         )
-    return eligible, group_to_fold
+    return eligible, group_to_fold, inner_assignments
 
 
 def load_disorder(root: Path, example=False) -> tuple[dict, dict, dict, dict]:
     directory = task_directory(root, TASK_DISORDER)
-    samples, _ = load_samples(root, TASK_DISORDER)
+    samples, _ = load_samples(root, TASK_DISORDER, example=example)
     expected = {sid: {} for sid in samples}
     seen = set()
-    label_path = directory / "labels.tsv"
-    if not label_path.is_file():
-        label_path = directory / "labels.tsv.gz"
+    label_path = residue_label_path(directory)
     for row in read_table(label_path):
         sid, position = row["sample_id"], int(row["position"])
         if (

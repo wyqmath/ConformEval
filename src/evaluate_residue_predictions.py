@@ -5,19 +5,29 @@ import csv
 import gzip
 import json
 import math
-import platform
 from pathlib import Path
 
 import numpy as np
-import scipy
-import sklearn
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from .datasets import TASK_DISORDER as TASK
-from .datasets import load_disorder as load_task
-from .datasets import write_tsv
-from .evaluate_predictions import load_protocol
-from .evaluate_predictions import now as stamp
+from .datasets import (
+    TASK_DISORDER as TASK,
+)
+from .datasets import (
+    load_disorder as load_task,
+)
+from .datasets import (
+    task_input_paths,
+    write_tsv,
+)
+from .runtime import RunRecord, json_write
+from .scoring import (
+    BOOTSTRAP_SEED,
+    BOOTSTRAPS,
+    CI_QUANTILES,
+    load_metadata,
+    load_protocol,
+)
 
 
 def read_scores(path, samples, expected, folds, arms, default_arm):
@@ -62,7 +72,9 @@ def read_scores(path, samples, expected, folds, arms, default_arm):
     return scores
 
 
-def calculate(samples, expected, folds, scores):
+def calculate(
+    samples, expected, folds, scores, replicates=BOOTSTRAPS, seed=BOOTSTRAP_SEED
+):
     rows = []
     summaries = {}
     arms = sorted(scores)
@@ -94,17 +106,19 @@ def calculate(samples, expected, folds, scores):
         summaries[arm] = {
             "n_proteins": len(rs),
             "mean_per_protein_AP": float(np.mean([r["average_precision"] for r in rs])),
-            "sd_per_protein_AP": float(np.std([r["average_precision"] for r in rs])),
+            "sd_per_protein_AP": float(
+                np.std([r["average_precision"] for r in rs], ddof=0)
+            ),
             "mean_per_protein_AUROC": float(np.mean([r["auroc"] for r in rs])),
             "pooled_residue_AP_secondary": float(
-                sklearn.metrics.average_precision_score(
+                average_precision_score(
                     np.concatenate(pooled_labels), np.concatenate(pooled_scores)
                 )
             ),
         }
     groups = sorted({r["binding_group_id"] for r in rows})
-    rng = np.random.default_rng(2026)
-    draws = rng.integers(0, len(groups), size=(2000, len(groups)))
+    rng = np.random.default_rng(seed)
+    draws = rng.integers(0, len(groups), size=(replicates, len(groups)))
     boot = {}
     for arm in arms:
         by_group = {
@@ -119,101 +133,89 @@ def calculate(samples, expected, folds, scores):
         counts = np.array([len(by_group[g]) for g in groups])
         means = totals[draws].sum(axis=1) / counts[draws].sum(axis=1)
         boot[arm] = {
-            "macro_ap_ci95": np.quantile(means, [0.025, 0.975]).tolist(),
-            "replicates": 2000,
+            "macro_ap_ci95": np.quantile(means, CI_QUANTILES).tolist(),
+            "replicates": replicates,
             "bootstrap_unit": "binding_group_id",
         }
     summaries["group_bootstrap"] = boot
     return (rows, summaries)
 
 
-def main():
-    ap = argparse.ArgumentParser(
-        description="Score full out-of-fold predictions for the frozen disorder reference task."
-    )
-    ap.add_argument("--task-dir", required=True, type=Path)
-    ap.add_argument("--predictions", required=True, type=Path)
-    ap.add_argument("--model-metadata", required=True, type=Path)
-    ap.add_argument("--protocol", type=Path, default=Path("configs/scoring.json"))
-    ap.add_argument(
-        "--example",
-        action="store_true",
-        help="Score the bundled synthetic software example",
-    )
-    ap.add_argument("--output-dir", required=True, type=Path)
-    a = ap.parse_args()
-    out = a.output_dir.resolve()
-    task = a.task_dir.resolve()
-    pred = a.predictions.resolve()
-    if out.exists():
-        raise ValueError("output directory already exists")
-    load_protocol(a.protocol)
-    metadata = json.loads(a.model_metadata.read_text(encoding="utf-8-sig"))
-    for k in ["model_id", "model_revision", "prediction_method", "training_protocol"]:
-        if not isinstance(metadata.get(k), str) or not metadata[k].strip():
-            raise ValueError(f"missing model metadata: {k}")
-    if metadata["training_protocol"] != "nested_grouped_oof":
-        raise ValueError("unsupported training protocol")
-    declared = metadata.get("arms", [metadata["model_id"]])
-    if (
-        not isinstance(declared, list)
-        or not declared
-        or any((not isinstance(x, str) or not x for x in declared))
-        or (len(set(declared)) != len(declared))
-    ):
-        raise ValueError("invalid declared arms")
-    metadata["arms"] = declared
-    run = {
-        "started_at": stamp(),
-        "status": "RUNNING",
-        "model_metadata": metadata,
-        "versions": {
-            "python": platform.python_version(),
-            "numpy": np.__version__,
-            "scipy": scipy.__version__,
-            "scikit_learn": sklearn.__version__,
-        },
-        "scope": "software_example"
-        if a.example
-        else "retrospective_grouped_development",
-        "warnings": [
-            "Scores verify identities and metrics; training history is supplied provenance.",
-            "Intervals condition on fixed predictions; no refitting uncertainty.",
-        ],
-    }
-    out.mkdir(parents=True)
-    try:
-        samples, expected, folds, _ = load_task(task, example=a.example)
+def evaluate(
+    task_dir, predictions_path, metadata_path, protocol_path, output_dir, example=False
+):
+    with RunRecord(output_dir, {"task": TASK, "example": example}) as record:
+        protocol = load_protocol(protocol_path)
+        record.data["configuration"]["scoring"] = protocol
+        for path in [predictions_path, metadata_path, protocol_path] + task_input_paths(
+            task_dir, TASK
+        ):
+            record.track(path)
+        metadata = load_metadata(metadata_path, example=example)
+        arms = metadata.get("arms", [metadata["model_id"]])
+        if (
+            not isinstance(arms, list)
+            or not arms
+            or any(not isinstance(arm, str) or not arm for arm in arms)
+            or len(set(arms)) != len(arms)
+        ):
+            raise ValueError("invalid declared arms")
+        metadata["arms"] = arms
+        samples, expected, folds, _ = load_task(task_dir, example=example)
         scores = read_scores(
-            pred, samples, expected, folds, set(metadata["arms"]), metadata["model_id"]
+            predictions_path, samples, expected, folds, set(arms), metadata["model_id"]
         )
-        rows, metrics = calculate(samples, expected, folds, scores)
-        write_tsv(out / "protein_metrics.tsv", list(rows[0]), rows)
-        (out / "metrics.json").write_bytes(
-            (json.dumps(metrics, indent=2, sort_keys=True) + "\n").encode("utf-8")
+        uncertainty = protocol["uncertainty"]
+        rows, metrics = calculate(
+            samples,
+            expected,
+            folds,
+            scores,
+            replicates=uncertainty["bootstrap_replicates"],
+            seed=uncertainty["seed"],
         )
-        run.update(
-            status="COMPLETE",
-            ended_at=stamp(),
+        write_tsv(output_dir / "protein_metrics.tsv", list(rows[0]), rows)
+        json_write(output_dir / "metrics.json", metrics)
+        record.data.update(
+            model_metadata=metadata,
+            scoring_protocol_id=protocol["protocol_id"],
+            scope="software_example"
+            if example
+            else "retrospective_grouped_development",
             n_predictions=sum(
-                (len(ps) for arm in scores.values() for ps in arm.values())
+                len(positions) for arm in scores.values() for positions in arm.values()
             ),
         )
-    except Exception as e:
-        run.update(status="FAILED", ended_at=stamp(), error=str(e))
-        (out / "run.json").write_bytes(
-            (json.dumps(run, indent=2, sort_keys=True) + "\n").encode("utf-8")
-        )
-        raise
-    (out / "run.json").write_bytes(
-        (json.dumps(run, indent=2, sort_keys=True) + "\n").encode("utf-8")
+    return record.data
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Score out-of-fold residue disorder predictions."
+    )
+    parser.add_argument("--task-dir", required=True, type=Path)
+    parser.add_argument("--predictions", required=True, type=Path)
+    parser.add_argument("--model-metadata", required=True, type=Path)
+    parser.add_argument("--protocol", type=Path, default=Path("configs/scoring.json"))
+    parser.add_argument(
+        "--example", action="store_true", help="Score synthetic example data"
+    )
+    parser.add_argument("--output-dir", required=True, type=Path)
+    args = parser.parse_args()
+    result = evaluate(
+        args.task_dir.resolve(),
+        args.predictions.resolve(),
+        args.model_metadata.resolve(),
+        args.protocol.resolve(),
+        args.output_dir.resolve(),
+        example=args.example,
     )
     print(
         json.dumps(
             {
-                "status": run["status"],
-                "n_predictions": run["n_predictions"],
-                "output_dir": str(out),
+                "status": result["status"],
+                "n_predictions": result["n_predictions"],
+                "output_dir": str(args.output_dir),
             },
             indent=2,
         )

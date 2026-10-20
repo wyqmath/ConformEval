@@ -11,14 +11,16 @@ from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from sklearn.metrics import average_precision_score, roc_auc_score
 from sklearn.preprocessing import StandardScaler
 
-from .datasets import load_pooled, parse_fasta, sequence_path, write_tsv
-from .evaluate_predictions import (
+from .datasets import (
     TASK_FS,
     TASK_KNOT,
-    evaluate,
-    load_protocol,
-    write_gzip_tsv,
+    load_pooled,
+    parse_fasta,
+    sequence_path,
+    task_input_paths,
+    write_tsv,
 )
+from .evaluate_predictions import evaluate
 from .evaluate_residue_predictions import (
     TASK as RESIDUE_TASK,
 )
@@ -30,6 +32,7 @@ from .evaluate_residue_predictions import (
 from .model_interface import load_mean_representation, load_residue_representation
 from .readers import fold_indices, fs_rank_percentiles, nearest_neighbor, sequence_aux
 from .runtime import RunRecord, json_write, safe_path
+from .scoring import load_protocol
 
 
 def reader_config(path: Path):
@@ -207,7 +210,7 @@ def load_archives(path, required, residue=False):
 
 
 def pooled_data(data_dir, task, manifest_path, example=False):
-    eligible, group_to_fold = load_pooled(data_dir, {task})
+    eligible, group_to_fold, inner = load_pooled(data_dir, {task}, example=example)
     sequences = parse_fasta(sequence_path(data_dir, task))
     rows = sorted(eligible.values(), key=lambda r: r["sample_id"])
     sample_sequences = [row["sequence_ids"].split(";") for row in rows]
@@ -228,7 +231,7 @@ def pooled_data(data_dir, task, manifest_path, example=False):
             for ids in sample_sequences
         ]
     )
-    y, plan = fold_indices(task, rows, data_dir, group_to_fold)
+    y, plan = fold_indices(task, rows, group_to_fold, inner[task])
     return dict(
         task=task,
         rows=rows,
@@ -420,9 +423,8 @@ def train_task(args, record, config):
     data["X"] = {l: data["X"][l] for l in layers}
     for archive in data["archive_paths"]:
         record.track(Path(archive))
-    for p in data_dir.rglob("*"):
-        if p.is_file() and p.suffix != ".md":
-            record.track(p)
+    for p in task_input_paths(data_dir, task):
+        record.track(p)
     arm_scores = {}
     selection_rows = []
     outer_rows = []
@@ -570,7 +572,7 @@ def train_task(args, record, config):
                     row["position_1based"] = int(data["positions"][index])
                 pred_rows.append(row)
     prediction_path = record.output / "predictions.tsv.gz"
-    write_gzip_tsv(prediction_path, pred_rows, list(pred_rows[0]))
+    write_tsv(prediction_path, list(pred_rows[0]), pred_rows)
     if data["residue"]:
         checked = read_scores(
             prediction_path,
@@ -591,14 +593,14 @@ def train_task(args, record, config):
         metrics = {}
         for arm in sorted(arm_scores):
             arm_path = record.output / (arm + ".tsv.gz")
-            write_gzip_tsv(
+            write_tsv(
                 arm_path,
+                ["task_id", "sample_id", "outer_fold", "score"],
                 [
                     {k: v for k, v in r.items() if k != "arm"}
                     for r in pred_rows
                     if r["arm"] == arm
                 ],
-                ["task_id", "sample_id", "outer_fold", "score"],
             )
             evaluate(
                 data_dir,

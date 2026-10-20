@@ -72,6 +72,81 @@ def _validate_identity(
         raise ValueError("feature model revision mismatch")
 
 
+def _load_representation(
+    path, kind, expected_sequence_id, expected_length, selected_layers, model, revision
+):
+    with np.load(path, allow_pickle=False) as archive:
+        if kind == "mean":
+            key = (
+                "sequence_layers"
+                if "sequence_layers" in archive.files
+                else "mean_layers"
+            )
+            if key not in archive.files:
+                raise ValueError(
+                    f"feature archive has no sequence representation: {path.name}"
+                )
+            raw_indices = None
+        else:
+            key = "resid_layers"
+            if not {"resid_layers", "resid_indices"} <= set(archive.files):
+                raise ValueError(f"feature archive lacks residue arrays: {path.name}")
+            raw_indices = np.asarray(archive["resid_indices"])
+        meta = _load_meta(archive)
+        values = np.asarray(archive[key])
+    _validate_identity(meta, expected_sequence_id, expected_length, model, revision)
+    layer_ids = _layer_ids(meta, kind)
+    ndim = 2 if kind == "mean" else 3
+    if (
+        values.ndim != ndim
+        or values.shape[0] != len(layer_ids)
+        or any(n < 1 for n in values.shape[1:])
+    ):
+        raise ValueError(
+            f"invalid {kind} representation shape: {path.name} {values.shape}"
+        )
+    if not np.issubdtype(values.dtype, np.number) or not np.isfinite(values).all():
+        raise ValueError(
+            f"{kind} representation has invalid numeric values: {path.name}"
+        )
+    indices = None
+    if kind == "resid":
+        if (
+            raw_indices.ndim != 1
+            or len(raw_indices) != values.shape[1]
+            or not np.issubdtype(raw_indices.dtype, np.integer)
+        ):
+            raise ValueError(f"residue coordinate array is invalid: {path.name}")
+        indices = raw_indices.astype(np.int64, copy=False)
+        if (
+            len(np.unique(indices)) != len(indices)
+            or np.any(indices < 1)
+            or np.any(indices > expected_length)
+        ):
+            raise ValueError(
+                f"residue coordinates must be unique 1-based positions within sequence: {path.name}"
+            )
+        if np.any(indices[1:] <= indices[:-1]):
+            raise ValueError(
+                f"residue coordinates must be strictly increasing: {path.name}"
+            )
+    if not selected_layers or len(set(selected_layers)) != len(selected_layers):
+        raise ValueError(f"selected {kind} layers must be nonempty and unique")
+    missing = [layer for layer in selected_layers if layer not in layer_ids]
+    if missing:
+        raise ValueError(f"requested {kind} layers are absent: {missing}")
+    with np.errstate(over="ignore", invalid="ignore"):
+        selected = np.asarray(
+            values[[layer_ids.index(layer) for layer in selected_layers]],
+            dtype=np.float32,
+        )
+    if not np.isfinite(selected).all():
+        raise ValueError(
+            f"{kind} representation is not finite after float32 conversion: {path.name}"
+        )
+    return selected, indices, int(values.shape[-1])
+
+
 def load_mean_representation(
     path: Path,
     expected_sequence_id: str,
@@ -80,35 +155,16 @@ def load_mean_representation(
     model: str,
     revision: str,
 ) -> tuple[np.ndarray, int]:
-    with np.load(path, allow_pickle=False) as archive:
-        key = "sequence_layers" if "sequence_layers" in archive.files else "mean_layers"
-        if key not in archive.files:
-            raise ValueError(f"feature archive has no mean_layers: {path.name}")
-        meta = _load_meta(archive)
-        values = np.asarray(archive[key])
-    _validate_identity(meta, expected_sequence_id, expected_length, model, revision)
-    layer_ids = _layer_ids(meta, "mean")
-    if values.ndim != 2 or values.shape[0] != len(layer_ids) or values.shape[1] < 1:
-        raise ValueError(
-            f"invalid mean representation shape: {path.name} {values.shape}"
-        )
-    if not np.issubdtype(values.dtype, np.number) or not np.isfinite(values).all():
-        raise ValueError(f"mean representation has invalid numeric values: {path.name}")
-    if not selected_layers or len(set(selected_layers)) != len(selected_layers):
-        raise ValueError("selected mean layers must be nonempty and unique")
-    missing = [layer for layer in selected_layers if layer not in layer_ids]
-    if missing:
-        raise ValueError(f"requested mean layers are absent: {missing}")
-    with np.errstate(over="ignore", invalid="ignore"):
-        selected = np.asarray(
-            values[[layer_ids.index(layer) for layer in selected_layers]],
-            dtype=np.float32,
-        )
-    if not np.isfinite(selected).all():
-        raise ValueError(
-            f"mean representation is not finite after float32 conversion: {path.name}"
-        )
-    return (selected, int(values.shape[1]))
+    values, _, dimension = _load_representation(
+        path,
+        "mean",
+        expected_sequence_id,
+        expected_length,
+        selected_layers,
+        model,
+        revision,
+    )
+    return values, dimension
 
 
 def load_residue_representation(
@@ -119,59 +175,12 @@ def load_residue_representation(
     model: str,
     revision: str,
 ) -> tuple[np.ndarray, np.ndarray, int]:
-    with np.load(path, allow_pickle=False) as archive:
-        required = {"resid_layers", "resid_indices"}
-        if not required.issubset(archive.files):
-            raise ValueError(f"feature archive lacks residue arrays: {path.name}")
-        meta = _load_meta(archive)
-        values = np.asarray(archive["resid_layers"])
-        raw_indices = np.asarray(archive["resid_indices"])
-    _validate_identity(meta, expected_sequence_id, expected_length, model, revision)
-    layer_ids = _layer_ids(meta, "resid")
-    if (
-        values.ndim != 3
-        or values.shape[0] != len(layer_ids)
-        or values.shape[1] < 1
-        or (values.shape[2] < 1)
-    ):
-        raise ValueError(
-            f"invalid residue representation shape: {path.name} {values.shape}"
-        )
-    if not np.issubdtype(values.dtype, np.number) or not np.isfinite(values).all():
-        raise ValueError(
-            f"residue representation has invalid numeric values: {path.name}"
-        )
-    if (
-        raw_indices.ndim != 1
-        or len(raw_indices) != values.shape[1]
-        or (not np.issubdtype(raw_indices.dtype, np.integer))
-    ):
-        raise ValueError(f"residue coordinate array is invalid: {path.name}")
-    indices = raw_indices.astype(np.int64, copy=False)
-    if (
-        len(np.unique(indices)) != len(indices)
-        or np.any(indices < 1)
-        or np.any(indices > expected_length)
-    ):
-        raise ValueError(
-            f"residue coordinates must be unique 1-based positions within sequence: {path.name}"
-        )
-    if np.any(indices[1:] <= indices[:-1]):
-        raise ValueError(
-            f"residue coordinates must be strictly increasing: {path.name}"
-        )
-    if not selected_layers or len(set(selected_layers)) != len(selected_layers):
-        raise ValueError("selected residue layers must be nonempty and unique")
-    missing = [layer for layer in selected_layers if layer not in layer_ids]
-    if missing:
-        raise ValueError(f"requested residue layers are absent: {missing}")
-    with np.errstate(over="ignore", invalid="ignore"):
-        selected = np.asarray(
-            values[[layer_ids.index(layer) for layer in selected_layers]],
-            dtype=np.float32,
-        )
-    if not np.isfinite(selected).all():
-        raise ValueError(
-            f"residue representation is not finite after float32 conversion: {path.name}"
-        )
-    return (selected, indices, int(values.shape[2]))
+    return _load_representation(
+        path,
+        "resid",
+        expected_sequence_id,
+        expected_length,
+        selected_layers,
+        model,
+        revision,
+    )
