@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import json
 from pathlib import Path
 
@@ -32,7 +30,7 @@ def _layer_ids(meta: dict, kind: str) -> tuple[int, ...]:
     return matches[0]
 
 
-def _load_meta(archive: np.lib.npyio.NpzFile) -> dict:
+def _load_meta(archive) -> dict:
     if "meta" not in archive.files:
         raise ValueError("feature archive has no metadata")
     try:

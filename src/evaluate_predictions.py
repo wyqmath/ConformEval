@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import argparse
 import csv
 import gzip
@@ -7,6 +5,7 @@ import json
 import math
 import sys
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
@@ -184,7 +183,7 @@ def evaluate(
     metadata_path: Path,
     protocol_path: Path,
     output_dir: Path,
-    tasks: set[str] | None = None,
+    tasks: Optional[set[str]] = None,
     example: bool = False,
 ) -> dict:
     tasks = TASKS if tasks is None else set(tasks)
