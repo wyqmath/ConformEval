@@ -104,4 +104,4 @@ The examples contain 30 synthetic sequences, 20 knot samples, 20 ranking items, 
 
 Sequences and annotations come from [UniProt](https://www.uniprot.org/), [DisProt](https://disprot.org/), [RCSB PDB/SIFTS](https://www.ebi.ac.uk/pdbe/docs/sifts/), and KnotProt-derived annotations. Fold-switch cases follow [Porter and Looger (2018)](https://doi.org/10.1073/pnas.1800168115). The downloaded dataset's `sources.tsv` records references, source versions, and reuse terms. KnotProt redistribution terms and the original scored-label source snapshot remain unresolved.
 
-[MIT](LICENSE) covers the software. Dataset reuse follows the terms recorded for each source.
+[MIT](LICENSE) covers the software. Source-specific data reuse terms are recorded in `ConformEval-data/sources.tsv` inside the [dataset ZIP](https://zenodo.org/records/23433394/files/ConformEval-data.zip?download=1).
